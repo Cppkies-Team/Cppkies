@@ -1,0 +1,55 @@
+{
+	"name": "cppkies",
+	"version": "1.0.0",
+	"description": "Cppkies is a modding framework for the game Cookie Clicker. It intends to make modding the game very simple.",
+	"main": "/dist/index.js",
+	"scripts": {
+		"setProd": "export NODE_ENV=production",
+		"setDev": "export NODE_ENV=development",
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"code-test": "npm run setProd&&npm run eslint&&npm run build",
+		"build": "npx rollup -c",
+		"build:watch": "npm run build -- --watch",
+		"eslint": "npx eslint ./src/**/*.ts ./src/*.ts ./*.js",
+		"eslint:fix": "npm run eslint -- --fix"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "npm run code-test",
+			"pre-push": "npm run code-test"
+		}
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/TheGLander/cookie-clicker-lib.git"
+	},
+	"author": "Cppkies team",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/TheGLander/cookie-clicker-lib/issues"
+	},
+	"homepage": "https://github.com/TheGLander/cookie-clicker-lib#readme",
+	"dependencies": {},
+	"devDependencies": {
+		"@babel/preset-env": "^7.8.3",
+		"@rollup/plugin-commonjs": "^11.0.2",
+		"@typescript-eslint/eslint-plugin": "^2.19.0",
+		"@typescript-eslint/parser": "^2.19.0",
+		"babel": "^6.23.0",
+		"babel-minify": "^0.5.1",
+		"babel-preset-env": "^1.7.0",
+		"babel-preset-minify": "^0.5.1",
+		"dotenv": "^8.2.0",
+		"eslint": "^6.8.0",
+		"eslint-config-prettier": "^6.9.0",
+		"eslint-plugin-prettier": "^3.1.2",
+		"husky": "^4.2.1",
+		"prettier": "^1.19.1",
+		"rollup": "^1.29.1",
+		"rollup-plugin-analyzer": "^3.2.2",
+		"rollup-plugin-babel": "^4.3.3",
+		"rollup-plugin-babel-minify": "^9.1.1",
+		"rollup-plugin-typescript2": "^0.25.3",
+		"typescript": "^3.7.5"
+	}
+}
