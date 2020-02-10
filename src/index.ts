@@ -9,9 +9,11 @@ declare global {
 }
 
 if (window.Cppkies) throw new Error("Duplicate Cppkies import")
-const hooks = main()
+main().then((answer: { [key: string]: Function[] }) => {
+	window.Cppkies.hooks = answer
+})
 const master = {
-	hooks,
+	hooks: {},
 	injectCode,
 }
 export default master

@@ -7,9 +7,7 @@ declare global {
     }
 }
 declare const master: {
-    hooks: {
-        [key: string]: Function[];
-    };
+    hooks: {};
     injectCode: typeof injectCode;
 };
 export default master;

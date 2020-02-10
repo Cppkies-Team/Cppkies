@@ -6,6 +6,10 @@ declare global {
         Beautify: Function;
     }
 }
-export declare function main(): {
+/**
+ * Injects functions for basegame
+ * @returns A promise
+ */
+export declare function main(): Promise<{
     [key: string]: Function[];
-};
+}>;
