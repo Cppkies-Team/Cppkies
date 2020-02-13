@@ -58,7 +58,7 @@ export function injectCode(
 			else newFuncStr = newFuncStr.replace(regex, `${source}${target}`)
 			break
 		default:
-			throw new Error('re Parameter must be "before", "replace" or "after"')
+			throw new Error('where Parameter must be "before", "replace" or "after"')
 	}
 	const newFunc = new Function(`return (${newFuncStr})`)()
 	newFunc.prototype = func.prototype
