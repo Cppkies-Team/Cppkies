@@ -30,20 +30,21 @@ export function main(): Promise<{ [key: string]: Function[] }> {
 					null,
 					`
 					// Cppkies injection
-			switch (Game.onMenu) {
-				case "prefs":
-					for(const i in Cppkies.hooks.customOptionsMenu) Cppkies.hooks.customOptionsMenu[i]();
-					break;
-				case "stats":
-					for(const i in Cppkies.hooks.customStatsMenu) Cppkies.hooks.customStatsMenu[i]();
-					break;
-				case "log":
-					for(const i in Cppkies.hooks.customInfoMenu) Cppkies.hooks.customInfoMenu[i]();
-					break;
-				default:
-					break;
-			}
-			for(const i in Cppkies.hooks.customMenu) Cppkies.hooks.customMenu[i]();`,
+					switch (Game.onMenu) {
+						case "prefs":
+							for(const i in Cppkies.hooks.customOptionsMenu) Cppkies.hooks.customOptionsMenu[i]();
+						break;
+						case "stats":
+							for(const i in Cppkies.hooks.customStatsMenu) Cppkies.hooks.customStatsMenu[i]();
+						break;
+						case "log":
+							for(const i in Cppkies.hooks.customInfoMenu) Cppkies.hooks.customInfoMenu[i]();
+						break;
+						default:
+						break;
+					}
+					for(const i in Cppkies.hooks.customMenu) Cppkies.hooks.customMenu[i](); 
+					`,
 					"before"
 				)
 			}),
@@ -56,8 +57,9 @@ export function main(): Promise<{ [key: string]: Function[] }> {
 					window.Game.LoadSave,
 					"if (Game.prefs.showBackupWarning==1)",
 					`
-			// Cppkies injection
-			for(const i in CLL.customLoad) CLL.customLoad[i](); `,
+					// Cppkies injection
+					for(const i in CLL.customLoad) CLL.customLoad[i](); 
+					`,
 					"before"
 				)
 			}),
@@ -66,9 +68,9 @@ export function main(): Promise<{ [key: string]: Function[] }> {
 					window.Game.Reset,
 					null,
 					`
-			// Cppkies injection
-			for(const i in Cppkies.hooks.customReset) Cppkies.hooks.customReset[i](hard);
-		`,
+					// Cppkies injection
+					for(const i in Cppkies.hooks.customReset) Cppkies.hooks.customReset[i](hard);
+					`,
 					"before"
 				)
 			}),
@@ -77,13 +79,15 @@ export function main(): Promise<{ [key: string]: Function[] }> {
 				window.Beautify = injectCode(
 					window.Beautify,
 					"return negative?'-'+output:output+decimal;",
-					`// Cppkies injection
-  let ret = negative?'-'+output:output+decimal;
-	for(const i in Cppkies.hooks.customBeautify) {
-		let returnedValue = Cppkies.hooks.customBeautify[i](value, floats, ret)
-		ret = returnedValue ? returnedValue : ret
-	};
-	return ret;`,
+					`
+					// Cppkies injection
+  					let ret = negative?'-'+output:output+decimal;
+					for(const i in Cppkies.hooks.customBeautify) {
+						let returnedValue = Cppkies.hooks.customBeautify[i](value, floats, ret)
+						ret = returnedValue ? returnedValue : ret
+					};
+					return ret;
+					`,
 					"replace"
 				)
 			}),
@@ -93,9 +97,9 @@ export function main(): Promise<{ [key: string]: Function[] }> {
 					window.Game.tooltip.draw,
 					null,
 					`
-			// Cppkies injection
-			for(const i in Cppkies.hooks.customTooltipDraw) CLL.customTooltipDraw[i](from, text, origin);
-		`,
+					// Cppkies injection
+					for(const i in Cppkies.hooks.customTooltipDraw) CLL.customTooltipDraw[i](from, text, origin);
+					`,
 					"before"
 				)
 			}),
@@ -104,9 +108,9 @@ export function main(): Promise<{ [key: string]: Function[] }> {
 					window.Game.tooltip.update,
 					null,
 					`
-			// Cppkies injection
-			for(const i in Cppkies.hooks.customTooltipUpdate) CLL.customTooltipUpdate[i]();
-		`,
+					// Cppkies injection
+					for(const i in Cppkies.hooks.customTooltipUpdate) CLL.customTooltipUpdate[i]();
+					`,
 					"before"
 				)
 			}),
@@ -120,12 +124,14 @@ export function main(): Promise<{ [key: string]: Function[] }> {
 						"replace"
 					),
 					";",
-					`// Cppkies injection
-			for(const i in Cppkies.hooks.customHowManyCookiesReset){ 
-				returnedValue = Cppkies.hooks.customHowManyCookiesReset[i](chips, ret);
-				ret = returnedValue ? returnedValue : ret
-			}
-			return ret;`,
+					`
+					// Cppkies injection
+					for(const i in Cppkies.hooks.customHowManyCookiesReset){ 
+						returnedValue = Cppkies.hooks.customHowManyCookiesReset[i](chips, ret);
+						ret = returnedValue ? returnedValue : ret
+					}
+					return ret;
+					`,
 					"after"
 				)
 			}),
