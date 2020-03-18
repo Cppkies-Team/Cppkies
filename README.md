@@ -1,41 +1,104 @@
-<h1 id="title"> Cppkies </h1>
- ![Cppkies](./static/CppkiesLogo.png)
+# Cppkies
+
+![Cppkies](./static/CppkiesLogo.png?raw=true)
 
 ## Table of Contents
 
-- <a href="#GettingStarted">Getting Started</a>
-  - <a href="#WhatIsCppkies">What Is Cppkies?</a>
-- <a href="#Examples">Examples</a>
-- <a href="#Goals">Future Goals</a>
-- <a href="#ChanglogAndCredits">Changelog & Credits</a>
+- [What Is Cppkies?](#What-is-Cppkies?)
+- [Getting Started](#Getting-Started)
+  - [Using NPM](#Using-NPM)
+  - [Importing through `Game.LoadMod`](#Importing-through-`Game.LoadMod`)
+- [Documentation](#Documentation)
+- [Examples](#Examples)
+- [Roadmap](#Roadmap)
+- [Changelog & Credits](#Changelog-&-Credits)
+  - [Credits](#Credits)
+  - [Changelog](#Changelog)
 
-<h3 id="GettingStarted"> Getting Started </h3>
+## What is Cppkies
 
-<h4 id="WhatIsCppkies"> What is Cppkies? </h4>
-<p>Cppkies is a modding framework for the game <a href="cookieclicker.eu/cookieclicker">Cookie Clicker</a>. It intends to make modding the game very simple.</p>
+Cppkies is a modding framework for the game [Cookie Clicker](https://orteil.dashnet.org/cookieclicker/). It intends to make modding the game very simple.
 
-<h3 id="Examples"> Examples </h3>
+## Getting Started
 
-<h3 id="Goals">Future Goals</h3>
+There are 2 ways of using Cppkies, installing with NPM or importing though `Game.LoadMod`
 
-##### Goals
+### Using NPM
 
-- Yes
+Using Cppkies with NPM is the reccomended way of using Cppkies, since you can split your code into files and use typescript.
 
-<h3 id="ChanglogAndCredits"> Changlog & Credits </h3>
+To use Cppkies using NPM, you must install it first:
 
-Credits :
+```sh
+npm i cppkies
+# Or if you are using yarn...
+yarn add cppkies
+```
 
-- TheGLander (ʐ̈ MANNNNNNN#2006) :
+Then you can use a bundler, like Webpack or Rollup, to bundle them.
+
+```ts
+import * as Cppkies from "cppkies"
+Cppkies.onLoad.push(() => {
+	new Cppkies.Upgrade("Hello, World!", "My first upgrade!", 7, [10, 5])
+})
+```
+
+### Importing through `Game.LoadMod`
+
+Importing Cppkies through `Game.LoadMod` is not reccomended since you can't split your code into multiple files or use typescript.
+
+To import it, you need to start your mod with
+
+```js
+Game.LoadMod("https://unpkg.com/cppkies")
+```
+
+For example:
+
+```js
+Game.LoadMod("https://unpkg.com/cppkies")
+Cppkies.onLoad.push(() => {
+	new Cppkies.Upgrade("Hello, World!", "My first upgrade!", 7, [10, 5])
+})
+```
+
+## Documentation
+
+## Examples
+
+[Think Tank building](https://github.com/Cppkies/Examples)
+
+## Roadmap
+
+- [x] Buildings
+- [ ] Upgrades
+- [ ] Achievements
+- [ ] Heavenly Upgrades
+- [ ] Garden hooks
+- [ ] Lumps
+- [ ] More?
+
+## Changlog & Credits
+
+### Credits
+
+- [TheGLander](https://github.com/TheGLander) (ʐ̈ MANNNNNNN#2006) :
   - Programer
-- Bob (MasterOfBob777#8346) :
+- [Bob](https://github.com/MasterOfBob777) (MasterOfBob777#8346) :
   - Programer
-- TheSkullyKO (Mistow OwO#0245) :
+- [TheSkullyKO](https://github.com/TheSkullyKO) (Mistow OwO#0245) :
   - Helped with Ideas
-- Klatamose (<a href="https://github.com/klattmose/">https://github.com/klattmose/</a>) :
+- [Klattmose](https://github.com/klattmose/) :
   - Gave us the idea to begin the project
 
-2/10/20 - V0.0.0
+### Changelog
+
+#### 18/03/20
+
+- Redo changelog
+
+#### 10/02/20 - V0.0.0
 
 - Created the github repo
 - Created the structure of a readme
