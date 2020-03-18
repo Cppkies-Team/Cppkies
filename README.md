@@ -65,21 +65,41 @@ Cppkies.onLoad.push(() => {
 
 ## Documentation
 
+The documentation is located [here](https://cppkies-team.github.io/Cppkies/#/Setup).
+
 ## Examples
 
 Examples:
 
-- [Think Tank building](https://github.com/Cppkies-Team/Examples/tree/master/building)
+### [Think Tank Building](https://github.com/Cppkies/Examples/ThinkTank)
+
+This addon provides an example on how to create a new building new upgrades and new achievements. Sprites by "Bt Y#0895".
+
+### [LumpExample](https://github.com/Cppkies/Examples/LumpExample)
+
+This addon provides an example of creating a new lump type.
+
+### [BuffExample](https://github.com/Cppkies/Examples/BuffExample)
+
+This addon provides an example of creating a new buff type, and adding a buff type to golden cookies.
+
+### [GardenExample](https://github.com/Cppkies/Examples/GardenExample)
+
+This addon provides an example of creating a new plant<!--, and maybe a new soil type. Not sure if it's possible.-->.
 
 ## Roadmap
 
 - [x] Buildings
 - [ ] Upgrades
+  - [ ] Fortune Upgrades
+  - [ ] Seasonal Upgrades
+  - [ ] Heavenly Upgrades
 - [ ] Achievements
-- [ ] Heavenly Upgrades
-- [ ] Garden hooks
+- [ ] Garden Hooks
+- [ ] Temple Hooks <!-- Maybe? -->
+- [ ] Grimoire Hooks <!-- Maybe? -->
 - [ ] Lumps
-- [ ] More?
+  <!-- More? -->
 
 ## Changlog & Credits
 
@@ -96,11 +116,14 @@ Examples:
 
 ### Changelog
 
-#### 18/03/20
+18/3/20 - V0.1.0 Cppkie Crumbles
 
-- Redo changelog
+- Created the docs with [Docsify](https://docsify.js.org/#/)
+- Redid the readme
+- Added Buildings API
+- Published to NPM
 
-#### 10/02/20 - V0.0.0
+10/2/20 - V0.0.0
 
 - Created the github repo
 - Created the structure of a readme
