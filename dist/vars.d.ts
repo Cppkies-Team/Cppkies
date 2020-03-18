@@ -5,5 +5,5 @@ declare global {
         Cppkies: CppkiesType;
     }
 }
-declare let CppkiesExport: CppkiesType;
-export default CppkiesExport;
+declare const master: CppkiesType;
+export default master;
