@@ -1,8 +1,10 @@
 <h1 id="title"> Cppkies </h1>
+ ![Cppkies](./static/CppkiesLogo.png)
 
 ## Table of Contents
+
 - <a href="#GettingStarted">Getting Started</a>
-    - <a href="#WhatIsCppkies">What Is Cppkies?</a>
+  - <a href="#WhatIsCppkies">What Is Cppkies?</a>
 - <a href="#Examples">Examples</a>
 - <a href="#Goals">Future Goals</a>
 - <a href="#ChanglogAndCredits">Changelog & Credits</a>
@@ -14,16 +16,18 @@
 
 <h3 id="Examples"> Examples </h3>
 
-<h3 id="Goals">Future Goals</h3> 
+<h3 id="Goals">Future Goals</h3>
 
 ##### Goals
+
 - Yes
 
 <h3 id="ChanglogAndCredits"> Changlog & Credits </h3>
 
-Credits : 
+Credits :
+
 - TheGLander (ʐ̈ MANNNNNNN#2006) :
-  - Programer 
+  - Programer
 - Bob (MasterOfBob777#8346) :
   - Programer
 - TheSkullyKO (Mistow OwO#0245) :
@@ -32,5 +36,6 @@ Credits :
   - Gave us the idea to begin the project
 
 2/10/20 - V0.0.0
+
 - Created the github repo
-- Created the structure of a readme 
+- Created the structure of a readme
