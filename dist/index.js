@@ -82,6 +82,8 @@
 	    onLoad: [],
 	    Building: null,
 	    injectCode: null,
+	    DEFAULT_ONBUY: null,
+	    DEFAULT_CPS: null,
 	};
 	//# sourceMappingURL=vars.js.map
 
@@ -391,6 +393,17 @@
 	    }
 	    return Building;
 	}(Game.Object));
+	var defaultCps = function (me) {
+	    return Game.GetTieredCpsMult(me) * Game.magicCpS(me.name) * me.baseCps;
+	};
+	var defaultOnBuy = function () {
+	    Game.UnlockTiered(this);
+	    if (this.amount >= Game.SpecialGrandmaUnlock &&
+	        Game.Objects["Grandma"].amount > 0 &&
+	        this.grandma)
+	        Game.Unlock(this.grandma.name);
+	};
+	//# sourceMappingURL=buildings.js.map
 
 	var CppkiesExport;
 	//Check if Cppkies is already created
@@ -404,6 +417,8 @@
 	    CppkiesExport = master;
 	    CppkiesExport.Building = Building;
 	    CppkiesExport.injectCode = injectCode;
+	    CppkiesExport.DEFAULT_CPS = defaultCps;
+	    CppkiesExport.DEFAULT_ONBUY = defaultOnBuy;
 	    //Inject maingame and create hooks
 	    main().then(function (answer) {
 	        CppkiesExport.hooks = answer;
@@ -422,6 +437,7 @@
 	    });
 	}
 	var CppkiesExport$1 = CppkiesExport;
+	//# sourceMappingURL=index.js.map
 
 	return CppkiesExport$1;
 

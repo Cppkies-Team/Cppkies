@@ -566,6 +566,8 @@ export interface Cppkies {
 	buildingLink: string
 	Building: typeof Building | null
 	onLoad: Function[]
+	DEFAULT_ONBUY: () => void | null
+	DEFAULT_CPS: (me: Building) => number | null
 }
 export interface FoolBuilding {
 	name: string

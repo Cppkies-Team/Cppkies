@@ -16,5 +16,7 @@ const master: CppkiesType = {
 	onLoad: [],
 	Building: null,
 	injectCode: null,
+	DEFAULT_ONBUY: null,
+	DEFAULT_CPS: null,
 }
 export default master

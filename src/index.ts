@@ -1,7 +1,7 @@
 import { injectCode } from "./helpers"
 import { main } from "./injects/basegame"
 import gameType, { Cppkies as CppkiesType } from "./gameType"
-import { Building } from "./buildings"
+import { Building, defaultCps, defaultOnBuy } from "./buildings"
 import master from "./vars"
 declare global {
 	interface Window {
@@ -20,6 +20,8 @@ if (window.Cppkies) {
 	CppkiesExport = master
 	CppkiesExport.Building = Building
 	CppkiesExport.injectCode = injectCode
+	CppkiesExport.DEFAULT_CPS = defaultCps
+	CppkiesExport.DEFAULT_ONBUY = defaultOnBuy
 	//Inject maingame and create hooks
 	main().then((answer: Record<string, Function[]>) => {
 		CppkiesExport.hooks = answer

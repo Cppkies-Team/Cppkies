@@ -174,3 +174,14 @@ export class Building extends Game.Object {
 		Game.recalculateGains = 1
 	}
 }
+export const defaultCps = (me: Building): number =>
+	Game.GetTieredCpsMult(me) * Game.magicCpS(me.name) * me.baseCps
+export const defaultOnBuy = function(): void {
+	Game.UnlockTiered(this)
+	if (
+		this.amount >= Game.SpecialGrandmaUnlock &&
+		Game.Objects["Grandma"].amount > 0 &&
+		this.grandma
+	)
+		Game.Unlock(this.grandma.name)
+}
