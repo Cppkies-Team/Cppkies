@@ -42,11 +42,12 @@ export function injectCode(
 		regex = new RegExp(escapeRegExp(source), "g")
 	}
 	target = getValue(target)
-	const findStart = /\)\s+{/
+	const findStart = /(\)[^{]*{)/
+	const findEnd = /(}?)$/
 	if (!sliceMode && !regex.test(newFuncStr)) console.warn("Nothing to inject.")
 	switch (where) {
 		case "before":
-			if (sliceMode) newFuncStr = newFuncStr.replace(findStart, `) {${target}`)
+			if (sliceMode) newFuncStr = newFuncStr.replace(findStart, `$1${target}`)
 			else newFuncStr = newFuncStr.replace(regex, `${target}${source}`)
 			break
 		case "replace":
@@ -54,7 +55,7 @@ export function injectCode(
 			else newFuncStr = newFuncStr.replace(regex, `${target}`)
 			break
 		case "after":
-			if (sliceMode) throw new Error("Yikes, can't add to end!")
+			if (sliceMode) newFuncStr = newFuncStr.replace(findEnd, `${target}$1`)
 			else newFuncStr = newFuncStr.replace(regex, `${source}${target}`)
 			break
 		default:

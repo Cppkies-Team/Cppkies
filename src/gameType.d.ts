@@ -1,6 +1,7 @@
 /*eslint @typescript-eslint/no-explicit-any:0*/
 
 import { CommonString } from "./helpers"
+import { Building } from "buildings"
 export default interface Game {
 	Launch: Function
 	version: number
@@ -379,11 +380,11 @@ export default interface Game {
 	buyMode: number
 	buyBulkOld: number
 	buyBulkShortcut: number
-	Objects: Array<any>
+	Objects: Record<string, any>
 	ObjectsById: Array<any>
 	ObjectsN: number
 	BuildingsOwned: number
-	Object: Function
+	Object: any
 	DrawBuildings: Function
 	sortSprites: Function
 	sortSpritesById: Function
@@ -398,7 +399,7 @@ export default interface Game {
 	scriptLoaded: Function
 	magicCpS: Function
 	SpecialGrandmaUnlock: number
-	foolObjects: object
+	foolObjects: FoolBuilding[]
 	ClickProduct: Function
 	mutedBuildingTooltip: Function
 	upgradesToRebuild: number
@@ -555,8 +556,26 @@ export interface Cppkies {
 		source: CommonString | null,
 		target: CommonString,
 		where: "before" | "replace" | "after"
-	) => Function
+	) => Function | null
 	hooks: {
-		[key: string]: Array<Function>
+		[key: string]: Function[]
 	}
+	buildingHooks: Record<string, Record<string, Function[]>>
+	buildingHooksById: Record<string, Function[]>[]
+	iconLink: string
+	buildingLink: string
+	Building: typeof Building | null
+	onLoad: Function[]
+	DEFAULT_ONBUY: () => void | null
+	DEFAULT_CPS: (me: Building) => number | null
 }
+export interface FoolBuilding {
+	name: string
+	description: string
+	icon: [number, number]
+}
+export type AddEvent = (
+	htmlElement: HTMLElement,
+	eventName: string,
+	eventFunction: (e: Event | any) => void
+) => void
