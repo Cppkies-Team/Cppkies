@@ -1,5 +1,5 @@
 import { injectCode } from "./helpers"
-import { main } from "./injects"
+import { main } from "./injects/basegame"
 import gameType, { Cppkies as CppkiesType } from "./gameType"
 import { Building } from "./buildings"
 import master from "./vars"

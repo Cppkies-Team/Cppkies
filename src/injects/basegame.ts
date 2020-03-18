@@ -1,6 +1,7 @@
-import { injectCode } from "./helpers"
-import Game, { Cppkies } from "./gameType"
-import master from "./vars"
+import { injectCode } from "../helpers"
+import Game, { Cppkies } from "../gameType"
+import master from "../vars"
+import { Injection } from "./generic"
 
 declare global {
 	interface Window {
@@ -15,13 +16,6 @@ declare global {
  */
 export function main(): Promise<{ [key: string]: Function[] }> {
 	return new Promise(resolve => {
-		class Injection {
-			constructor(
-				public value: string,
-				public defValue: [],
-				public func?: Function
-			) {}
-		}
 		const dummy = {}
 		const injections: Array<Injection> = [
 			//// -- Custom menus -- ////
