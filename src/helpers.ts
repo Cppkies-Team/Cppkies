@@ -43,7 +43,7 @@ export function injectCode(
 	}
 	target = getValue(target)
 	const findStart = /(\)[^{]*{)/
-	const findEnd = /}?$/
+	const findEnd = /(}?)$/
 	if (!sliceMode && !regex.test(newFuncStr)) console.warn("Nothing to inject.")
 	switch (where) {
 		case "before":
