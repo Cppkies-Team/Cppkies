@@ -1,5 +1,8 @@
 import gameType, { FoolBuilding, Cppkies, AddEvent } from "./gameType"
 import master from "./vars"
+import Game from "./gameType"
+import { injectCode } from "./helpers"
+import { Injection } from "./injects/generic"
 declare let Game: gameType
 declare let Cppkies: Cppkies
 declare const l: (id: string) => HTMLElement
@@ -16,6 +19,30 @@ interface Art {
 	pic: string
 	bg: string
 }
+export function createHooks(building: Building | Game["Object"]): void {
+	const injections: Injection[] = [
+		new Injection("tooltip", [], () => {
+			building.tooltip = injectCode(
+				injectCode(building.tooltip, "return", "let ret = ", "replace"),
+				null,
+				`\n//Cppkies injection
+		for(const i in Cppkies.buildingHooks["${building.name}"].tooltip) {
+			const tempRet = Cppkies.buildingHooks["${building.name}"].tooltip[i].call(this, ret)
+			ret = tempRet || ret
+		}
+		return ret`,
+				"after"
+			)
+		}),
+	]
+	const dummy: Record<string, Function[]> = {}
+	injections.forEach(inject => {
+		dummy[inject.value] = inject.defValue
+		if (inject.func) inject.func()
+	})
+	master.buildingHooks[building.name] = dummy
+}
+
 export class Building extends Game.Object {
 	constructor(
 		name: string,
@@ -39,6 +66,7 @@ export class Building extends Game.Object {
 			cpsFunc,
 			buyFunction
 		)
+		createHooks(this)
 		//Manually relink canvases and contexts because Orteil made it so new buildings break the old canvas and context links
 		for (const i in Game.ObjectsById) {
 			if (parseInt(i) > 0) {
@@ -69,14 +97,14 @@ export class Building extends Game.Object {
 		//CCSE.ReplaceBuilding(name)
 
 		if (localIconLink) {
-			master.buildingHooksById[this.id].tooltip.push(function(obj, ret) {
-				if (this.locked) return ret
-				else
-					return ret.replace(
-						"background-position",
-						`background-image:url(${localIconLink});background-position`
-					)
-			})
+			master.buildingHooks[this.name].tooltip.push(ret =>
+				this.locked
+					? ret
+					: ret.replace(
+							"background-position",
+							`background-image:url(${localIconLink});background-position`
+					  )
+			)
 		}
 
 		/*if (CCSE.save.Buildings[name]) {
