@@ -67,7 +67,9 @@ Cppkies.onLoad.push(() => {
 
 ## Examples
 
-[Think Tank building](https://github.com/Cppkies/Examples)
+Examples:
+
+- [Think Tank building](https://github.com/Cppkies-Team/Examples/tree/master/building)
 
 ## Roadmap
 
