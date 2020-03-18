@@ -113,7 +113,7 @@ export default interface Game {
     startDate: number;
     fullDate: number;
     lastDate: number;
-    prefs: Array<any>;
+    prefs: Array<any>; 
     DefaultPrefs: Function;
     Mobile: Function;
     showBackupWarning: Function;
