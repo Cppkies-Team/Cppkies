@@ -1,8 +1,7 @@
-import Game, { Cppkies } from "../gameType";
+import Game from "../gameType";
 declare global {
     interface Window {
         Game: Game;
-        Cppkies: Cppkies;
         Beautify: Function;
     }
 }
