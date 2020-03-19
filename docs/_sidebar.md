@@ -11,4 +11,3 @@
 - [Examples](Examples.md)
 - [Roadmap](Roadmap.md)
 - [Changelog](Changelog.md)
-- [Credits](Credits.md)
