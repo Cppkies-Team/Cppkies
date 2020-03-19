@@ -8,15 +8,15 @@ declare const l: (id: string) => HTMLElement
 declare const AddEvent: AddEvent
 declare const PlaySound: (url: string, volume?: number, pitch?: number) => void
 interface Art {
-	base: string
-	xV: number
-	yV: number
-	w: number
-	rows: number
-	x: number
-	y: number
-	pic: string
-	bg: string
+	base?: string
+	xV?: number
+	yV?: number
+	w?: number
+	rows?: number
+	x?: number
+	y?: number
+	pic?: string
+	bg?: string
 }
 export function createHooks(building: Building | Game["Object"]): void {
 	const injections: Injection[] = [
