@@ -1,6 +1,6 @@
 ### Creating a Building
 
-Buildings are the main way you make cookies in COokie Clicker, today we will be teaching you how to make one of your own!
+Buildings are the main way you make cookies in Cookie Clicker, today we will be teaching you how to make one of your own!
 
 If you are coming from the setup tutorial this is what your mod should look like so far:
 ```ts
