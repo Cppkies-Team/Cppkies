@@ -1,16 +1,17 @@
 {
 	"name": "cppkies",
-	"version": "0.1.0",
+	"version": "0.1.7",
 	"description": "Cppkies is a modding framework for the game Cookie Clicker. It intends to make modding the game very simple.",
 	"main": "./dist/index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"code-test": "npm run prodBuild && npm run eslint",
 		"build": "npx rollup -c",
-		"prodBuild": "export NODE_ENV=\"production\"&&npm run build",
+		"prodBuild": "export NODE_ENV=\"production\"&&npm run build&&npm run patch",
 		"watch": "export NODE_ENV=\"development\"&&npm run build -- --watch",
 		"eslint": "npx eslint ./src/**/*.ts ./src/*.ts ./*.js",
-		"eslint:fix": "npm run eslint -- --fix"
+		"eslint:fix": "npm run eslint -- --fix",
+		"patch": "sed -i 's/buildings/.\\/buildings/' ./dist/gameType.d.ts"
 	},
 	"husky": {
 		"hooks": {
@@ -27,6 +28,7 @@
 	"bugs": {
 		"url": "https://github.com/Cppkies-Team/Cppkies/issues"
 	},
+	"types": "./dist/index.d.ts",
 	"homepage": "https://github.com/Cppkies-Team/Cppkies#readme",
 	"dependencies": {},
 	"devDependencies": {

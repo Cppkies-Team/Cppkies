@@ -36,6 +36,8 @@ if (window.Cppkies) {
 				return true
 			},
 		})
+		//Force manual addition since in-module injects b r e a k
+		window.Cppkies = CppkiesExport
 	})
 }
 export default CppkiesExport
