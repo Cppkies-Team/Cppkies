@@ -1,5 +1,9 @@
 ### Changelog
 
+19/3/20 - V0.1.6
+
+- Make everything in `Art` optional
+
 19/3/20 - V0.1.5
 
 - Automatically patch path
