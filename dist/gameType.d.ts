@@ -1,5 +1,5 @@
 import { CommonString } from "./helpers";
-import { Building } from "buildings";
+import { Building } from "./buildings";
 export default interface Game {
     Launch: Function;
     version: number;
