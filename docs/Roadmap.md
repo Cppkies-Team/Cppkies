@@ -1,13 +1,14 @@
-### Roadmap
+## Roadmap
 
 - [x] Buildings
 - [ ] Upgrades
-	- [ ] Fortune Upgrades 
-	- [ ] Seasonal Upgrades
-	- [ ] Heavenly Upgrades
+  - [ ] Fortune Upgrades
+  - [ ] Seasonal Upgrades
+  - [ ] Heavenly Upgrades
 - [ ] Achievements
+- [ ] Buffs
 - [ ] Garden Hooks
-- [ ] Temple Hooks <!-- Maybe? -->
 - [ ] Grimoire Hooks <!-- Maybe? -->
+- [ ] Temple Hooks <!-- Maybe? -->
 - [ ] Lumps
-<!-- More? -->
+  <!-- More? -->

@@ -31,8 +31,8 @@
 
 18/3/20 - V0.1.0 Cppkie Crumbles
 
-- Created these lovely docs with [Docsify](https://docsify.js.org/#/)
-- Redid the README
+- Created the docs with [Docsify](https://docsify.js.org/#/)
+- Redid the readme
 - Added Buildings API
 - Published to NPM
 
