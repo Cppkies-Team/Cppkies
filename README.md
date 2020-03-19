@@ -8,9 +8,7 @@
 - [Documentation](#Documentation)
 - [Examples](#Examples)
 - [Roadmap](#Roadmap)
-- [Changelog & Credits](#Changelog-&-Credits)
-  - [Credits](#Credits)
-  - [Changelog](#Changelog)
+- [Credits](#Credits)
 
 ## What is Cppkies
 
