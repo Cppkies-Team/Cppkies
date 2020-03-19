@@ -1,4 +1,4 @@
-### Setup 
+### Setup
 
 There are 2 ways of using Cppkies, installing with NPM or importing though `Game.LoadMod`.
 
@@ -43,7 +43,9 @@ Cppkies.onLoad.push(() => {
 ```
 
 ### Setting up your Workspace - TS
+
 <!-- Basically just creating a main mod file and explaining the benefits of separating your projects code into multiple files -->
 
 ### Creating your addon's backbone - JS & TS
+
 <!-- All this would be is a simple explanation of pushing to functions, setting up Cppkies.onLoad, etc. -->
