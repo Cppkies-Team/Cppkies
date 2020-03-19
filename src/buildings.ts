@@ -1,10 +1,9 @@
-import gameType, { FoolBuilding, Cppkies, AddEvent } from "./gameType"
+import gameType, { FoolBuilding, AddEvent } from "./gameType"
 import master from "./vars"
 import Game from "./gameType"
 import { injectCode } from "./helpers"
 import { Injection } from "./injects/generic"
 declare let Game: gameType
-declare let Cppkies: Cppkies
 declare const l: (id: string) => HTMLElement
 declare const AddEvent: AddEvent
 declare const PlaySound: (url: string, volume?: number, pitch?: number) => void
@@ -87,8 +86,8 @@ export class Building extends Game.Object {
 				})
 			}
 		}
-		const localBuildingLink = Cppkies.buildingLink + "",
-			localIconLink = Cppkies.iconLink + ""
+		const localBuildingLink = master.buildingLink + "",
+			localIconLink = master.iconLink + ""
 		// This is the name, description, and icon used during Business Season
 		if (foolObject) Game.foolObjects[name] = foolObject
 		// The name of this building's golden cookie buff and debuff

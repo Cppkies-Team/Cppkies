@@ -1,12 +1,11 @@
 import { injectCode } from "../helpers"
-import Game, { Cppkies } from "../gameType"
+import Game from "../gameType"
 import master from "../vars"
 import { Injection } from "./generic"
 
 declare global {
 	interface Window {
 		Game: Game
-		Cppkies: Cppkies
 		Beautify: Function
 	}
 }
