@@ -116,6 +116,11 @@ This addon provides an example of creating a new plant<!--, and maybe a new soil
 
 ### Changelog
 
+19/3/20 - V0.1.2
+
+- Manually add Cppkies to `window`
+- Remove unnecessary Cppkies definitions
+
 19/3/20 - V0.1.1
 
 - Patch declaration files

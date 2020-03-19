@@ -1,5 +1,10 @@
 ### Changelog
 
+19/3/20 - V0.1.2
+
+- Manually add Cppkies to `window`
+- Remove unnecessary Cppkies definitions
+
 19/3/20 - V0.1.1
 
 - Patch declaration files
