@@ -27,6 +27,7 @@
 	"bugs": {
 		"url": "https://github.com/Cppkies-Team/Cppkies/issues"
 	},
+	"types": "./dist/index.d.ts",
 	"homepage": "https://github.com/Cppkies-Team/Cppkies#readme",
 	"dependencies": {},
 	"devDependencies": {
