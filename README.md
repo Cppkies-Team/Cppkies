@@ -116,6 +116,10 @@ This addon provides an example of creating a new plant<!--, and maybe a new soil
 
 ### Changelog
 
+19/3/20 - V0.1.1
+
+- Patch declaration files
+
 18/3/20 - V0.1.0 Cppkie Crumbles
 
 - Created the docs with [Docsify](https://docsify.js.org/#/)
