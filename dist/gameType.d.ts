@@ -1,4 +1,5 @@
 import { CommonString } from "./helpers";
+import { Building } from "buildings";
 export default interface Game {
     Launch: Function;
     version: number;
@@ -113,7 +114,7 @@ export default interface Game {
     startDate: number;
     fullDate: number;
     lastDate: number;
-    prefs: Array<any>; 
+    prefs: Array<any>;
     DefaultPrefs: Function;
     Mobile: Function;
     showBackupWarning: Function;
@@ -377,11 +378,11 @@ export default interface Game {
     buyMode: number;
     buyBulkOld: number;
     buyBulkShortcut: number;
-    Objects: Array<any>;
+    Objects: Record<string, any>;
     ObjectsById: Array<any>;
     ObjectsN: number;
     BuildingsOwned: number;
-    Object: Function;
+    Object: any;
     DrawBuildings: Function;
     sortSprites: Function;
     sortSpritesById: Function;
@@ -396,7 +397,7 @@ export default interface Game {
     scriptLoaded: Function;
     magicCpS: Function;
     SpecialGrandmaUnlock: number;
-    foolObjects: object;
+    foolObjects: FoolBuilding[];
     ClickProduct: Function;
     mutedBuildingTooltip: Function;
     upgradesToRebuild: number;
@@ -548,8 +549,22 @@ export default interface Game {
     choiceSelectorOn: number;
 }
 export interface Cppkies {
-    injectCode: (func: Function, source: CommonString | null, target: CommonString, where: "before" | "replace" | "after") => Function;
+    injectCode: (func: Function, source: CommonString | null, target: CommonString, where: "before" | "replace" | "after") => Function | null;
     hooks: {
-        [key: string]: Array<Function>;
+        [key: string]: Function[];
     };
+    buildingHooks: Record<string, Record<string, Function[]>>;
+    buildingHooksById: Record<string, Function[]>[];
+    iconLink: string;
+    buildingLink: string;
+    Building: typeof Building | null;
+    onLoad: Function[];
+    DEFAULT_ONBUY: () => void | null;
+    DEFAULT_CPS: (me: Building) => number | null;
 }
+export interface FoolBuilding {
+    name: string;
+    description: string;
+    icon: [number, number];
+}
+export declare type AddEvent = (htmlElement: HTMLElement, eventName: string, eventFunction: (e: Event | any) => void) => void;
