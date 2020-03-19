@@ -564,7 +564,7 @@ export interface Cppkies {
 }
 export interface FoolBuilding {
     name: string;
-    description: string;
+    desc: string;
     icon: [number, number];
 }
 export declare type AddEvent = (htmlElement: HTMLElement, eventName: string, eventFunction: (e: Event | any) => void) => void;

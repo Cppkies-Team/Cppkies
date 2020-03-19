@@ -571,7 +571,7 @@ export interface Cppkies {
 }
 export interface FoolBuilding {
 	name: string
-	description: string
+	desc: string
 	icon: [number, number]
 }
 export type AddEvent = (
