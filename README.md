@@ -116,6 +116,10 @@ This addon provides an example of creating a new plant<!--, and maybe a new soil
 
 ### Changelog
 
+19/3/20 - V0.1.3
+
+- Create `.npmignore`
+
 19/3/20 - V0.1.2
 
 - Manually add Cppkies to `window`

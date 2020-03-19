@@ -1,5 +1,9 @@
 ### Changelog
 
+19/3/20 - V0.1.3
+
+- Create `.npmignore`
+
 19/3/20 - V0.1.2
 
 - Manually add Cppkies to `window`
