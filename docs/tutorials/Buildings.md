@@ -31,7 +31,7 @@ Cppkies.onLoad.push(() => {
 	Cppkies.iconLink = `${prefix}/static/buildingIcons.png`
 	new Cppkies.Building(
 		"Cppkie Baker", // The Name of your building
-		"cppkie baker|cppkie bakers|baked|[X] bug fix|[X] bug fixes", // name of your building in a sentence, and then it plural, then what boosts your building when a sugar lump is added, then it plural
+		"cppkie baker|cppkie bakers|baked|[X] bug fix|[X] bug fixes", // Name of your building in a sentence, and then it plural, then what boosts your building when a sugar lump is added, then it plural
 		"Generates cookies by baking them, why did nobody think about this?" // How your building generates cookies
 	)
 })
@@ -53,8 +53,8 @@ Cppkies.onLoad.push(() => {
 		{
 			bg: `${prefix}/static/buildingBg.png`, // The background for your building on the building screen
 			pic: `${prefix}/static/buildingBake.png`, // The actual building pic on the building screen
-			yV: 64, // The amount your building can move up and down on the building screen in pixels
 			xV: 16, // The amount your building can move left and right on the building screen in pixels
+			yV: 64, // The amount your building can move up and down on the building screen in pixels
 		}
 	)
 })
@@ -116,4 +116,40 @@ Cppkies.onLoad.push(() => {
 })
 ```
 
-If you finished these steps then you should have yourself a new building.
+If you finished these steps then you should have yourself all the code needed for a new building. For a recap here is all the code commented for your convenience. 
+
+```ts
+import Cppkies from "cppkies"
+const prefix = "https://example.com/CppkieBaker"
+Cppkies.onLoad.push(() => {
+	Cppkies.buildingLink = `${prefix}/static/buildingBigIcon.png`
+	Cppkies.iconLink = `${prefix}/static/buildingIcons.png`
+	new Cppkies.Building(
+		"Cppkie Baker", // The Name of your building
+		"cppkie baker|cppkie bakers|baked|[X] bug fix|[X] bug fixes", // Name of your building in a sentence, and then it plural, then what boosts your building when a sugar lump is added, then it plural
+		"Generates cookies by baking them, why did nobody think about this?", // How your building generates cookies
+		[0, 0], // The coords for the default icon for your building
+		{
+			bg: `${prefix}/static/buildingBg.png`, // The background for your building on the building screen
+			pic: `${prefix}/static/buildingBake.png`, // The actual building pic on the building screen
+			yV: 64, // The amount your building can move left and right on the building screen in pixels
+			xV: 16, // The amount your building can move up and down on the building screen in pixels
+		},
+		Cppkies.DEFAULT_CPS, // Your buildings cps
+		Cppkies.DEFAULT_ONBUY, // The function to call when your building gets bought but don't worry about this
+		{
+			name: "Normal Baker",
+			desc: "The top of your cookie hierarchy",
+			icon: [1, 0], 
+		}, // Your buildings data on business day
+		["Motivation!", "Distractions"] // Your building's building buff and building debuff
+	)
+})
+```
+
+Now it's time for the images needed for making a building.
+
+64x64px - Building screen building sprite
+129x64px - Building on buy screen
+128x128px - Building Background
+
