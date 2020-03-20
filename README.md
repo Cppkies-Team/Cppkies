@@ -16,7 +16,7 @@ Cppkies is a modding framework for the game [Cookie Clicker](https://orteil.dash
 
 ## Documentation
 
-The documentation is located [here](https://cppkies.js.org/#/Setup).
+The documentation is located [here](https://cppkies.js.org/#).
 
 ## Examples
 
