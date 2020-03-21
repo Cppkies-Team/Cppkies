@@ -3,6 +3,7 @@ import { main } from "./injects/basegame"
 import gameType, { Cppkies as CppkiesType } from "./gameType"
 import { Building, defaultCps, defaultOnBuy } from "./buildings"
 import master from "./vars"
+import { Upgrade } from "./upgrade"
 declare global {
 	interface Window {
 		Game: gameType
@@ -19,6 +20,7 @@ if (window.Cppkies) {
 	//Set it to master, and set some stuff
 	CppkiesExport = master
 	CppkiesExport.Building = Building
+	CppkiesExport.Upgrade = Upgrade
 	CppkiesExport.injectCode = injectCode
 	CppkiesExport.DEFAULT_CPS = defaultCps
 	CppkiesExport.DEFAULT_ONBUY = defaultOnBuy

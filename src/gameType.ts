@@ -2,6 +2,7 @@
 
 import { CommonString } from "./helpers"
 import { Building } from "buildings"
+import { Upgrade } from "./upgrade"
 export default interface Game {
 	Launch: Function
 	version: number
@@ -566,6 +567,7 @@ export interface Cppkies {
 	iconLink: string
 	buildingLink: string
 	Building: typeof Building | null
+	Upgrade: typeof Upgrade | null
 	onLoad: Function[]
 	DEFAULT_ONBUY: () => void | null
 	DEFAULT_CPS: (me: Building) => number | null

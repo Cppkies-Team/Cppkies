@@ -15,6 +15,7 @@ const master: CppkiesType = {
 	buildingHooksById: [],
 	onLoad: [],
 	Building: null,
+	Upgrade: null,
 	injectCode: null,
 	DEFAULT_ONBUY: null,
 	DEFAULT_CPS: null,

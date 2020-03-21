@@ -1,5 +1,6 @@
 import { CommonString } from "./helpers";
-import { Building } from "./buildings";
+import { Building } from "buildings";
+import { Upgrade } from "./upgrade";
 export default interface Game {
     Launch: Function;
     version: number;
@@ -406,7 +407,7 @@ export default interface Game {
     UpgradesN: number;
     UpgradesInStore: Array<any>;
     UpgradesOwned: number;
-    Upgrade: Function;
+    Upgrade: any;
     storeBuyAll: Function;
     vault: Array<any>;
     CountsAsUpgradeOwned: Function;
@@ -548,6 +549,7 @@ export default interface Game {
     defaultBg: string;
     choiceSelectorOn: number;
 }
+export declare type Icon = [number, number, string?];
 export interface Cppkies {
     injectCode: (func: Function, source: CommonString | null, target: CommonString, where: "before" | "replace" | "after") => Function | null;
     hooks: {
@@ -558,6 +560,7 @@ export interface Cppkies {
     iconLink: string;
     buildingLink: string;
     Building: typeof Building | null;
+    Upgrade: typeof Upgrade | null;
     onLoad: Function[];
     DEFAULT_ONBUY: () => void | null;
     DEFAULT_CPS: (me: Building) => number | null;
@@ -568,3 +571,5 @@ export interface FoolBuilding {
     icon: [number, number];
 }
 export declare type AddEvent = (htmlElement: HTMLElement, eventName: string, eventFunction: (e: Event | any) => void) => void;
+export declare type l = (name: string) => HTMLElement;
+export declare type PlaySound = (url: string, volume?: number, pitch?: number) => void;
