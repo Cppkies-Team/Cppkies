@@ -1,12 +1,11 @@
-import gameType, { FoolBuilding, AddEvent } from "./gameType"
+import gameType, { FoolBuilding, AddEvent, PlaySound, l } from "./gameType"
 import master from "./vars"
-import Game from "./gameType"
 import { injectCode } from "./helpers"
 import { Injection } from "./injects/generic"
 declare let Game: gameType
-declare const l: (id: string) => HTMLElement
+declare const l: l
 declare const AddEvent: AddEvent
-declare const PlaySound: (url: string, volume?: number, pitch?: number) => void
+declare const PlaySound: PlaySound
 interface Art {
 	base?: string
 	xV?: number
@@ -24,7 +23,7 @@ interface Art {
  * Creates the hooks for a building
  * @param building The building to create hooks for
  */
-export function createHooks(building: Building | Game["Object"]): void {
+export function createHooks(building: Building | gameType["Object"]): void {
 	const injections: Injection[] = [
 		new Injection("tooltip", [], () => {
 			building.tooltip = injectCode(
