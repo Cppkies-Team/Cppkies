@@ -1,4 +1,10 @@
-import gameType, { FoolBuilding, AddEvent, PlaySound, l } from "./gameType"
+import gameType, {
+	FoolBuilding,
+	AddEvent,
+	PlaySound,
+	l,
+	Icon,
+} from "./gameType"
 import master from "./vars"
 import { injectCode } from "./helpers"
 import { Injection } from "./injects/generic"
@@ -57,6 +63,7 @@ export class Building extends Game.Object {
 	 * @param commonName Various additional string for the building, split by |:  The name of the building, then in plural, how the building produced the cookies, the effect from sugar lumps, then in plural
 	 * @param desc The description of the building
 	 * @param icon The icon for the building
+	 * @param bigIcon The icon that shows up in store
 	 * @param art The art for the building
 	 * @param cpsFunc The function to calculate CPS
 	 * @param buyFunction The function which gets called when it's bought
@@ -67,7 +74,8 @@ export class Building extends Game.Object {
 		name: string,
 		commonName: string,
 		desc: string,
-		icon: [number, number],
+		icon: Icon,
+		bigIcon: Icon,
 		art: Art,
 		cpsFunc: (me: Building) => number,
 		buyFunction: () => void,
@@ -78,8 +86,8 @@ export class Building extends Game.Object {
 			name,
 			commonName,
 			desc,
+			bigIcon[1],
 			icon[0],
-			icon[1],
 			art,
 			0, //Game automatically calculates Price and BaseCps
 			cpsFunc,
@@ -106,8 +114,8 @@ export class Building extends Game.Object {
 				})
 			}
 		}
-		const localBuildingLink = master.buildingLink + "",
-			localIconLink = master.iconLink + ""
+		const localBuildingLink = bigIcon[2] || master.buildingLink + "",
+			localIconLink = icon[2] || master.iconLink + ""
 		// This is the name, description, and icon used during Business Season
 		if (foolObject) Game.foolObjects[name] = foolObject
 		// The name of this building's golden cookie buff and debuff
