@@ -1,5 +1,4 @@
-import gameType, { FoolBuilding } from "./gameType";
-import Game from "./gameType";
+import gameType, { FoolBuilding, Icon } from "./gameType";
 declare let Game: gameType;
 interface Art {
     base?: string;
@@ -18,7 +17,7 @@ interface Art {
  * Creates the hooks for a building
  * @param building The building to create hooks for
  */
-export declare function createHooks(building: Building | Game["Object"]): void;
+export declare function createHooks(building: Building | gameType["Object"]): void;
 /**
  * The building class for creating new buildings
  */
@@ -29,13 +28,14 @@ export declare class Building extends Game.Object {
      * @param commonName Various additional string for the building, split by |:  The name of the building, then in plural, how the building produced the cookies, the effect from sugar lumps, then in plural
      * @param desc The description of the building
      * @param icon The icon for the building
+     * @param bigIcon The icon that shows up in store
      * @param art The art for the building
      * @param cpsFunc The function to calculate CPS
      * @param buyFunction The function which gets called when it's bought
      * @param foolObject The fool building to display during business day
      * @param buildingSpecial The building special and building debuff
      */
-    constructor(name: string, commonName: string, desc: string, icon: [number, number], art: Art, cpsFunc: (me: Building) => number, buyFunction: () => void, foolObject: FoolBuilding, buildingSpecial: [string, string]);
+    constructor(name: string, commonName: string, desc: string, icon: Icon, bigIcon: Icon, art: Art, cpsFunc: (me: Building) => number, buyFunction: () => void, foolObject: FoolBuilding, buildingSpecial: [string, string]);
 }
 /**
  * The recommended function to pass in building CpsFunc

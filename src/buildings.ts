@@ -62,8 +62,8 @@ export class Building extends Game.Object {
 	 * @param name The name of the building
 	 * @param commonName Various additional string for the building, split by |:  The name of the building, then in plural, how the building produced the cookies, the effect from sugar lumps, then in plural
 	 * @param desc The description of the building
-	 * @param icon The icon for the building
-	 * @param bigIcon The icon that shows up in store
+	 * @param icon The icon for the building (Only the column matters)
+	 * @param bigIcon The icon that shows up in store (Only the row matters)
 	 * @param art The art for the building
 	 * @param cpsFunc The function to calculate CPS
 	 * @param buyFunction The function which gets called when it's bought
