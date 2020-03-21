@@ -408,7 +408,7 @@ export default interface Game {
 	UpgradesN: number
 	UpgradesInStore: Array<any>
 	UpgradesOwned: number
-	Upgrade: Function
+	Upgrade: any
 	storeBuyAll: Function
 	vault: Array<any>
 	CountsAsUpgradeOwned: Function
@@ -550,6 +550,7 @@ export default interface Game {
 	defaultBg: string
 	choiceSelectorOn: number
 }
+export type Icon = [number, number, string?]
 export interface Cppkies {
 	injectCode: (
 		func: Function,
@@ -579,3 +580,5 @@ export type AddEvent = (
 	eventName: string,
 	eventFunction: (e: Event | any) => void
 ) => void
+export type l = (name: string) => HTMLElement
+export type PlaySound = (url: string, volume?: number, pitch?: number) => void
