@@ -20,6 +20,10 @@ interface Art {
 	bg?: string
 	frames?: number
 }
+/**
+ * Creates the hooks for a building
+ * @param building The building to create hooks for
+ */
 export function createHooks(building: Building | Game["Object"]): void {
 	const injections: Injection[] = [
 		new Injection("tooltip", [], () => {
@@ -44,7 +48,22 @@ export function createHooks(building: Building | Game["Object"]): void {
 	master.buildingHooks[building.name] = dummy
 }
 
+/**
+ * The building class for creating new buildings
+ */
 export class Building extends Game.Object {
+	/**
+	 * Creates a new building and creates the hooks for it
+	 * @param name The name of the building
+	 * @param commonName Various additional string for the building, split by |:  The name of the building, then in plural, how the building produced the cookies, the effect from sugar lumps, then in plural
+	 * @param desc The description of the building
+	 * @param icon The icon for the building
+	 * @param art The art for the building
+	 * @param cpsFunc The function to calculate CPS
+	 * @param buyFunction The function which gets called when it's bought
+	 * @param foolObject The fool building to display during business day
+	 * @param buildingSpecial The building special and building debuff
+	 */
 	constructor(
 		name: string,
 		commonName: string,
@@ -175,8 +194,15 @@ export class Building extends Game.Object {
 		Game.recalculateGains = 1
 	}
 }
+/**
+ * The recommended function to pass in building CpsFunc
+ * @param me Itself
+ */
 export const defaultCps = (me: Building): number =>
 	Game.GetTieredCpsMult(me) * Game.magicCpS(me.name) * me.baseCps
+/**
+ * The reccomended function to pass in building BuyFunc
+ */
 export const defaultOnBuy = function(): void {
 	Game.UnlockTiered(this)
 	if (
