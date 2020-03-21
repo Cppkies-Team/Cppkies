@@ -12,11 +12,13 @@ interface Art {
 	xV?: number
 	yV?: number
 	w?: number
+	h?: number
 	rows?: number
 	x?: number
 	y?: number
 	pic?: string
 	bg?: string
+	frames?: number
 }
 export function createHooks(building: Building | Game["Object"]): void {
 	const injections: Injection[] = [
