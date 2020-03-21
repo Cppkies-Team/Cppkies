@@ -10,7 +10,7 @@ declare global {
 	}
 }
 /**
- * Injects functions for basegame
+ * Creates the function hooks for base game
  * @returns A promise
  */
 export function main(): Promise<{ [key: string]: Function[] }> {

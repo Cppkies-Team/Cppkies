@@ -6,7 +6,7 @@ declare global {
     }
 }
 /**
- * Injects functions for basegame
+ * Creates the function hooks for base game
  * @returns A promise
  */
 export declare function main(): Promise<{
