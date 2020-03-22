@@ -76,6 +76,10 @@
 	 * The localStotrage wrapper class
 	 */
 	var LocalStorageWrapper = /** @class */ (function () {
+	    /**
+	     * The wrapper class for localStorage
+	     * @param name The name of the key
+	     */
 	    function LocalStorageWrapper(name) {
 	        var _this = this;
 	        this.name = name;
@@ -93,9 +97,16 @@
 	            },
 	        });
 	    }
+	    /**
+	     * Reads the values from the name
+	     * @param name The key to read from
+	     */
 	    LocalStorageWrapper.prototype.updateValues = function (name) {
 	        this.store = JSON.parse(localStorage.getItem(name));
 	    };
+	    /**
+	     * Writes store to localstorage
+	     */
 	    LocalStorageWrapper.prototype.writeValues = function () {
 	        localStorage.setItem(this.name, JSON.stringify(this.store));
 	    };
