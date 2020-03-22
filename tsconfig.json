@@ -4,7 +4,8 @@
 		"module": "esnext",
 		"lib": ["dom"],
 		"esModuleInterop": true,
-		"declaration": true
+		"declaration": true,
+		"moduleResolution": "node"
 	},
 	"exclude": ["./dist"]
 }
