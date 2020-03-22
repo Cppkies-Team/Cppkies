@@ -72,6 +72,36 @@
 	}
 	//# sourceMappingURL=helpers.js.map
 
+	/**
+	 * The localStotrage wrapper class
+	 */
+	var LocalStorageWrapper = /** @class */ (function () {
+	    function LocalStorageWrapper(name) {
+	        var _this = this;
+	        this.name = name;
+	        this.updateValues(name);
+	        this.store = new Proxy(this.store, {
+	            set: function (target, key, value) {
+	                var retVal = Reflect.set(target, key, value);
+	                _this.writeValues();
+	                return retVal;
+	            },
+	            deleteProperty: function (target, key) {
+	                var retVal = Reflect.deleteProperty(target, key);
+	                _this.writeValues();
+	                return retVal;
+	            },
+	        });
+	    }
+	    LocalStorageWrapper.prototype.updateValues = function (name) {
+	        this.store = JSON.parse(localStorage.getItem(name));
+	    };
+	    LocalStorageWrapper.prototype.writeValues = function () {
+	        localStorage.setItem(this.name, JSON.stringify(this.store));
+	    };
+	    return LocalStorageWrapper;
+	}());
+
 	//The *main* variable
 	var master = {
 	    hooks: {},
@@ -79,6 +109,7 @@
 	    buildingLink: "",
 	    buildingHooks: {},
 	    buildingHooksById: [],
+	    save: new LocalStorageWrapper("cppkiesSave").store,
 	    onLoad: [],
 	    Building: null,
 	    Upgrade: null,
@@ -86,7 +117,6 @@
 	    DEFAULT_ONBUY: null,
 	    DEFAULT_CPS: null,
 	};
-	//# sourceMappingURL=vars.js.map
 
 	var Injection = /** @class */ (function () {
 	    function Injection(value, defValue, func) {
@@ -455,6 +485,7 @@
 	    }
 	    return Upgrade;
 	}(Game.Upgrade));
+	//# sourceMappingURL=upgrade.js.map
 
 	var CppkiesExport;
 	//Check if Cppkies is already created
@@ -491,6 +522,7 @@
 	    });
 	}
 	var CppkiesExport$1 = CppkiesExport;
+	//# sourceMappingURL=index.js.map
 
 	return CppkiesExport$1;
 
