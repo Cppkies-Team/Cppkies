@@ -112,6 +112,12 @@ export class Building extends Game.Object {
 					me.mousePos[0] = e.pageX - box.left
 					me.mousePos[1] = e.pageY - box.top
 				})
+				//Restore minigames
+				if (me.minigame && me.minigameLoaded) {
+					const save = me.minigame.save()
+					me.minigame.launch()
+					me.minigame.load(save)
+				}
 			}
 		}
 		const localBuildingLink = bigIcon[2] || master.buildingLink + "",
