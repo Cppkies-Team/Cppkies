@@ -10,6 +10,7 @@ export default class LocalStorageWrapper {
 	 */
 	constructor(private name: string) {
 		this.updateValues(name)
+		if (!this.store) this.store = {}
 		this.store = onChange(this.store, () => {
 			this.writeValues()
 		})
