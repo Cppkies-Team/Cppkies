@@ -1,9 +1,9 @@
 /*eslint @typescript-eslint/no-explicit-any:0*/
 
 import { CommonString } from "./helpers"
-import { Building } from "buildings"
+import { Building } from "./buildings"
 import { Upgrade } from "./upgrade"
-import LocalStorageWrapper from "./lib/localstorage"
+import { SaveType } from "./saves"
 export default interface Game {
 	Launch: Function
 	version: number
@@ -569,10 +569,12 @@ export interface Cppkies {
 	buildingLink: string
 	Building: typeof Building | null
 	Upgrade: typeof Upgrade | null
-	save: LocalStorageWrapper["store"]
+	save: SaveType | null
 	onLoad: Function[]
 	DEFAULT_ONBUY: () => void | null
 	DEFAULT_CPS: (me: Building) => number | null
+	customBuildings: Building[]
+	customUpgrades: Upgrade[]
 }
 export interface FoolBuilding {
 	name: string

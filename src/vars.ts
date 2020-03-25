@@ -1,5 +1,4 @@
 import gameType, { Cppkies as CppkiesType } from "./gameType"
-import LocalStorageWrapper from "./lib/localstorage"
 
 declare global {
 	interface Window {
@@ -14,7 +13,9 @@ const master: CppkiesType = {
 	buildingLink: "",
 	buildingHooks: {},
 	buildingHooksById: [],
-	save: new LocalStorageWrapper("cppkiesSave").store,
+	customBuildings: [],
+	customUpgrades: [],
+	save: null,
 	onLoad: [],
 	Building: null,
 	Upgrade: null,

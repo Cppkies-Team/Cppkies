@@ -72,47 +72,6 @@
 	}
 	//# sourceMappingURL=helpers.js.map
 
-	/**
-	 * The localStotrage wrapper class
-	 */
-	var LocalStorageWrapper = /** @class */ (function () {
-	    /**
-	     * The wrapper class for localStorage
-	     * @param name The name of the key
-	     */
-	    function LocalStorageWrapper(name) {
-	        var _this = this;
-	        this.name = name;
-	        this.updateValues(name);
-	        this.store = new Proxy(this.store, {
-	            set: function (target, key, value) {
-	                var retVal = Reflect.set(target, key, value);
-	                _this.writeValues();
-	                return retVal;
-	            },
-	            deleteProperty: function (target, key) {
-	                var retVal = Reflect.deleteProperty(target, key);
-	                _this.writeValues();
-	                return retVal;
-	            },
-	        });
-	    }
-	    /**
-	     * Reads the values from the name
-	     * @param name The key to read from
-	     */
-	    LocalStorageWrapper.prototype.updateValues = function (name) {
-	        this.store = JSON.parse(localStorage.getItem(name));
-	    };
-	    /**
-	     * Writes store to localstorage
-	     */
-	    LocalStorageWrapper.prototype.writeValues = function () {
-	        localStorage.setItem(this.name, JSON.stringify(this.store));
-	    };
-	    return LocalStorageWrapper;
-	}());
-
 	//The *main* variable
 	var master = {
 	    hooks: {},
@@ -120,7 +79,9 @@
 	    buildingLink: "",
 	    buildingHooks: {},
 	    buildingHooksById: [],
-	    save: new LocalStorageWrapper("cppkiesSave").store,
+	    customBuildings: [],
+	    customUpgrades: [],
+	    save: null,
 	    onLoad: [],
 	    Building: null,
 	    Upgrade: null,
@@ -128,6 +89,7 @@
 	    DEFAULT_ONBUY: null,
 	    DEFAULT_CPS: null,
 	};
+	//# sourceMappingURL=vars.js.map
 
 	var Injection = /** @class */ (function () {
 	    function Injection(value, defValue, func) {
@@ -315,6 +277,89 @@
 	}
 
 	/**
+	 * The default save file for buildings
+	 */
+	var DEFAULT_BUILDING_SAVE = {
+	    amount: 0,
+	    bought: 0,
+	    free: 0,
+	    totalCookies: 0,
+	    level: 0,
+	    muted: 0,
+	    minigameSave: "",
+	};
+	/**
+	 * The default save for an upgrade
+	 */
+	var DEFAULT_UPGRADE_SAVE = {
+	    bought: false,
+	    unlocked: false,
+	};
+	var DEFAULT_MOD_SAVE = {
+	    buildings: {},
+	    upgrades: {},
+	};
+	/**
+	 * Creates a save for Cppkies
+	 */
+	function initSave() {
+	    master.save.mods = {};
+	    master.save.foreign = DEFAULT_MOD_SAVE;
+	    master.save.saveVer = 0;
+	    master.save.exists = true;
+	}
+	/**
+	 * Loads the building save data
+	 * @param building The building to load savedata for
+	 */
+	function loadBuilding(building) {
+	    //Use names because ID conflicts
+	    return master.save.foreign.buildings[building.name] || DEFAULT_BUILDING_SAVE;
+	}
+	/**
+	 * Saves a building
+	 * @param building The building to save
+	 */
+	function saveBuilding(_a) {
+	    var amount = _a.amount, bought = _a.bought, free = _a.free, totalCookies = _a.totalCookies, level = _a.level, muted = _a.muted, minigameSave = _a.minigameSave, name = _a.name;
+	    master.save.foreign.buildings[name] = {
+	        amount: amount,
+	        bought: bought,
+	        free: free,
+	        totalCookies: totalCookies,
+	        level: level,
+	        muted: muted,
+	        minigameSave: minigameSave,
+	    };
+	}
+	/**
+	 * Loads an upgrade
+	 * @param upgrade The upgrade to load
+	 */
+	function loadUpgrade(upgrade) {
+	    return master.save.foreign.upgrades[upgrade.name] || DEFAULT_UPGRADE_SAVE;
+	}
+	/**
+	 * Saves an upgrade
+	 * @param upgrade The upgrade to save
+	 */
+	function saveUpgrade(upgrade) {
+	    master.save.foreign.upgrades[upgrade.name] = {
+	        unlocked: upgrade.unlocked,
+	        bought: upgrade.bought,
+	    };
+	}
+	/**
+	 * Saves everything
+	 */
+	function saveAll() {
+	    for (var i in master.customBuildings)
+	        saveBuilding(master.customBuildings[i]);
+	    for (var i in master.customUpgrades)
+	        saveUpgrade(master.customUpgrades[i]);
+	}
+
+	/**
 	 * Creates the hooks for a building
 	 * @param building The building to create hooks for
 	 */
@@ -353,6 +398,8 @@
 	    function Building(name, commonName, desc, icon, bigIcon, art, cpsFunc, buyFunction, foolObject, buildingSpecial) {
 	        var _this = _super.call(this, name, commonName, desc, bigIcon[1], icon[0], art, 0, //Game automatically calculates Price and BaseCps
 	        cpsFunc, buyFunction) || this;
+	        master.customBuildings.push(_this);
+	        // Create hooks
 	        createHooks(_this);
 	        var _loop_1 = function (i) {
 	            if (parseInt(i) > 0) {
@@ -371,6 +418,12 @@
 	                    me_1.mousePos[0] = e.pageX - box.left;
 	                    me_1.mousePos[1] = e.pageY - box.top;
 	                });
+	                //Restore minigames
+	                if (me_1.minigame && me_1.minigameLoaded) {
+	                    var save = me_1.minigame.save();
+	                    me_1.minigame.launch();
+	                    me_1.minigame.load(save);
+	                }
 	            }
 	        };
 	        //Manually relink canvases and contexts because Orteil made it so new buildings break the old canvas and context links
@@ -450,6 +503,10 @@
 	            _this.mousePos[1] = e.pageY - box.top;
 	        });
 	        l("buildingsMute").appendChild(muteDiv);
+	        // Load the save stuff
+	        var loadProps = loadBuilding(_this);
+	        for (var i in loadProps)
+	            _this[i] = loadProps[i];
 	        Game.recalculateGains = 1;
 	        return _this;
 	    }
@@ -481,28 +538,420 @@
 	        if (!icon[2])
 	            icon[2] = master.iconLink + "";
 	        _this = _super.call(this, name, desc, price, icon, buyFunc) || this;
+	        master.customUpgrades.push(_this);
+	        var loadProps = loadUpgrade(_this);
+	        for (var i in loadProps)
+	            _this[i] = loadProps[i];
 	        return _this;
-	        /*
-	        if (CCSE.save.Upgrades[name]) {
-	            me.unlocked = CCSE.save.Upgrades[name].unlocked
-	            me.bought = CCSE.save.Upgrades[name].bought
-	        } else {
-	            CCSE.save.Upgrades[name] = {
-	                unlocked: 0,
-	                bought: 0,
-	            }
-	        }
-	        */
 	    }
 	    return Upgrade;
 	}(Game.Upgrade));
-	//# sourceMappingURL=upgrade.js.map
+
+	var constants = {
+		PATH_SEPARATOR: '.',
+		TARGET: Symbol('target'),
+		UNSUBSCRIBE: Symbol('unsubscribe')
+	};
+
+	var isArray = Array.isArray;
+
+	var isSymbol = value => typeof value === 'symbol';
+
+	const {PATH_SEPARATOR} = constants;
+
+
+
+	var path = {
+		after: (path, subPath) => {
+			if (isArray(path)) {
+				return path.slice(subPath.length);
+			}
+
+			if (subPath === '') {
+				return path;
+			}
+
+			return path.slice(subPath.length + 1);
+		},
+		concat: (path, key) => {
+			if (isArray(path)) {
+				path = path.slice();
+
+				if (key) {
+					path.push(key);
+				}
+
+				return path;
+			}
+
+			if (key && key.toString !== undefined) {
+				if (path !== '') {
+					path += PATH_SEPARATOR;
+				}
+
+				if (isSymbol(key)) {
+					return path + 'Symbol(' + key.description + ')';
+				}
+
+				return path + key;
+			}
+
+			return path;
+		},
+		initial: path => {
+			if (isArray(path)) {
+				return path.slice(0, -1);
+			}
+
+			if (path === '') {
+				return path;
+			}
+
+			const index = path.lastIndexOf(PATH_SEPARATOR);
+
+			if (index === -1) {
+				return '';
+			}
+
+			return path.slice(0, index);
+		},
+		walk: (path, callback) => {
+			if (isArray(path)) {
+				path.forEach(callback);
+			} else if (path !== '') {
+				let position = 0;
+				let index = path.indexOf(PATH_SEPARATOR);
+
+				if (index === -1) {
+					callback(path);
+				} else {
+					while (position < path.length) {
+						if (index === -1) {
+							index = path.length;
+						}
+
+						callback(path.slice(position, index));
+
+						position = index + 1;
+						index = path.indexOf(PATH_SEPARATOR, position);
+					}
+				}
+			}
+		}
+	};
+
+	const {TARGET, UNSUBSCRIBE} = constants;
+
+
+
+
+	const isPrimitive = value => value === null || (typeof value !== 'object' && typeof value !== 'function');
+
+	const isBuiltinWithoutMutableMethods = value => value instanceof RegExp || value instanceof Number;
+
+	const isBuiltinWithMutableMethods = value => value instanceof Date;
+
+	const isSameDescriptor = (a, b) => {
+		return a !== undefined && b !== undefined &&
+			Object.is(a.value, b.value) &&
+			(a.writable || false) === (b.writable || false) &&
+			(a.enumerable || false) === (b.enumerable || false) &&
+			(a.configurable || false) === (b.configurable || false);
+	};
+
+	const shallowClone = value => {
+		if (isArray(value)) {
+			return value.slice();
+		}
+
+		return {...value};
+	};
+
+	const onChange = (object, onChange, options = {}) => {
+		const proxyTarget = Symbol('ProxyTarget');
+		let inApply = false;
+		let changed = false;
+		let applyPath;
+		let applyPrevious;
+		let isUnsubscribed = false;
+		const equals = options.equals || Object.is;
+		let propCache = new WeakMap();
+		let pathCache = new WeakMap();
+		let proxyCache = new WeakMap();
+
+		const handleChange = (changePath, property, previous, value) => {
+			if (isUnsubscribed) {
+				return;
+			}
+
+			if (!inApply) {
+				onChange(path.concat(changePath, property), value, previous);
+				return;
+			}
+
+			if (inApply && applyPrevious && previous !== undefined && value !== undefined && property !== 'length') {
+				let item = applyPrevious;
+
+				if (changePath !== applyPath) {
+					changePath = path.after(changePath, applyPath);
+
+					path.walk(changePath, key => {
+						item[key] = shallowClone(item[key]);
+						item = item[key];
+					});
+				}
+
+				item[property] = previous;
+			}
+
+			changed = true;
+		};
+
+		const getOwnPropertyDescriptor = (target, property) => {
+			let props = propCache !== null && propCache.get(target);
+
+			if (props) {
+				props = props.get(property);
+			}
+
+			if (props) {
+				return props;
+			}
+
+			props = new Map();
+			propCache.set(target, props);
+
+			let prop = props.get(property);
+
+			if (!prop) {
+				prop = Reflect.getOwnPropertyDescriptor(target, property);
+				props.set(property, prop);
+			}
+
+			return prop;
+		};
+
+		const invalidateCachedDescriptor = (target, property) => {
+			const props = propCache ? propCache.get(target) : undefined;
+
+			if (props) {
+				props.delete(property);
+			}
+		};
+
+		const buildProxy = (value, path) => {
+			if (isUnsubscribed) {
+				return value;
+			}
+
+			pathCache.set(value, path);
+
+			let proxy = proxyCache.get(value);
+
+			if (proxy === undefined) {
+				proxy = new Proxy(value, handler);
+				proxyCache.set(value, proxy);
+			}
+
+			return proxy;
+		};
+
+		const unsubscribe = target => {
+			isUnsubscribed = true;
+			propCache = null;
+			pathCache = null;
+			proxyCache = null;
+
+			return target;
+		};
+
+		const ignoreProperty = property => {
+			return isUnsubscribed ||
+				(options.ignoreSymbols === true && isSymbol(property)) ||
+				(options.ignoreUnderscores === true && property.charAt(0) === '_') ||
+				(options.ignoreKeys !== undefined && options.ignoreKeys.includes(property));
+		};
+
+		const handler = {
+			get(target, property, receiver) {
+				if (property === proxyTarget || property === TARGET) {
+					return target;
+				}
+
+				if (property === UNSUBSCRIBE &&
+					pathCache !== null &&
+					pathCache.get(target) === '') {
+					return unsubscribe(target);
+				}
+
+				const value = Reflect.get(target, property, receiver);
+				if (
+					isPrimitive(value) ||
+					isBuiltinWithoutMutableMethods(value) ||
+					property === 'constructor' ||
+					options.isShallow === true ||
+					ignoreProperty(property)
+				) {
+					return value;
+				}
+
+				// Preserve invariants
+				const descriptor = getOwnPropertyDescriptor(target, property);
+				if (descriptor && !descriptor.configurable) {
+					if (descriptor.set && !descriptor.get) {
+						return undefined;
+					}
+
+					if (descriptor.writable === false) {
+						return value;
+					}
+				}
+
+				return buildProxy(value, path.concat(pathCache.get(target), property));
+			},
+
+			set(target, property, value, receiver) {
+				if (value && value[proxyTarget] !== undefined) {
+					value = value[proxyTarget];
+				}
+
+				const ignore = ignoreProperty(property);
+				const previous = ignore ? null : Reflect.get(target, property, receiver);
+				const isChanged = !(property in target) || !equals(previous, value);
+				let result = true;
+
+				if (isChanged) {
+					result = Reflect.set(target[proxyTarget] || target, property, value);
+
+					if (!ignore && result) {
+						handleChange(pathCache.get(target), property, previous, value);
+					}
+				}
+
+				return result;
+			},
+
+			defineProperty(target, property, descriptor) {
+				let result = true;
+
+				if (!isSameDescriptor(descriptor, getOwnPropertyDescriptor(target, property))) {
+					result = Reflect.defineProperty(target, property, descriptor);
+
+					if (result && !ignoreProperty(property) && !isSameDescriptor()) {
+						invalidateCachedDescriptor(target, property);
+
+						handleChange(pathCache.get(target), property, undefined, descriptor.value);
+					}
+				}
+
+				return result;
+			},
+
+			deleteProperty(target, property) {
+				if (!Reflect.has(target, property)) {
+					return true;
+				}
+
+				const ignore = ignoreProperty(property);
+				const previous = ignore ? null : Reflect.get(target, property);
+				const result = Reflect.deleteProperty(target, property);
+
+				if (!ignore && result) {
+					invalidateCachedDescriptor(target, property);
+
+					handleChange(pathCache.get(target), property, previous);
+				}
+
+				return result;
+			},
+
+			apply(target, thisArg, argumentsList) {
+				const compare = isBuiltinWithMutableMethods(thisArg);
+
+				if (compare) {
+					thisArg = thisArg[proxyTarget];
+				}
+
+				if (!inApply) {
+					inApply = true;
+
+					if (compare) {
+						applyPrevious = thisArg.valueOf();
+					}
+
+					if (isArray(thisArg) || toString.call(thisArg) === '[object Object]') {
+						applyPrevious = shallowClone(thisArg[proxyTarget]);
+					}
+
+					applyPath = path.initial(pathCache.get(target));
+
+					const result = Reflect.apply(target, thisArg, argumentsList);
+
+					inApply = false;
+
+					if (changed || (compare && !equals(applyPrevious, thisArg.valueOf()))) {
+						handleChange(applyPath, '', applyPrevious, thisArg[proxyTarget] || thisArg);
+						applyPrevious = null;
+						changed = false;
+					}
+
+					return result;
+				}
+
+				return Reflect.apply(target, thisArg, argumentsList);
+			}
+		};
+
+		const proxy = buildProxy(object, options.pathAsArray === true ? [] : '');
+		onChange = onChange.bind(proxy);
+
+		return proxy;
+	};
+
+	onChange.target = proxy => proxy[TARGET] || proxy;
+	onChange.unsubscribe = proxy => proxy[UNSUBSCRIBE] || proxy;
+
+	var onChange_1 = onChange;
+
+	/**
+	 * The localStotrage wrapper class
+	 */
+	var LocalStorageWrapper = /** @class */ (function () {
+	    /**
+	     * The wrapper class for localStorage
+	     * @param name The name of the key
+	     */
+	    function LocalStorageWrapper(name) {
+	        var _this = this;
+	        this.name = name;
+	        this.updateValues(name);
+	        if (!this.store)
+	            this.store = {};
+	        this.store = onChange_1(this.store, function () {
+	            _this.writeValues();
+	        });
+	    }
+	    /**
+	     * Reads the values from the name
+	     * @param name The key to read from
+	     */
+	    LocalStorageWrapper.prototype.updateValues = function (name) {
+	        this.store = JSON.parse(localStorage.getItem(name));
+	    };
+	    /**
+	     * Writes store to localstorage
+	     */
+	    LocalStorageWrapper.prototype.writeValues = function () {
+	        localStorage.setItem(this.name, JSON.stringify(this.store));
+	    };
+	    return LocalStorageWrapper;
+	}());
+	//# sourceMappingURL=localstorage.js.map
 
 	var CppkiesExport;
 	//Check if Cppkies is already created
 	if (window.Cppkies) {
 	    //If so, just reexport it
-	    console.warn("Duplicate Cppkies");
 	    CppkiesExport = window.Cppkies;
 	}
 	else {
@@ -513,10 +962,18 @@
 	    CppkiesExport.injectCode = injectCode;
 	    CppkiesExport.DEFAULT_CPS = defaultCps;
 	    CppkiesExport.DEFAULT_ONBUY = defaultOnBuy;
+	    //Since we can't trust our data...
+	    master.save = new LocalStorageWrapper("cppkiesSave")
+	        .store;
+	    //Create a save if it doesn't exist
+	    if (!master.save.exists) {
+	        initSave();
+	    }
 	    //Inject maingame and create hooks
 	    main().then(function (answer) {
 	        CppkiesExport.hooks = answer;
-	        window.Game.Note.call({}, "Cppkies loaded!", "", [32, 17]);
+	        window.Game.customSave.push(saveAll);
+	        window.Game.Notify("Cppkies loaded!", "", [32, 17]);
 	        window.Game.Win("Third-party");
 	        //Run all onLoad events
 	        master.onLoad.forEach(function (val) { return val(); });
@@ -533,7 +990,6 @@
 	    });
 	}
 	var CppkiesExport$1 = CppkiesExport;
-	//# sourceMappingURL=index.js.map
 
 	return CppkiesExport$1;
 

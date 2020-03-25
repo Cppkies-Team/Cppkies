@@ -8,6 +8,8 @@ import gameType, {
 import master from "./vars"
 import { injectCode } from "./helpers"
 import { Injection } from "./injects/generic"
+import { loadBuilding } from "./saves"
+
 declare let Game: gameType
 declare const l: l
 declare const AddEvent: AddEvent
@@ -25,6 +27,7 @@ interface Art {
 	bg?: string
 	frames?: number
 }
+
 /**
  * Creates the hooks for a building
  * @param building The building to create hooks for
@@ -93,6 +96,8 @@ export class Building extends Game.Object {
 			cpsFunc,
 			buyFunction
 		)
+		master.customBuildings.push(this)
+		// Create hooks
 		createHooks(this)
 		//Manually relink canvases and contexts because Orteil made it so new buildings break the old canvas and context links
 		for (const i in Game.ObjectsById) {
@@ -130,7 +135,7 @@ export class Building extends Game.Object {
 		//CCSE.ReplaceBuilding(name)
 
 		if (localIconLink) {
-			master.buildingHooks[this.name].tooltip.push(ret =>
+			master.buildingHooks[this.name].tooltip.push((ret: string) =>
 				this.locked
 					? ret
 					: ret.replace(
@@ -204,6 +209,9 @@ export class Building extends Game.Object {
 			this.mousePos[1] = e.pageY - box.top
 		})
 		l("buildingsMute").appendChild(muteDiv)
+		// Load the save stuff
+		const loadProps = loadBuilding(this)
+		for (const i in loadProps) this[i] = loadProps[i]
 		Game.recalculateGains = 1
 	}
 }

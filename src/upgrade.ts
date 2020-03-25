@@ -1,5 +1,6 @@
 import gameType, { Icon } from "./gameType"
 import master from "./vars"
+import { loadUpgrade } from "./saves"
 declare let Game: gameType
 
 export class Upgrade extends Game.Upgrade {
@@ -12,16 +13,8 @@ export class Upgrade extends Game.Upgrade {
 	) {
 		if (!icon[2]) icon[2] = master.iconLink + ""
 		super(name, desc, price, icon, buyFunc)
-		/*
-		if (CCSE.save.Upgrades[name]) {
-			me.unlocked = CCSE.save.Upgrades[name].unlocked
-			me.bought = CCSE.save.Upgrades[name].bought
-		} else {
-			CCSE.save.Upgrades[name] = {
-				unlocked: 0,
-				bought: 0,
-			}
-		}
-		*/
+		master.customUpgrades.push(this)
+		const loadProps = loadUpgrade(this)
+		for (const i in loadProps) this[i] = loadProps[i]
 	}
 }

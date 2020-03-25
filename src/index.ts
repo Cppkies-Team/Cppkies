@@ -4,6 +4,8 @@ import gameType, { Cppkies as CppkiesType } from "./gameType"
 import { Building, defaultCps, defaultOnBuy } from "./buildings"
 import master from "./vars"
 import { Upgrade } from "./upgrade"
+import { initSave, SaveType, saveAll } from "./saves"
+import LocalStorageWrapper from "./lib/localstorage"
 declare global {
 	interface Window {
 		Game: gameType
@@ -23,10 +25,18 @@ if (window.Cppkies) {
 	CppkiesExport.injectCode = injectCode
 	CppkiesExport.DEFAULT_CPS = defaultCps
 	CppkiesExport.DEFAULT_ONBUY = defaultOnBuy
+	//Since we can't trust our data...
+	master.save = (new LocalStorageWrapper("cppkiesSave")
+		.store as unknown) as SaveType
+	//Create a save if it doesn't exist
+	if (!master.save.exists) {
+		initSave()
+	}
 	//Inject maingame and create hooks
 	main().then((answer: Record<string, Function[]>) => {
 		CppkiesExport.hooks = answer
-		window.Game.Note.call({}, "Cppkies loaded!", "", [32, 17])
+		window.Game.customSave.push(saveAll)
+		window.Game.Notify("Cppkies loaded!", "", [32, 17])
 		window.Game.Win("Third-party")
 		//Run all onLoad events
 		master.onLoad.forEach(val => val())
