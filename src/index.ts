@@ -14,7 +14,6 @@ let CppkiesExport: CppkiesType
 //Check if Cppkies is already created
 if (window.Cppkies) {
 	//If so, just reexport it
-	console.warn("Duplicate Cppkies")
 	CppkiesExport = window.Cppkies
 } else {
 	//Set it to master, and set some stuff
