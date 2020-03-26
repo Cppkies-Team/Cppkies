@@ -19,6 +19,7 @@ const master: CppkiesType = {
 	onLoad: [],
 	Building: null,
 	Upgrade: null,
+	HeavenlyUpgrade: null,
 	injectCode: null,
 	DEFAULT_ONBUY: null,
 	DEFAULT_CPS: null,

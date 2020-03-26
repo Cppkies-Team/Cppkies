@@ -2,6 +2,7 @@ import { CommonString } from "./helpers";
 import { Building } from "./buildings";
 import { Upgrade } from "./upgrade";
 import { SaveType } from "./saves";
+import { HeavenlyUpgrade } from "./heavenlyupgrade";
 export default interface Game {
     Launch: Function;
     version: number;
@@ -562,6 +563,7 @@ export interface Cppkies {
     buildingLink: string;
     Building: typeof Building | null;
     Upgrade: typeof Upgrade | null;
+    HeavenlyUpgrade: typeof HeavenlyUpgrade | null;
     save: SaveType | null;
     onLoad: Function[];
     DEFAULT_ONBUY: () => void | null;

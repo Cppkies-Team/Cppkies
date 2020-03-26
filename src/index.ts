@@ -6,6 +6,7 @@ import master from "./vars"
 import { Upgrade } from "./upgrade"
 import { initSave, SaveType, saveAll } from "./saves"
 import LocalStorageWrapper from "./lib/localstorage"
+import { HeavenlyUpgrade } from "./heavenlyupgrade"
 declare global {
 	interface Window {
 		Game: gameType
@@ -22,6 +23,7 @@ if (window.Cppkies) {
 	CppkiesExport = master
 	CppkiesExport.Building = Building
 	CppkiesExport.Upgrade = Upgrade
+	CppkiesExport.HeavenlyUpgrade = HeavenlyUpgrade
 	CppkiesExport.injectCode = injectCode
 	CppkiesExport.DEFAULT_CPS = defaultCps
 	CppkiesExport.DEFAULT_ONBUY = defaultOnBuy

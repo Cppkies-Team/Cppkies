@@ -85,6 +85,7 @@
 	    onLoad: [],
 	    Building: null,
 	    Upgrade: null,
+	    HeavenlyUpgrade: null,
 	    injectCode: null,
 	    DEFAULT_ONBUY: null,
 	    DEFAULT_CPS: null,
@@ -358,6 +359,7 @@
 	    for (var i in master.customUpgrades)
 	        saveUpgrade(master.customUpgrades[i]);
 	}
+	//# sourceMappingURL=saves.js.map
 
 	/**
 	 * Creates the hooks for a building
@@ -531,9 +533,23 @@
 	};
 	//# sourceMappingURL=buildings.js.map
 
+	/**
+	 * The class for upgrades
+	 */
 	var Upgrade = /** @class */ (function (_super) {
 	    __extends(Upgrade, _super);
-	    function Upgrade(name, desc, price, icon, buyFunc) {
+	    /**
+	     * Creates an upgrade
+	     * @param name The name of the upgrade
+	     * @param desc The description of it
+	     * @param price The price of it
+	     * @param icon  The icon for it
+	     * @param buyFunc The function that gets called when you buy the upgrade
+	     */
+	    function Upgrade(name, desc, price, icon, 
+	    // eslint-disable-next-line @typescript-eslint/no-empty-function
+	    buyFunc) {
+	        if (buyFunc === void 0) { buyFunc = function () { }; }
 	        var _this = this;
 	        if (!icon[2])
 	            icon[2] = master.iconLink + "";
@@ -546,6 +562,7 @@
 	    }
 	    return Upgrade;
 	}(Game.Upgrade));
+	//# sourceMappingURL=upgrade.js.map
 
 	var constants = {
 		PATH_SEPARATOR: '.',
@@ -948,6 +965,43 @@
 	}());
 	//# sourceMappingURL=localstorage.js.map
 
+	/**
+	 * The class for heavenly upgrades
+	 */
+	var HeavenlyUpgrade = /** @class */ (function (_super) {
+	    __extends(HeavenlyUpgrade, _super);
+	    /**
+	     * Creates a heavenly upgrade
+	     * @param name The name for it
+	     * @param desc The description of it
+	     * @param price The price of in (in Heavenly Chips)
+	     * @param icon The icon for it
+	     * @param position The position of it on the heavenly map screen
+	     * @param parents It's parents, can be mixed ID's with names
+	     * @param buyFunc The function which gets called on being bought
+	     */
+	    function HeavenlyUpgrade(name, desc, price, icon, position, parents, 
+	    // eslint-disable-next-line @typescript-eslint/no-empty-function
+	    buyFunc) {
+	        if (parents === void 0) { parents = ["Legacy"]; }
+	        if (buyFunc === void 0) { buyFunc = function () { }; }
+	        var _this = _super.call(this, name, desc, price, icon, buyFunc) || this;
+	        _this.parents = parents;
+	        _this.pool = "prestige";
+	        _this.posX = position[0];
+	        _this.posY = position[1];
+	        for (var i in _this.parents) {
+	            var me = _this.parents[i];
+	            //Try both by name and by id
+	            _this.parents[i] = Game.Upgrades[me] || Game.UpgradesById[me];
+	        }
+	        Game.PrestigeUpgrades.push(_this);
+	        Game.UpgradePositions[_this.id] = position;
+	        return _this;
+	    }
+	    return HeavenlyUpgrade;
+	}(Upgrade));
+
 	var CppkiesExport;
 	//Check if Cppkies is already created
 	if (window.Cppkies) {
@@ -959,6 +1013,7 @@
 	    CppkiesExport = master;
 	    CppkiesExport.Building = Building;
 	    CppkiesExport.Upgrade = Upgrade;
+	    CppkiesExport.HeavenlyUpgrade = HeavenlyUpgrade;
 	    CppkiesExport.injectCode = injectCode;
 	    CppkiesExport.DEFAULT_CPS = defaultCps;
 	    CppkiesExport.DEFAULT_ONBUY = defaultOnBuy;

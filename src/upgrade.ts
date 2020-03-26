@@ -20,7 +20,8 @@ export class Upgrade extends Game.Upgrade {
 		desc: string,
 		price: number,
 		icon: Icon,
-		buyFunc: () => void
+		// eslint-disable-next-line @typescript-eslint/no-empty-function
+		buyFunc: () => void = (): void => {}
 	) {
 		if (!icon[2]) icon[2] = master.iconLink + ""
 		super(name, desc, price, icon, buyFunc)
