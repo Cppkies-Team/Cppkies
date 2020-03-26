@@ -3,7 +3,18 @@ import master from "./vars"
 import { loadUpgrade } from "./saves"
 declare let Game: gameType
 
+/**
+ * The class for upgrades
+ */
 export class Upgrade extends Game.Upgrade {
+	/**
+	 * Creates an upgrade
+	 * @param name The name of the upgrade
+	 * @param desc The description of it
+	 * @param price The price of it
+	 * @param icon  The icon for it
+	 * @param buyFunc The function that gets called when you buy the upgrade
+	 */
 	constructor(
 		name: string,
 		desc: string,
