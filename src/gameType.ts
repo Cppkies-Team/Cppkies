@@ -1,6 +1,6 @@
 /*eslint @typescript-eslint/no-explicit-any:0*/
 
-import { CommonString } from "./helpers"
+import { CommonValue } from "./helpers"
 import { Building } from "./buildings"
 import { Upgrade } from "./upgrade"
 import { SaveType } from "./saves"
@@ -557,8 +557,8 @@ export type Icon = [number, number, string?]
 export interface Cppkies {
 	injectCode: (
 		func: Function,
-		source: CommonString | null,
-		target: CommonString,
+		source: CommonValue<string> | null,
+		target: CommonValue<string>,
 		where: "before" | "replace" | "after"
 	) => Function | null
 	hooks: {

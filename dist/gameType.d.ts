@@ -1,4 +1,4 @@
-import { CommonString } from "./helpers";
+import { CommonValue } from "./helpers";
 import { Building } from "./buildings";
 import { Upgrade } from "./upgrade";
 import { SaveType } from "./saves";
@@ -553,7 +553,7 @@ export default interface Game {
 }
 export declare type Icon = [number, number, string?];
 export interface Cppkies {
-    injectCode: (func: Function, source: CommonString | null, target: CommonString, where: "before" | "replace" | "after") => Function | null;
+    injectCode: (func: Function, source: CommonValue<string> | null, target: CommonValue<string>, where: "before" | "replace" | "after") => Function | null;
     hooks: {
         [key: string]: Function[];
     };

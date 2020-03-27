@@ -1,6 +1,7 @@
 import { Upgrade } from "./upgrade"
 import { Icon } from "./gameType"
 import gameType from "./gameType"
+import { CommonValue } from "./helpers"
 declare let Game: gameType
 /**
  * The class for heavenly upgrades
@@ -18,7 +19,7 @@ export class HeavenlyUpgrade extends Upgrade {
 	 */
 	constructor(
 		name: string,
-		desc: string,
+		desc: CommonValue<string>,
 		price: number,
 		icon: Icon,
 		position: [number, number],

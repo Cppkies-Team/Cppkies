@@ -1,13 +1,13 @@
 /**
- * The common type for a string, can be either a string or a function that returns a string
+ * The common type for a value, can be either the value or a function that returns a value with the type.
  */
-export type CommonString = string | (() => string)
+export type CommonValue<T> = T | (() => T)
 /**
- * A helper function which converts a common string to a string.
- * @param value The common string to convert
+ * A helper function which converts a common value to a value
+ * @param value The common value to convert
  * @helper
  */
-export function getValue(value: CommonString): string {
+export function getValue<T>(value: CommonValue<T>): T {
 	if (value instanceof Function) return value()
 	return value
 }
@@ -30,8 +30,8 @@ export function escapeRegExp(str: string): string {
  */
 export function injectCode(
 	func: Function,
-	source: CommonString | null,
-	target: CommonString,
+	source: CommonValue<string> | null,
+	target: CommonValue<string>,
 	where: "before" | "replace" | "after"
 ): Function {
 	let newFuncStr = func.toString()

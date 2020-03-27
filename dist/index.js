@@ -5,8 +5,8 @@
 }(this, (function () { 'use strict';
 
 	/**
-	 * A helper function which converts a common string to a string.
-	 * @param value The common string to convert
+	 * A helper function which converts a common value to a value
+	 * @param value The common value to convert
 	 * @helper
 	 */
 	function getValue(value) {
@@ -90,7 +90,6 @@
 	    DEFAULT_ONBUY: null,
 	    DEFAULT_CPS: null,
 	};
-	//# sourceMappingURL=vars.js.map
 
 	var Injection = /** @class */ (function () {
 	    function Injection(value, defValue, func) {
@@ -246,7 +245,6 @@
 	        resolve(dummy);
 	    });
 	}
-	//# sourceMappingURL=basegame.js.map
 
 	/*! *****************************************************************************
 	Copyright (c) Microsoft Corporation. All rights reserved.
@@ -531,7 +529,6 @@
 	        this.grandma)
 	        Game.Unlock(this.grandma.name);
 	};
-	//# sourceMappingURL=buildings.js.map
 
 	/**
 	 * The class for upgrades
@@ -553,7 +550,10 @@
 	        var _this = this;
 	        if (!icon[2])
 	            icon[2] = master.iconLink + "";
-	        _this = _super.call(this, name, desc, price, icon, buyFunc) || this;
+	        _this = _super.call(this, name, typeof desc === "function" ? "" : desc, price, icon, buyFunc) || this;
+	        if (typeof desc === "function") {
+	            _this.descFunc = desc;
+	        }
 	        master.customUpgrades.push(_this);
 	        var loadProps = loadUpgrade(_this);
 	        for (var i in loadProps)
@@ -562,7 +562,6 @@
 	    }
 	    return Upgrade;
 	}(Game.Upgrade));
-	//# sourceMappingURL=upgrade.js.map
 
 	var constants = {
 		PATH_SEPARATOR: '.',

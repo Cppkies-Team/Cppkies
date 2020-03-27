@@ -1,5 +1,6 @@
 import { Upgrade } from "./upgrade";
 import { Icon } from "./gameType";
+import { CommonValue } from "./helpers";
 /**
  * The class for heavenly upgrades
  */
@@ -15,5 +16,5 @@ export declare class HeavenlyUpgrade extends Upgrade {
      * @param parents It's parents, can be mixed ID's with names
      * @param buyFunc The function which gets called on being bought
      */
-    constructor(name: string, desc: string, price: number, icon: Icon, position: [number, number], parents?: (string | number)[], buyFunc?: () => void);
+    constructor(name: string, desc: CommonValue<string>, price: number, icon: Icon, position: [number, number], parents?: (string | number)[], buyFunc?: () => void);
 }

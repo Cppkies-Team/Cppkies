@@ -1,13 +1,13 @@
 /**
- * The common type for a string, can be either a string or a function that returns a string
+ * The common type for a value, can be either the value or a function that returns a value with the type.
  */
-export declare type CommonString = string | (() => string);
+export declare type CommonValue<T> = T | (() => T);
 /**
- * A helper function which converts a common string to a string.
- * @param value The common string to convert
+ * A helper function which converts a common value to a value
+ * @param value The common value to convert
  * @helper
  */
-export declare function getValue(value: CommonString): string;
+export declare function getValue<T>(value: CommonValue<T>): T;
 /**
  * A helper function which escapes special regex characters.
  * @param str The string to escape
@@ -22,4 +22,4 @@ export declare function escapeRegExp(str: string): string;
  * @param where Where to insert or replace your injection
  * @helper
  */
-export declare function injectCode(func: Function, source: CommonString | null, target: CommonString, where: "before" | "replace" | "after"): Function;
+export declare function injectCode(func: Function, source: CommonValue<string> | null, target: CommonValue<string>, where: "before" | "replace" | "after"): Function;

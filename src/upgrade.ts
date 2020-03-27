@@ -1,6 +1,7 @@
 import gameType, { Icon } from "./gameType"
 import master from "./vars"
 import { loadUpgrade } from "./saves"
+import { CommonValue } from "./helpers"
 declare let Game: gameType
 
 /**
@@ -17,14 +18,17 @@ export class Upgrade extends Game.Upgrade {
 	 */
 	constructor(
 		name: string,
-		desc: string,
+		desc: CommonValue<string>,
 		price: number,
 		icon: Icon,
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		buyFunc: () => void = (): void => {}
 	) {
 		if (!icon[2]) icon[2] = master.iconLink + ""
-		super(name, desc, price, icon, buyFunc)
+		super(name, typeof desc === "function" ? "" : desc, price, icon, buyFunc)
+		if (typeof desc === "function") {
+			this.descFunc = desc
+		}
 		master.customUpgrades.push(this)
 		const loadProps = loadUpgrade(this)
 		for (const i in loadProps) this[i] = loadProps[i]
