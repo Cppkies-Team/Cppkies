@@ -90,6 +90,7 @@
 	    DEFAULT_ONBUY: null,
 	    DEFAULT_CPS: null,
 	};
+	//# sourceMappingURL=vars.js.map
 
 	var Injection = /** @class */ (function () {
 	    function Injection(value, defValue, func) {
@@ -245,6 +246,7 @@
 	        resolve(dummy);
 	    });
 	}
+	//# sourceMappingURL=basegame.js.map
 
 	/*! *****************************************************************************
 	Copyright (c) Microsoft Corporation. All rights reserved.
@@ -357,7 +359,6 @@
 	    for (var i in master.customUpgrades)
 	        saveUpgrade(master.customUpgrades[i]);
 	}
-	//# sourceMappingURL=saves.js.map
 
 	/**
 	 * Creates the hooks for a building
@@ -529,6 +530,7 @@
 	        this.grandma)
 	        Game.Unlock(this.grandma.name);
 	};
+	//# sourceMappingURL=buildings.js.map
 
 	/**
 	 * The class for upgrades
@@ -550,10 +552,13 @@
 	        var _this = this;
 	        if (!icon[2])
 	            icon[2] = master.iconLink + "";
-	        _this = _super.call(this, name, typeof desc === "function" ? "" : desc, price, icon, buyFunc) || this;
-	        if (typeof desc === "function") {
+	        _this = _super.call(this, name, typeof desc === "function" ? "" : desc, typeof price === "function" ? 0 : price, typeof icon === "function" ? [0, 0] : icon, buyFunc) || this;
+	        if (typeof desc === "function")
 	            _this.descFunc = desc;
-	        }
+	        if (typeof price === "function")
+	            _this.priceFunc = price;
+	        if (typeof icon === "function")
+	            _this.iconFunction = icon;
 	        master.customUpgrades.push(_this);
 	        var loadProps = loadUpgrade(_this);
 	        for (var i in loadProps)
@@ -562,6 +567,7 @@
 	    }
 	    return Upgrade;
 	}(Game.Upgrade));
+	//# sourceMappingURL=upgrade.js.map
 
 	var constants = {
 		PATH_SEPARATOR: '.',

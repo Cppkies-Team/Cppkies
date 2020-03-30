@@ -13,6 +13,6 @@ export declare class Upgrade extends Game.Upgrade {
      * @param icon  The icon for it
      * @param buyFunc The function that gets called when you buy the upgrade
      */
-    constructor(name: string, desc: CommonValue<string>, price: number, icon: Icon, buyFunc?: () => void);
+    constructor(name: string, desc: CommonValue<string>, price: CommonValue<number>, icon: CommonValue<Icon>, buyFunc?: () => void);
 }
 export {};

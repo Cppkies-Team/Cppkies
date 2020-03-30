@@ -20,8 +20,8 @@ export class HeavenlyUpgrade extends Upgrade {
 	constructor(
 		name: string,
 		desc: CommonValue<string>,
-		price: number,
-		icon: Icon,
+		price: CommonValue<number>,
+		icon: CommonValue<Icon>,
 		position: [number, number],
 		public parents: (string | number)[] = ["Legacy"],
 		// eslint-disable-next-line @typescript-eslint/no-empty-function

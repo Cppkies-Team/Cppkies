@@ -19,16 +19,22 @@ export class Upgrade extends Game.Upgrade {
 	constructor(
 		name: string,
 		desc: CommonValue<string>,
-		price: number,
-		icon: Icon,
+		price: CommonValue<number>,
+		icon: CommonValue<Icon>,
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		buyFunc: () => void = (): void => {}
 	) {
 		if (!icon[2]) icon[2] = master.iconLink + ""
-		super(name, typeof desc === "function" ? "" : desc, price, icon, buyFunc)
-		if (typeof desc === "function") {
-			this.descFunc = desc
-		}
+		super(
+			name,
+			typeof desc === "function" ? "" : desc,
+			typeof price === "function" ? 0 : price,
+			typeof icon === "function" ? [0, 0] : icon,
+			buyFunc
+		)
+		if (typeof desc === "function") this.descFunc = desc
+		if (typeof price === "function") this.priceFunc = price
+		if (typeof icon === "function") this.iconFunction = icon
 		master.customUpgrades.push(this)
 		const loadProps = loadUpgrade(this)
 		for (const i in loadProps) this[i] = loadProps[i]

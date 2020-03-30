@@ -16,5 +16,5 @@ export declare class HeavenlyUpgrade extends Upgrade {
      * @param parents It's parents, can be mixed ID's with names
      * @param buyFunc The function which gets called on being bought
      */
-    constructor(name: string, desc: CommonValue<string>, price: number, icon: Icon, position: [number, number], parents?: (string | number)[], buyFunc?: () => void);
+    constructor(name: string, desc: CommonValue<string>, price: CommonValue<number>, icon: CommonValue<Icon>, position: [number, number], parents?: (string | number)[], buyFunc?: () => void);
 }
