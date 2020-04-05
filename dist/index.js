@@ -72,31 +72,11 @@
 	}
 	//# sourceMappingURL=helpers.js.map
 
-	//The *main* variable
-	var master = {
-	    hooks: {},
-	    iconLink: "",
-	    buildingLink: "",
-	    buildingHooks: {},
-	    buildingHooksById: [],
-	    customBuildings: [],
-	    customUpgrades: [],
-	    save: null,
-	    onLoad: [],
-	    Building: null,
-	    Upgrade: null,
-	    HeavenlyUpgrade: null,
-	    injectCode: null,
-	    DEFAULT_ONBUY: null,
-	    DEFAULT_CPS: null,
-	};
-	//# sourceMappingURL=vars.js.map
-
 	var Injection = /** @class */ (function () {
-	    function Injection(value, defValue, func) {
+	    function Injection(value, func) {
 	        this.value = value;
-	        this.defValue = defValue;
 	        this.func = func;
+	        this.defValue = [];
 	    }
 	    return Injection;
 	}());
@@ -126,12 +106,12 @@
 	            customMenu()
 	            Allows you to add entries to all menus
 	            */
-	            new Injection("customMenu", [], function () {
+	            new Injection("customMenu", function () {
 	                window.Game.UpdateMenu = injectCode(window.Game.UpdateMenu, null, "\n\t\t\t\t\t// Cppkies injection\n\t\t\t\t\tswitch (Game.onMenu) {\n\t\t\t\t\t\tcase \"prefs\":\n\t\t\t\t\t\t\tfor(const i in Cppkies.hooks.customOptionsMenu) Cppkies.hooks.customOptionsMenu[i]();\n\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tcase \"stats\":\n\t\t\t\t\t\t\tfor(const i in Cppkies.hooks.customStatsMenu) Cppkies.hooks.customStatsMenu[i]();\n\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tcase \"log\":\n\t\t\t\t\t\t\tfor(const i in Cppkies.hooks.customInfoMenu) Cppkies.hooks.customInfoMenu[i]();\n\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t\tdefault:\n\t\t\t\t\t\t\tbreak;\n\t\t\t\t\t}\n\t\t\t\t\tfor(const i in Cppkies.hooks.customMenu) Cppkies.hooks.customMenu[i]();\n\t\t\t\t\t", "before");
 	            }),
-	            new Injection("customOptionsMenu", []),
-	            new Injection("customStatsMenu", []),
-	            new Injection("customInfoMenu", []),
+	            new Injection("customOptionsMenu"),
+	            new Injection("customStatsMenu"),
+	            new Injection("customInfoMenu"),
 	            //// -- Data manipulation -- ////
 	            /*
 	            General Description
@@ -143,97 +123,30 @@
 	            Allows you to execute a function on data load, useful for custom data resetting
 	            hard: bool - whether or not this is a hard reset
 	            */
-	            new Injection("customLoad", [], function () {
+	            new Injection("customLoad", function () {
 	                window.Game.LoadSave = injectCode(window.Game.LoadSave, "if (Game.prefs.showBackupWarning==1)", "\n\t\t\t\t\t// Cppkies injection\n\t\t\t\t\tfor(const i in Cppkies.hooks.customLoad) Cppkies.hooks.customLoad[i](); \n\t\t\t\t\t", "before");
 	            }),
-	            new Injection("customReset", [], function () {
+	            new Injection("customReset", function () {
 	                window.Game.Reset = injectCode(window.Game.Reset, null, "\n\t\t\t\t\t// Cppkies injection\n\t\t\t\t\tfor(const i in Cppkies.hooks.customReset) Cppkies.hooks.customReset[i](hard);\n\t\t\t\t\t", "before");
 	            }),
-	            //// -- Misc -- ////
-	            /**
-	            General Description
-
-	            customBeautify(value, floats, ret)
-	            Allows you to "Insert Text Here" should return the new string of a beautied
-	            value - original value
-	            floats - The floating value
-	            ret - current value
-
-	            */
-	            new Injection("customBeautify", [], function () {
-	                window.Beautify = injectCode(window.Beautify, "return negative?'-'+output:output+decimal;", "\n\t\t\t\t\t// Cppkies injection\n\t\t\t\t\tlet ret = negative?'-'+output:output+decimal;\n\t\t\t\t\tfor(const i in Cppkies.hooks.customBeautify) {\n\t\t\t\t\t\tlet returnedValue = Cppkies.hooks.customBeautify[i](value, floats, ret)\n\t\t\t\t\t\tret = returnedValue ? returnedValue : ret\n\t\t\t\t\t};\n\t\t\t\t\treturn ret;\n\t\t\t\t\t", "replace");
-	            }),
-	            //// -- Tooltips -- ////
-	            /*
-	            General Description
-	            
-	            customTooltipDraw(from, text, origin)
-	            Allows you to "Insert Text Here"
-	            from -
-	            text -
-	            origin -
-
-	            customTooltipUpdate()
-	            Allows you to "Insert Text Here"
-
-	            */
-	            new Injection("customTooltipDraw", [], function () {
-	                window.Game.tooltip.draw = injectCode(window.Game.tooltip.draw, null, "\n\t\t\t\t\t// Cppkies injection\n\t\t\t\t\tfor(const i in Cppkies.hooks.customTooltipDraw) Cppkies.hooks.customTooltipDraw[i](from, text, origin);\n\t\t\t\t\t", "before");
-	            }),
-	            new Injection("customTooltipUpdate", [], function () {
-	                window.Game.tooltip.update = injectCode(window.Game.tooltip.update, null, "\n\t\t\t\t\t// Cppkies injection\n\t\t\t\t\tfor(const i in Cppkies.hooks.customTooltipUpdate) Cppkies.hooks.customTooltipUpdate[i]();\n\t\t\t\t\t", "before");
-	            }),
-	            //// -- Ascension -- ////
-	            /**
-	            General Description
-	            
-	            customHowMuchPrestige(chips, ret)
-	            Allows you to "Insert Text Here" should return "value"
-	            chips - How many chips
-	            ret -
-
-	            customHeavenlyMultiplier() // TODO
-	            Allows you to "Insert Text Here"
-
-	            UpdateAscensionModePrompt() // TODO
-	            Allows you to "Insert Text Here"
-
-	            */
-	            new Injection("customHowMuchPrestige", [], function () {
-	                window.Game.HowMuchPrestige = injectCode(injectCode(window.Game.HowMuchPrestige, "return", "let ret =", "replace"), ";", "\n\t\t\t\t\t// Cppkies injection\n\t\t\t\t\tfor(const i in Cppkies.hooks.customHowManyCookiesReset){ \n\t\t\t\t\t\treturnedValue = Cppkies.hooks.customHowManyCookiesReset[i](chips, ret);\n\t\t\t\t\t\tret = returnedValue ? returnedValue : ret\n\t\t\t\t\t}\n\t\t\t\t\treturn ret;\n\t\t\t\t\t", "after");
-	            }),
-	            new Injection("customHeavenlyMultiplier", []),
-	            new Injection("UpdateAscensionModePrompt", []),
-	            new Injection("customReincarnate", []),
-	            new Injection("customAscend", []),
-	            new Injection("customUpdateAscend", []),
-	            new Injection("customBuildAscendTree", []),
-	            new Injection("customAscend", []),
-	            //TODO: Everything else
-	            //Should I declare functions in this file or in another place entirely? - Bob
-	            //I have to go so just dm me the answer to the question when you have the time
 	            //// -- Sugar Lump -- ////
+	            // TODO Rewrite Game.computeLumpType
+	            // TODO Cppkies.hooks.customComputeLumpType
+	            // TODO Cppkies.hooks.customDoLumps
 	            //// -- Economics -- ////
+	            // TODO Cppkies.hooks.customCps
 	            //// -- Shimmers -- ////
-	            //// -- Particles -- ////
-	            //// -- Notifications -- ////
+	            // TODO everything shimmer related
 	            //// -- Prompts -- ////
+	            //Idk what here
 	            //// -- Menus -- ////
+	            // TODO Patch disabled buttons(?)
 	            //// -- Buildings -- ////
-	            new Injection("customGrandmaPic", [], function () {
-	                window.Game.Objects.Grandma.art.pic = injectCode(window.Game.Objects.Grandma.art.pic, "return choose(list)+'.png'", "// Cppkies injection\n\t\t\t\t\tlist = list.concat(Cppkies.hooks.customGrandmaPic.map(val=>val() || null).filter(val=>val !== null))\n\t\t\t\t\t", "before");
+	            new Injection("postBuildStore", function () {
+	                window.Game.BuildStore = injectCode(window.Game.BuildStore, null, ";\nfor(const i in Cppkies.hooks.postBuildStore) Cppkies.hooks.postBuildStore[i]()", "after");
 	            }),
-	            //// -- Unsorted, for quick injections -- ////
-	            new Injection("postBuildStore", [], function () {
-	                var oldString = window.Game.BuildStore.toString();
-	                window.Game.BuildStore = new Proxy(window.Game.BuildStore, {
-	                    apply: function (target, _this, args) {
-	                        target.apply(_this, args);
-	                        for (var i in master.hooks.postBuildStore)
-	                            master.hooks.postBuildStore[i]();
-	                    },
-	                });
-	                window.Game.BuildStore.toString = function () { return oldString; };
+	            new Injection("customGrandmaPic", function () {
+	                window.Game.Objects.Grandma.art.pic = injectCode(window.Game.Objects.Grandma.art.pic, "return choose(list)+'.png'", "// Cppkies injection\n\t\t\t\t\tlist = list.concat(Cppkies.hooks.customGrandmaPic.map(val=>val() || null).filter(val=>val !== null))\n\t\t\t\t\t", "before");
 	            }),
 	        ];
 	        injections.forEach(function (inject) {
@@ -276,6 +189,26 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	}
+
+	//The *main* variable
+	var master = {
+	    hooks: {},
+	    iconLink: "",
+	    buildingLink: "",
+	    buildingHooks: {},
+	    buildingHooksById: [],
+	    customBuildings: [],
+	    customUpgrades: [],
+	    save: null,
+	    onLoad: [],
+	    Building: null,
+	    Upgrade: null,
+	    HeavenlyUpgrade: null,
+	    injectCode: null,
+	    DEFAULT_ONBUY: null,
+	    DEFAULT_CPS: null,
+	};
+	//# sourceMappingURL=vars.js.map
 
 	/**
 	 * The default save file for buildings
@@ -359,6 +292,7 @@
 	    for (var i in master.customUpgrades)
 	        saveUpgrade(master.customUpgrades[i]);
 	}
+	//# sourceMappingURL=saves.js.map
 
 	/**
 	 * Creates the hooks for a building
@@ -366,7 +300,7 @@
 	 */
 	function createHooks(building) {
 	    var injections = [
-	        new Injection("tooltip", [], function () {
+	        new Injection("tooltip", function () {
 	            building.tooltip = injectCode(injectCode(building.tooltip, "return", "let ret = ", "replace"), null, "\n//Cppkies injection\n\t\tfor(const i in Cppkies.buildingHooks[\"" + building.name + "\"].tooltip) {\n\t\t\tconst tempRet = Cppkies.buildingHooks[\"" + building.name + "\"].tooltip[i].call(this, ret)\n\t\t\tret = tempRet || ret\n\t\t}\n\t\treturn ret", "after");
 	        }),
 	    ];
@@ -1006,6 +940,7 @@
 	    }
 	    return HeavenlyUpgrade;
 	}(Upgrade));
+	//# sourceMappingURL=heavenlyupgrade.js.map
 
 	var CppkiesExport;
 	//Check if Cppkies is already created
@@ -1050,6 +985,7 @@
 	    });
 	}
 	var CppkiesExport$1 = CppkiesExport;
+	//# sourceMappingURL=index.js.map
 
 	return CppkiesExport$1;
 

@@ -1,6 +1,5 @@
 import { injectCode } from "../helpers"
 import Game from "../gameType"
-import master from "../vars"
 import { Injection } from "./generic"
 
 declare global {
@@ -33,7 +32,7 @@ export function main(): Promise<{ [key: string]: Function[] }> {
 			customMenu()
 			Allows you to add entries to all menus
 			*/
-			new Injection("customMenu", [], () => {
+			new Injection("customMenu", () => {
 				window.Game.UpdateMenu = injectCode(
 					window.Game.UpdateMenu,
 					null,
@@ -57,9 +56,9 @@ export function main(): Promise<{ [key: string]: Function[] }> {
 					"before"
 				)
 			}),
-			new Injection("customOptionsMenu", []),
-			new Injection("customStatsMenu", []),
-			new Injection("customInfoMenu", []),
+			new Injection("customOptionsMenu"),
+			new Injection("customStatsMenu"),
+			new Injection("customInfoMenu"),
 			//// -- Data manipulation -- ////
 			/*
 			General Description
@@ -71,7 +70,7 @@ export function main(): Promise<{ [key: string]: Function[] }> {
 			Allows you to execute a function on data load, useful for custom data resetting
 			hard: bool - whether or not this is a hard reset
 			*/
-			new Injection("customLoad", [], () => {
+			new Injection("customLoad", () => {
 				window.Game.LoadSave = injectCode(
 					window.Game.LoadSave,
 					"if (Game.prefs.showBackupWarning==1)",
@@ -82,7 +81,7 @@ export function main(): Promise<{ [key: string]: Function[] }> {
 					"before"
 				)
 			}),
-			new Injection("customReset", [], () => {
+			new Injection("customReset", () => {
 				window.Game.Reset = injectCode(
 					window.Game.Reset,
 					null,
@@ -93,125 +92,29 @@ export function main(): Promise<{ [key: string]: Function[] }> {
 					"before"
 				)
 			}),
-			//// -- Misc -- ////
-			/**
-			General Description
 
-			customBeautify(value, floats, ret)
-			Allows you to "Insert Text Here" should return the new string of a beautied 
-			value - original value
-			floats - The floating value
-			ret - current value
-
-			*/
-			new Injection("customBeautify", [], () => {
-				window.Beautify = injectCode(
-					window.Beautify,
-					"return negative?'-'+output:output+decimal;",
-					`
-					// Cppkies injection
-					let ret = negative?'-'+output:output+decimal;
-					for(const i in Cppkies.hooks.customBeautify) {
-						let returnedValue = Cppkies.hooks.customBeautify[i](value, floats, ret)
-						ret = returnedValue ? returnedValue : ret
-					};
-					return ret;
-					`,
-					"replace"
-				)
-			}),
-			//// -- Tooltips -- ////
-			/*
-			General Description
-			
-			customTooltipDraw(from, text, origin)
-			Allows you to "Insert Text Here"
-			from - 
-			text - 
-			origin - 
-
-			customTooltipUpdate()
-			Allows you to "Insert Text Here"
-
-			*/
-			new Injection("customTooltipDraw", [], () => {
-				window.Game.tooltip.draw = injectCode(
-					window.Game.tooltip.draw,
+			//// -- Sugar Lump -- ////
+			// TODO Rewrite Game.computeLumpType
+			// TODO Cppkies.hooks.customComputeLumpType
+			// TODO Cppkies.hooks.customDoLumps
+			//// -- Economics -- ////
+			// TODO Cppkies.hooks.customCps
+			//// -- Shimmers -- ////
+			// TODO everything shimmer related
+			//// -- Prompts -- ////
+			//Idk what here
+			//// -- Menus -- ////
+			// TODO Patch disabled buttons(?)
+			//// -- Buildings -- ////
+			new Injection("postBuildStore", () => {
+				window.Game.BuildStore = injectCode(
+					window.Game.BuildStore,
 					null,
-					`
-					// Cppkies injection
-					for(const i in Cppkies.hooks.customTooltipDraw) Cppkies.hooks.customTooltipDraw[i](from, text, origin);
-					`,
-					"before"
-				)
-			}),
-			new Injection("customTooltipUpdate", [], () => {
-				window.Game.tooltip.update = injectCode(
-					window.Game.tooltip.update,
-					null,
-					`
-					// Cppkies injection
-					for(const i in Cppkies.hooks.customTooltipUpdate) Cppkies.hooks.customTooltipUpdate[i]();
-					`,
-					"before"
-				)
-			}),
-			//// -- Ascension -- ////
-			/**
-			General Description
-			
-			customHowMuchPrestige(chips, ret)
-			Allows you to "Insert Text Here" should return "value"
-			chips - How many chips 
-			ret - 
-
-			customHeavenlyMultiplier() // TODO
-			Allows you to "Insert Text Here"
-
-			UpdateAscensionModePrompt() // TODO
-			Allows you to "Insert Text Here"
-
-			*/
-			new Injection("customHowMuchPrestige", [], () => {
-				window.Game.HowMuchPrestige = injectCode(
-					injectCode(
-						window.Game.HowMuchPrestige,
-						"return",
-						"let ret =",
-						"replace"
-					),
-					";",
-					`
-					// Cppkies injection
-					for(const i in Cppkies.hooks.customHowManyCookiesReset){ 
-						returnedValue = Cppkies.hooks.customHowManyCookiesReset[i](chips, ret);
-						ret = returnedValue ? returnedValue : ret
-					}
-					return ret;
-					`,
+					";\nfor(const i in Cppkies.hooks.postBuildStore) Cppkies.hooks.postBuildStore[i]()",
 					"after"
 				)
 			}),
-			new Injection("customHeavenlyMultiplier", []), //TODO
-			new Injection("UpdateAscensionModePrompt", []), //TODO
-			new Injection("customReincarnate", []),
-			new Injection("customAscend", []),
-			new Injection("customUpdateAscend", []),
-			new Injection("customBuildAscendTree", []),
-			new Injection("customAscend", []),
-			//TODO: Everything else
-			//Should I declare functions in this file or in another place entirely? - Bob
-			//I have to go so just dm me the answer to the question when you have the time
-
-			//// -- Sugar Lump -- ////
-			//// -- Economics -- ////
-			//// -- Shimmers -- ////
-			//// -- Particles -- ////
-			//// -- Notifications -- ////
-			//// -- Prompts -- ////
-			//// -- Menus -- ////
-			//// -- Buildings -- ////
-			new Injection("customGrandmaPic", [], () => {
+			new Injection("customGrandmaPic", () => {
 				window.Game.Objects.Grandma.art.pic = injectCode(
 					window.Game.Objects.Grandma.art.pic,
 					"return choose(list)+'.png'",
@@ -220,18 +123,6 @@ export function main(): Promise<{ [key: string]: Function[] }> {
 					`,
 					"before"
 				)
-			}),
-			//// -- Unsorted, for quick injections -- ////
-			new Injection("postBuildStore", [], () => {
-				const oldString = window.Game.BuildStore.toString()
-				window.Game.BuildStore = new Proxy(window.Game.BuildStore, {
-					apply: (target, _this, args): void => {
-						target.apply(_this, args)
-						for (const i in master.hooks.postBuildStore)
-							master.hooks.postBuildStore[i]()
-					},
-				})
-				window.Game.BuildStore.toString = (): string => oldString
 			}),
 		]
 		injections.forEach(inject => {

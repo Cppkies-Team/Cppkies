@@ -34,7 +34,7 @@ interface Art {
  */
 export function createHooks(building: Building | gameType["Object"]): void {
 	const injections: Injection[] = [
-		new Injection("tooltip", [], () => {
+		new Injection("tooltip", () => {
 			building.tooltip = injectCode(
 				injectCode(building.tooltip, "return", "let ret = ", "replace"),
 				null,
