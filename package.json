@@ -7,10 +7,11 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"code-test": "npm run prodBuild && npm run eslint",
 		"build": "npx rollup -c",
-		"prodBuild": "export NODE_ENV=\"production\"&&npm run build",
-		"watch": "export NODE_ENV=\"development\"&&npm run build -- --watch",
+		"prodBuild": "echo {\\\"prod\\\":true} > isprod.json && export NODE_ENV=\"production\" && npm run build && npm run preprod",
+		"watch": "echo {\\\"prod\\\":false} > isprod.json && export NODE_ENV=\"development\"&&npm run build -- --watch",
 		"eslint": "npx eslint ./src/**/*.ts ./src/*.ts ./*.js",
-		"eslint:fix": "npm run eslint -- --fix"
+		"eslint:fix": "npm run eslint -- --fix",
+		"preprod": "rm -rf ./dist/src/"
 	},
 	"husky": {
 		"hooks": {
@@ -35,6 +36,7 @@
 	"devDependencies": {
 		"@babel/preset-env": "^7.8.3",
 		"@rollup/plugin-commonjs": "^11.0.2",
+		"@rollup/plugin-json": "^4.0.2",
 		"@rollup/plugin-node-resolve": "^7.1.1",
 		"@typescript-eslint/eslint-plugin": "^2.19.0",
 		"@typescript-eslint/parser": "^2.19.0",

@@ -7,6 +7,7 @@ import { Upgrade } from "./upgrade"
 import { initSave, SaveType, saveAll } from "./saves"
 import LocalStorageWrapper from "./lib/localstorage"
 import { HeavenlyUpgrade } from "./heavenlyupgrade"
+import { prod } from "../isprod.json"
 declare global {
 	interface Window {
 		Game: gameType
@@ -37,8 +38,7 @@ if (window.Cppkies) {
 	//Inject maingame and create hooks
 	main().then((answer: Record<string, Function[]>) => {
 		CppkiesExport.hooks = answer
-		window.Game.customSave.push(saveAll)
-		window.Game.Notify("Cppkies loaded!", "", [32, 17])
+		window.Game.Notify("Cppkies loaded!", "", [32, prod ? 17 : 21])
 		window.Game.Win("Third-party")
 		//Run all onLoad events
 		master.onLoad.forEach(val => val())

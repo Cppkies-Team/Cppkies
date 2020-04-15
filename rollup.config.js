@@ -4,6 +4,7 @@ import minify from "rollup-plugin-babel-minify"
 import typescript from "rollup-plugin-typescript2"
 import resolve from "@rollup/plugin-node-resolve"
 import commonjs from "@rollup/plugin-commonjs"
+import json from "@rollup/plugin-json"
 
 const production = process.env.NODE_ENV === "production"
 //import banner from "rollup-plugin-banner"
@@ -19,7 +20,7 @@ export default {
 		typescript({
 			tsconfig: "./tsconfig.json",
 		}),
-
+		json(),
 		babel({
 			exclude: "node_modules/**",
 			sourceMaps: true,

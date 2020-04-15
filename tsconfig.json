@@ -5,7 +5,8 @@
 		"lib": ["dom"],
 		"esModuleInterop": true,
 		"declaration": true,
-		"moduleResolution": "node"
+		"moduleResolution": "node",
+		"resolveJsonModule": true
 	},
 	"exclude": ["./dist"]
 }
