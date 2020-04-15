@@ -105,3 +105,6 @@ typings/
 
 # Local misc tests
 localtestsetc/
+
+# rollup json bug folder(?)
+dist/src/
