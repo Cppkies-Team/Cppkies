@@ -12,7 +12,7 @@ declare global {
  * Creates the function hooks for base game
  * @returns A promise
  */
-export function main(): Promise<{ [key: string]: Function[] }> {
+export function main(): Promise<Record<string, Function[]>> {
 	return new Promise(resolve => {
 		const dummy = {}
 		const injections: Array<Injection> = [
