@@ -26,8 +26,8 @@
 	/**
 	 * A helper function which replaces(or appends) code in a function, returning the new function, and it's eval free!
 	 * @param func The source function
-	 * @param source What to replace(or act as a anchor where to plane), can be null for slicing
-	 * @param target What to put instead(or before/after) the source
+	 * @param source What to replace, can be null for slicing
+	 * @param target What to put instead of (or before/after) the source
 	 * @param where Where to insert or replace your injection
 	 * @helper
 	 */
@@ -37,7 +37,10 @@
 	    var regex;
 	    if (!sliceMode) {
 	        source = getValue(source);
-	        regex = new RegExp(escapeRegExp(source), "g");
+	        if (typeof source === "string")
+	            regex = new RegExp(escapeRegExp(source), "g");
+	        else
+	            regex = source;
 	    }
 	    target = getValue(target);
 	    var findStart = /(\)[^{]*{)/;
@@ -70,7 +73,6 @@
 	    newFunc.prototype = func.prototype;
 	    return newFunc;
 	}
-	//# sourceMappingURL=helpers.js.map
 
 	var Injection = /** @class */ (function () {
 	    function Injection(value, func) {
@@ -159,7 +161,6 @@
 	        resolve(dummy);
 	    });
 	}
-	//# sourceMappingURL=basegame.js.map
 
 	/*! *****************************************************************************
 	Copyright (c) Microsoft Corporation. All rights reserved.
@@ -464,7 +465,6 @@
 	        this.grandma)
 	        Game.Unlock(this.grandma.name);
 	};
-	//# sourceMappingURL=buildings.js.map
 
 	/**
 	 * The class for upgrades
@@ -501,7 +501,6 @@
 	    }
 	    return Upgrade;
 	}(Game.Upgrade));
-	//# sourceMappingURL=upgrade.js.map
 
 	var constants = {
 		PATH_SEPARATOR: '.',
@@ -940,7 +939,6 @@
 	    }
 	    return HeavenlyUpgrade;
 	}(Upgrade));
-	//# sourceMappingURL=heavenlyupgrade.js.map
 
 	var CppkiesExport;
 	//Check if Cppkies is already created
@@ -985,7 +983,6 @@
 	    });
 	}
 	var CppkiesExport$1 = CppkiesExport;
-	//# sourceMappingURL=index.js.map
 
 	return CppkiesExport$1;
 

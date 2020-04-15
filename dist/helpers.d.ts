@@ -17,9 +17,9 @@ export declare function escapeRegExp(str: string): string;
 /**
  * A helper function which replaces(or appends) code in a function, returning the new function, and it's eval free!
  * @param func The source function
- * @param source What to replace(or act as a anchor where to plane), can be null for slicing
- * @param target What to put instead(or before/after) the source
+ * @param source What to replace, can be null for slicing
+ * @param target What to put instead of (or before/after) the source
  * @param where Where to insert or replace your injection
  * @helper
  */
-export declare function injectCode(func: Function, source: CommonValue<string> | null, target: CommonValue<string>, where: "before" | "replace" | "after"): Function;
+export declare function injectCode(func: Function, source: CommonValue<string> | CommonValue<RegExp> | null, target: CommonValue<string>, where: "before" | "replace" | "after"): Function;
