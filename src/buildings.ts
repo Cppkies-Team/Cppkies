@@ -1,19 +1,9 @@
-import gameType, {
-	FoolBuilding,
-	AddEvent,
-	PlaySound,
-	l,
-	Icon,
-} from "./gameType"
+import gameType, { FoolBuilding, Icon } from "./gameType"
 import master from "./vars"
 import { injectCode } from "./helpers"
 import { Injection } from "./injects/generic"
 import { loadBuilding } from "./saves"
 
-declare let Game: gameType
-declare const l: l
-declare const AddEvent: AddEvent
-declare const PlaySound: PlaySound
 interface Art {
 	base?: string
 	xV?: number
@@ -59,7 +49,7 @@ export function createHooks(building: Building | gameType["Object"]): void {
 /**
  * The building class for creating new buildings
  */
-export class Building extends Game.Object {
+export class Building extends window.Game.Object {
 	/**
 	 * Creates a new building and creates the hooks for it
 	 * @param name The name of the building
@@ -92,7 +82,7 @@ export class Building extends Game.Object {
 			bigIcon[1],
 			icon[0],
 			art,
-			0, //Game automatically calculates Price and BaseCps
+			0, //window.Game automatically calculates Price and BaseCps
 			cpsFunc,
 			buyFunction
 		)
@@ -100,19 +90,19 @@ export class Building extends Game.Object {
 		// Create hooks
 		createHooks(this)
 		//Manually relink canvases and contexts because Orteil made it so new buildings break the old canvas and context links
-		for (const i in Game.ObjectsById) {
+		for (const i in window.Game.ObjectsById) {
 			if (parseInt(i) > 0) {
-				const me = Game.ObjectsById[i]
-				me.canvas = l(`rowCanvas${i}`)
+				const me = window.Game.ObjectsById[i]
+				me.canvas = window.l(`rowCanvas${i}`)
 				me.ctx = me.canvas.getContext("2d")
 				//Relink their events too
-				AddEvent(me.canvas, "mouseover", () => {
+				window.AddEvent(me.canvas, "mouseover", () => {
 					me.mouseOn = true
 				})
-				AddEvent(me.canvas, "mouseout", () => {
+				window.AddEvent(me.canvas, "mouseout", () => {
 					me.mouseOn = false
 				})
-				AddEvent(me.canvas, "mousemove", e => {
+				window.AddEvent(me.canvas, "mousemove", e => {
 					const box = me.canvas.getBoundingClientRect()
 					me.mousePos[0] = e.pageX - box.left
 					me.mousePos[1] = e.pageY - box.top
@@ -128,9 +118,10 @@ export class Building extends Game.Object {
 		const localBuildingLink = bigIcon[2] || master.buildingLink + "",
 			localIconLink = icon[2] || master.iconLink + ""
 		// This is the name, description, and icon used during Business Season
-		if (foolObject) Game.foolObjects[name] = foolObject
+		if (foolObject) window.Game.foolObjects[name] = foolObject
 		// The name of this building's golden cookie buff and debuff
-		if (buildingSpecial) Game.goldenCookieBuildingBuffs[name] = buildingSpecial
+		if (buildingSpecial)
+			window.Game.goldenCookieBuildingBuffs[name] = buildingSpecial
 
 		//CCSE.ReplaceBuilding(name)
 
@@ -155,7 +146,7 @@ export class Building extends Game.Object {
 			me.free = saved.free ? saved.free : 0 // Left this out earlier, can't expect it to be there
 			me.minigameSave = saved.minigameSave
 
-			Game.BuildingsOwned += me.amount
+			window.Game.BuildingsOwned += me.amount
 		} else {
 			var saved = {}
 			saved.amount = 0
@@ -168,19 +159,19 @@ export class Building extends Game.Object {
 			CCSE.save.Buildings[name] = saved
 		}*/
 
-		Game.BuildStore()
+		window.Game.BuildStore()
 		if (localBuildingLink) {
 			master.hooks.postBuildStore.push(() => {
-				l(
+				window.l(
 					`productIcon${this.id}`
 				).style.backgroundImage = `url(${localBuildingLink})`
-				l(
+				window.l(
 					`productIconOff${this.id}`
 				).style.backgroundImage = `url(${localBuildingLink})`
 			})
 		}
-		Game.BuildStore()
-		this.canvas = l(`rowCanvas${this.id}`)
+		window.Game.BuildStore()
+		this.canvas = window.l(`rowCanvas${this.id}`)
 		this.ctx = this.canvas.getContext("2d")
 		this.context = this.ctx
 		this.pics = []
@@ -194,25 +185,25 @@ export class Building extends Game.Object {
 		muteDiv.style.backgroundPositionY = `-${icon[1]}px`
 		muteDiv.addEventListener("click", () => {
 			this.mute(0)
-			PlaySound(this.muted ? "snd/clickOff.mp3" : "snd/clickOn.mp3")
+			window.PlaySound(this.muted ? "snd/clickOff.mp3" : "snd/clickOn.mp3")
 		})
 
-		AddEvent(this.canvas, "mouseover", () => {
+		window.AddEvent(this.canvas, "mouseover", () => {
 			this.mouseOn = true
 		})
-		AddEvent(this.canvas, "mouseout", () => {
+		window.AddEvent(this.canvas, "mouseout", () => {
 			this.mouseOn = false
 		})
-		AddEvent(this.canvas, "mousemove", e => {
+		window.AddEvent(this.canvas, "mousemove", e => {
 			const box = this.canvas.getBoundingClientRect()
 			this.mousePos[0] = e.pageX - box.left
 			this.mousePos[1] = e.pageY - box.top
 		})
-		l("buildingsMute").appendChild(muteDiv)
+		window.l("buildingsMute").appendChild(muteDiv)
 		// Load the save stuff
 		const loadProps = loadBuilding(this)
 		for (const i in loadProps) this[i] = loadProps[i]
-		Game.recalculateGains = 1
+		window.Game.recalculateGains = 1
 	}
 }
 /**
@@ -220,16 +211,16 @@ export class Building extends Game.Object {
  * @param me Itself
  */
 export const defaultCps = (me: Building): number =>
-	Game.GetTieredCpsMult(me) * Game.magicCpS(me.name) * me.baseCps
+	window.Game.GetTieredCpsMult(me) * window.Game.magicCpS(me.name) * me.baseCps
 /**
  * The reccomended function to pass in building BuyFunc
  */
 export const defaultOnBuy = function(): void {
-	Game.UnlockTiered(this)
+	window.Game.UnlockTiered(this)
 	if (
-		this.amount >= Game.SpecialGrandmaUnlock &&
-		Game.Objects["Grandma"].amount > 0 &&
+		this.amount >= window.Game.SpecialGrandmaUnlock &&
+		window.Game.Objects["Grandma"].amount > 0 &&
 		this.grandma
 	)
-		Game.Unlock(this.grandma.name)
+		window.Game.Unlock(this.grandma.name)
 }

@@ -8,12 +8,7 @@ import { initSave, SaveType, saveAll } from "./saves"
 import LocalStorageWrapper from "./lib/localstorage"
 import { HeavenlyUpgrade } from "./heavenlyupgrade"
 import { prod } from "../isprod.json"
-declare global {
-	interface Window {
-		Game: gameType
-		Cppkies: CppkiesType
-	}
-}
+
 let CppkiesExport: CppkiesType
 //Check if Cppkies is already created
 if (window.Cppkies) {

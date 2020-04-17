@@ -1,13 +1,6 @@
 import { injectCode } from "../helpers"
-import Game from "../gameType"
 import { Injection } from "./generic"
 
-declare global {
-	interface Window {
-		Game: Game
-		Beautify: Function
-	}
-}
 /**
  * Creates the function hooks for base game
  * @returns A promise

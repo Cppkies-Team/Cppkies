@@ -1,11 +1,5 @@
-import gameType, { Cppkies as CppkiesType } from "./gameType"
+import { Cppkies as CppkiesType } from "./gameType"
 
-declare global {
-	interface Window {
-		Game: gameType
-		Cppkies: CppkiesType
-	}
-}
 //The *main* variable
 const master: CppkiesType = {
 	hooks: {},

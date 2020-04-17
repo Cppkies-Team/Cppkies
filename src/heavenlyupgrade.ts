@@ -1,8 +1,6 @@
 import { Upgrade } from "./upgrade"
 import { Icon } from "./gameType"
-import gameType from "./gameType"
 import { CommonValue } from "./helpers"
-declare let Game: gameType
 /**
  * The class for heavenly upgrades
  */
@@ -34,9 +32,9 @@ export class HeavenlyUpgrade extends Upgrade {
 		for (const i in this.parents) {
 			const me = this.parents[i]
 			//Try both by name and by id
-			this.parents[i] = Game.Upgrades[me] || Game.UpgradesById[me]
+			this.parents[i] = window.Game.Upgrades[me] || window.Game.UpgradesById[me]
 		}
-		Game.PrestigeUpgrades.push(this)
-		Game.UpgradePositions[this.id] = position
+		window.Game.PrestigeUpgrades.push(this)
+		window.Game.UpgradePositions[this.id] = position
 	}
 }

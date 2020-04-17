@@ -294,24 +294,24 @@
 	     * @param buildingSpecial The building special and building debuff
 	     */
 	    function Building(name, commonName, desc, icon, bigIcon, art, cpsFunc, buyFunction, foolObject, buildingSpecial) {
-	        var _this = _super.call(this, name, commonName, desc, bigIcon[1], icon[0], art, 0, //Game automatically calculates Price and BaseCps
+	        var _this = _super.call(this, name, commonName, desc, bigIcon[1], icon[0], art, 0, //window.Game automatically calculates Price and BaseCps
 	        cpsFunc, buyFunction) || this;
 	        master.customBuildings.push(_this);
 	        // Create hooks
 	        createHooks(_this);
 	        var _loop_1 = function (i) {
 	            if (parseInt(i) > 0) {
-	                var me_1 = Game.ObjectsById[i];
-	                me_1.canvas = l("rowCanvas" + i);
+	                var me_1 = window.Game.ObjectsById[i];
+	                me_1.canvas = window.l("rowCanvas" + i);
 	                me_1.ctx = me_1.canvas.getContext("2d");
 	                //Relink their events too
-	                AddEvent(me_1.canvas, "mouseover", function () {
+	                window.AddEvent(me_1.canvas, "mouseover", function () {
 	                    me_1.mouseOn = true;
 	                });
-	                AddEvent(me_1.canvas, "mouseout", function () {
+	                window.AddEvent(me_1.canvas, "mouseout", function () {
 	                    me_1.mouseOn = false;
 	                });
-	                AddEvent(me_1.canvas, "mousemove", function (e) {
+	                window.AddEvent(me_1.canvas, "mousemove", function (e) {
 	                    var box = me_1.canvas.getBoundingClientRect();
 	                    me_1.mousePos[0] = e.pageX - box.left;
 	                    me_1.mousePos[1] = e.pageY - box.top;
@@ -325,16 +325,16 @@
 	            }
 	        };
 	        //Manually relink canvases and contexts because Orteil made it so new buildings break the old canvas and context links
-	        for (var i in Game.ObjectsById) {
+	        for (var i in window.Game.ObjectsById) {
 	            _loop_1(i);
 	        }
 	        var localBuildingLink = bigIcon[2] || master.buildingLink + "", localIconLink = icon[2] || master.iconLink + "";
 	        // This is the name, description, and icon used during Business Season
 	        if (foolObject)
-	            Game.foolObjects[name] = foolObject;
+	            window.Game.foolObjects[name] = foolObject;
 	        // The name of this building's golden cookie buff and debuff
 	        if (buildingSpecial)
-	            Game.goldenCookieBuildingBuffs[name] = buildingSpecial;
+	            window.Game.goldenCookieBuildingBuffs[name] = buildingSpecial;
 	        //CCSE.ReplaceBuilding(name)
 	        if (localIconLink) {
 	            master.buildingHooks[_this.name].tooltip.push(function (ret) {
@@ -353,7 +353,7 @@
 	            me.free = saved.free ? saved.free : 0 // Left this out earlier, can't expect it to be there
 	            me.minigameSave = saved.minigameSave
 
-	            Game.BuildingsOwned += me.amount
+	            window.Game.BuildingsOwned += me.amount
 	        } else {
 	            var saved = {}
 	            saved.amount = 0
@@ -365,15 +365,15 @@
 
 	            CCSE.save.Buildings[name] = saved
 	        }*/
-	        Game.BuildStore();
+	        window.Game.BuildStore();
 	        if (localBuildingLink) {
 	            master.hooks.postBuildStore.push(function () {
-	                l("productIcon" + _this.id).style.backgroundImage = "url(" + localBuildingLink + ")";
-	                l("productIconOff" + _this.id).style.backgroundImage = "url(" + localBuildingLink + ")";
+	                window.l("productIcon" + _this.id).style.backgroundImage = "url(" + localBuildingLink + ")";
+	                window.l("productIconOff" + _this.id).style.backgroundImage = "url(" + localBuildingLink + ")";
 	            });
 	        }
-	        Game.BuildStore();
-	        _this.canvas = l("rowCanvas" + _this.id);
+	        window.Game.BuildStore();
+	        _this.canvas = window.l("rowCanvas" + _this.id);
 	        _this.ctx = _this.canvas.getContext("2d");
 	        _this.context = _this.ctx;
 	        _this.pics = [];
@@ -387,45 +387,45 @@
 	        muteDiv.style.backgroundPositionY = "-" + icon[1] + "px";
 	        muteDiv.addEventListener("click", function () {
 	            _this.mute(0);
-	            PlaySound(_this.muted ? "snd/clickOff.mp3" : "snd/clickOn.mp3");
+	            window.PlaySound(_this.muted ? "snd/clickOff.mp3" : "snd/clickOn.mp3");
 	        });
-	        AddEvent(_this.canvas, "mouseover", function () {
+	        window.AddEvent(_this.canvas, "mouseover", function () {
 	            _this.mouseOn = true;
 	        });
-	        AddEvent(_this.canvas, "mouseout", function () {
+	        window.AddEvent(_this.canvas, "mouseout", function () {
 	            _this.mouseOn = false;
 	        });
-	        AddEvent(_this.canvas, "mousemove", function (e) {
+	        window.AddEvent(_this.canvas, "mousemove", function (e) {
 	            var box = _this.canvas.getBoundingClientRect();
 	            _this.mousePos[0] = e.pageX - box.left;
 	            _this.mousePos[1] = e.pageY - box.top;
 	        });
-	        l("buildingsMute").appendChild(muteDiv);
+	        window.l("buildingsMute").appendChild(muteDiv);
 	        // Load the save stuff
 	        var loadProps = loadBuilding(_this);
 	        for (var i in loadProps)
 	            _this[i] = loadProps[i];
-	        Game.recalculateGains = 1;
+	        window.Game.recalculateGains = 1;
 	        return _this;
 	    }
 	    return Building;
-	}(Game.Object));
+	}(window.Game.Object));
 	/**
 	 * The recommended function to pass in building CpsFunc
 	 * @param me Itself
 	 */
 	var defaultCps = function (me) {
-	    return Game.GetTieredCpsMult(me) * Game.magicCpS(me.name) * me.baseCps;
+	    return window.Game.GetTieredCpsMult(me) * window.Game.magicCpS(me.name) * me.baseCps;
 	};
 	/**
 	 * The reccomended function to pass in building BuyFunc
 	 */
 	var defaultOnBuy = function () {
-	    Game.UnlockTiered(this);
-	    if (this.amount >= Game.SpecialGrandmaUnlock &&
-	        Game.Objects["Grandma"].amount > 0 &&
+	    window.Game.UnlockTiered(this);
+	    if (this.amount >= window.Game.SpecialGrandmaUnlock &&
+	        window.Game.Objects["Grandma"].amount > 0 &&
 	        this.grandma)
-	        Game.Unlock(this.grandma.name);
+	        window.Game.Unlock(this.grandma.name);
 	};
 
 	/**
@@ -892,10 +892,10 @@
 	        for (var i in _this.parents) {
 	            var me = _this.parents[i];
 	            //Try both by name and by id
-	            _this.parents[i] = Game.Upgrades[me] || Game.UpgradesById[me];
+	            _this.parents[i] = window.Game.Upgrades[me] || window.Game.UpgradesById[me];
 	        }
-	        Game.PrestigeUpgrades.push(_this);
-	        Game.UpgradePositions[_this.id] = position;
+	        window.Game.PrestigeUpgrades.push(_this);
+	        window.Game.UpgradePositions[_this.id] = position;
 	        return _this;
 	    }
 	    return HeavenlyUpgrade;
