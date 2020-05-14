@@ -36,7 +36,7 @@ if (window.Cppkies) {
 	//Inject maingame and create hooks
 	main().then(answer => {
 		CppkiesExport.hooks = answer
-		window.Game.Notify("Cppkies loaded!!", "", [32, prod ? 17 : 21])
+		window.Game.Notify("Cppkies loaded!!!", "", [32, prod ? 17 : 21])
 		window.Game.Win("Third-party")
 		//Run all onLoad events
 		master.onLoad.forEach(val => val())
