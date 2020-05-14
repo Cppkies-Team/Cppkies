@@ -1,6 +1,7 @@
 import master from "./vars"
 import { Building } from "./buildings"
 import { Upgrade } from "./upgrade"
+import { applyAllProps } from "./helpers"
 
 /**
  * The save type for Cppkies
@@ -125,11 +126,11 @@ export function saveUpgrade(upgrade: Upgrade): void {
 export function loadAll(): void {
 	for (const i in master.customBuildings) {
 		const me = master.customBuildings[i]
-		window.Game.Objects[me.name] = { ...me, ...loadBuilding(me) }
+		applyAllProps(window.Game.Objects[me.name], loadBuilding(me))
 	}
 	for (const i in master.customUpgrades) {
 		const me = master.customUpgrades[i]
-		window.Game.Upgrades[me.name] = { ...me, ...loadUpgrade(me) }
+		applyAllProps(window.Game.Upgrades[me.name], loadUpgrade(me))
 	}
 }
 /**

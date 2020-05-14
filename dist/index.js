@@ -73,6 +73,7 @@
 	    newFunc.prototype = func.prototype;
 	    return newFunc;
 	}
+	//# sourceMappingURL=helpers.js.map
 
 	var Injection = /** @class */ (function () {
 	    function Injection(value, func) {
@@ -82,6 +83,7 @@
 	    }
 	    return Injection;
 	}());
+	//# sourceMappingURL=generic.js.map
 
 	/**
 	 * Creates the function hooks for base game
@@ -160,6 +162,7 @@
 	        resolve(dummy);
 	    });
 	}
+	//# sourceMappingURL=basegame.js.map
 
 	/*! *****************************************************************************
 	Copyright (c) Microsoft Corporation. All rights reserved.
@@ -208,6 +211,7 @@
 	    DEFAULT_ONBUY: null,
 	    DEFAULT_CPS: null,
 	};
+	//# sourceMappingURL=vars.js.map
 
 	/**
 	 * The default save file for buildings
@@ -250,12 +254,48 @@
 	    return master.save.foreign.buildings[building.name] || DEFAULT_BUILDING_SAVE;
 	}
 	/**
+	 * Saves a building
+	 * @param building The building to save
+	 */
+	function saveBuilding(_a) {
+	    var amount = _a.amount, bought = _a.bought, free = _a.free, totalCookies = _a.totalCookies, level = _a.level, muted = _a.muted, minigameSave = _a.minigameSave, name = _a.name;
+	    master.save.foreign.buildings[name] = {
+	        amount: amount,
+	        bought: bought,
+	        free: free,
+	        totalCookies: totalCookies,
+	        level: level,
+	        muted: muted,
+	        minigameSave: minigameSave,
+	    };
+	}
+	/**
 	 * Loads an upgrade
 	 * @param upgrade The upgrade to load
 	 */
 	function loadUpgrade(upgrade) {
 	    return master.save.foreign.upgrades[upgrade.name] || DEFAULT_UPGRADE_SAVE;
 	}
+	/**
+	 * Saves an upgrade
+	 * @param upgrade The upgrade to save
+	 */
+	function saveUpgrade(upgrade) {
+	    master.save.foreign.upgrades[upgrade.name] = {
+	        unlocked: upgrade.unlocked,
+	        bought: upgrade.bought,
+	    };
+	}
+	/**
+	 * Saves everything
+	 */
+	function saveAll() {
+	    for (var i in master.customBuildings)
+	        saveBuilding(master.customBuildings[i]);
+	    for (var i in master.customUpgrades)
+	        saveUpgrade(master.customUpgrades[i]);
+	}
+	//# sourceMappingURL=saves.js.map
 
 	/**
 	 * Creates the hooks for a building
@@ -427,6 +467,7 @@
 	        this.grandma)
 	        window.Game.Unlock(this.grandma.name);
 	};
+	//# sourceMappingURL=buildings.js.map
 
 	/**
 	 * The class for upgrades
@@ -463,6 +504,7 @@
 	    }
 	    return Upgrade;
 	}(Game.Upgrade));
+	//# sourceMappingURL=upgrade.js.map
 
 	var constants = {
 		PATH_SEPARATOR: '.',
@@ -863,6 +905,7 @@
 	    };
 	    return LocalStorageWrapper;
 	}());
+	//# sourceMappingURL=localstorage.js.map
 
 	/**
 	 * The class for heavenly upgrades
@@ -900,6 +943,7 @@
 	    }
 	    return HeavenlyUpgrade;
 	}(Upgrade));
+	//# sourceMappingURL=heavenlyupgrade.js.map
 
 	var CppkiesExport;
 	//Check if Cppkies is already created
@@ -923,6 +967,7 @@
 	    if (!master.save.exists) {
 	        initSave();
 	    }
+	    window.Game.customSave.push(saveAll);
 	    //Inject maingame and create hooks
 	    main().then(function (answer) {
 	        CppkiesExport.hooks = answer;

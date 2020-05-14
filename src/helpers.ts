@@ -67,3 +67,12 @@ export function injectCode(
 	newFunc.prototype = func.prototype
 	return newFunc
 }
+/**
+ * Applies all props to an object via mutating
+ * @param targObj The object which will be mutated
+ * @param srcObj The object which properties will be applied to the target object
+ */
+
+export function applyAllProps(targObj, srcObj): void {
+	for (const i in srcObj) targObj[i] = srcObj
+}

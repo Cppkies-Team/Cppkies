@@ -1,6 +1,6 @@
 import { injectCode } from "./helpers"
 import { main } from "./injects/basegame"
-import gameType, { Cppkies as CppkiesType } from "./gameType"
+import { Cppkies as CppkiesType } from "./gameType"
 import { Building, defaultCps, defaultOnBuy } from "./buildings"
 import master from "./vars"
 import { Upgrade } from "./upgrade"
@@ -30,6 +30,8 @@ if (window.Cppkies) {
 	if (!master.save.exists) {
 		initSave()
 	}
+	window.Game.customSave.push(saveAll)
+
 	//Inject maingame and create hooks
 	main().then(answer => {
 		CppkiesExport.hooks = answer
