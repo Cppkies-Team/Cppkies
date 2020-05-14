@@ -10,6 +10,7 @@ import { HeavenlyUpgrade } from "./heavenlyupgrade"
 import { prod } from "../isprod.json"
 
 let CppkiesExport: CppkiesType
+
 //Check if Cppkies is already created
 if (window.Cppkies) {
 	//If so, just reexport it
@@ -35,7 +36,7 @@ if (window.Cppkies) {
 	//Inject maingame and create hooks
 	main().then(answer => {
 		CppkiesExport.hooks = answer
-		window.Game.Notify("Cppkies loaded!", "", [32, prod ? 17 : 21])
+		window.Game.Notify("Cppkies loaded!!", "", [32, prod ? 17 : 21])
 		window.Game.Win("Third-party")
 		//Run all onLoad events
 		master.onLoad.forEach(val => val())
