@@ -120,7 +120,7 @@ export function main(): Promise<Record<string, Function[]>> {
 		]
 		injections.forEach(inject => {
 			dummy[inject.value] = inject.defValue
-			if (inject.func) inject.func()
+			inject.func?.()
 		})
 		//Misc stuff
 		window.Game.Loader.Load = injectCode(

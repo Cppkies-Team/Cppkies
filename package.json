@@ -34,6 +34,8 @@
 		"on-change": "^2.0.1"
 	},
 	"devDependencies": {
+		"@babel/plugin-proposal-nullish-coalescing-operator": "^7.8.3",
+		"@babel/plugin-proposal-optional-chaining": "^7.9.0",
 		"@babel/preset-env": "^7.8.3",
 		"@rollup/plugin-commonjs": "^11.0.2",
 		"@rollup/plugin-json": "^4.0.2",
