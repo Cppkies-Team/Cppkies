@@ -5,6 +5,7 @@ import { Building } from "./buildings"
 import { Upgrade } from "./upgrade"
 import { SaveType } from "./saves"
 import { HeavenlyUpgrade } from "./heavenlyupgrade"
+import Tier from "./tiers"
 export default interface Game {
 	Launch: Function
 	version: number
@@ -570,6 +571,7 @@ export interface Cppkies {
 	buildingLink: string
 	Building: typeof Building | null
 	Upgrade: typeof Upgrade | null
+	Tier: typeof Tier | null
 	HeavenlyUpgrade: typeof HeavenlyUpgrade | null
 	save: SaveType | null
 	onLoad: Function[]
@@ -577,6 +579,7 @@ export interface Cppkies {
 	DEFAULT_CPS: (me: Building) => number | null
 	customBuildings: Building[]
 	customUpgrades: Upgrade[]
+	customTiers: Tier[]
 }
 export interface FoolBuilding {
 	name: string

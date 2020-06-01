@@ -8,6 +8,8 @@ import { initSave, SaveType, saveAll } from "./saves"
 import LocalStorageWrapper from "./lib/localstorage"
 import { HeavenlyUpgrade } from "./heavenlyupgrade"
 import { prod } from "../isprod.json"
+import postInject from "./injects/postInject"
+import Tier from "./tiers"
 
 let CppkiesExport: CppkiesType
 
@@ -21,6 +23,7 @@ if (window.Cppkies) {
 	CppkiesExport.Building = Building
 	CppkiesExport.Upgrade = Upgrade
 	CppkiesExport.HeavenlyUpgrade = HeavenlyUpgrade
+	CppkiesExport.Tier = Tier
 	CppkiesExport.injectCode = injectCode
 	CppkiesExport.DEFAULT_CPS = defaultCps
 	CppkiesExport.DEFAULT_ONBUY = defaultOnBuy
@@ -47,6 +50,7 @@ if (window.Cppkies) {
 				return true
 			},
 		})
+		postInject()
 		//Force manual addition since in-module injects b r e a k
 		window.Cppkies = CppkiesExport
 	})

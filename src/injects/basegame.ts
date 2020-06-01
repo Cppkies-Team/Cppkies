@@ -106,7 +106,7 @@ export function main(): Promise<Record<string, Function[]>> {
 			//// -- Shimmers -- ////
 			// TODO everything shimmer related
 			//// -- Prompts -- ////
-			//Idk what here
+			// Idk what here
 			//// -- Menus -- ////
 			// TODO Patch disabled buttons(?)
 			//// -- Buildings -- ////
