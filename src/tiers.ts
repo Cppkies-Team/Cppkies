@@ -28,8 +28,8 @@ export default class Tier {
 		public name: string,
 		sampleIcon: Icon,
 		public color: string,
-		public price: number,
 		special = false,
+		public price: number | "auto" = "auto",
 		public unlock: number | "auto" | null = null,
 		achievUnlock: number | "auto" | null = null,
 		req: string | null = null,
@@ -39,6 +39,13 @@ export default class Tier {
 		if (unlock === null) this.unlock = -1
 		if (typeof achievUnlock === "number") this.achievUnlock = achievUnlock
 		if (req) this.req = req
+		if (price === "auto")
+			this.price =
+				window.Game.Tiers[
+					Object.keys(window.Game.Tiers)
+						.filter(val => !isNaN(parseInt(val)))
+						.length.toString()
+				].price * 1e8
 		/*
 			Analyze sample icon
 		*/
