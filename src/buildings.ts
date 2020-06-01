@@ -50,6 +50,8 @@ export function createHooks(building: Building | gameType["Object"]): void {
  * The building class for creating new buildings
  */
 export class Building extends window.Game.Object {
+	iconLink: string
+	bigIconLink: string
 	/**
 	 * Creates a new building and creates the hooks for it
 	 * @param name The name of the building
@@ -75,14 +77,26 @@ export class Building extends window.Game.Object {
 		foolObject: FoolBuilding,
 		buildingSpecial: [string, string]
 	) {
+		//Warn about enforced orders
+		//TODO Create article
+		if (icon[0] !== 0) {
+			console.warn(
+				"All icon sheets must follow an order, see https://cppkies.js.org/#/CommonProblems#IconOrder"
+			)
+		}
+		if (bigIcon[1] !== 0) {
+			console.warn(
+				"All big icon sheets must follow an order, see https://cppkies.js.org/#/CommonProblems#IconOrder"
+			)
+		}
 		super(
 			name,
 			commonName,
 			desc,
-			bigIcon[1],
-			icon[0],
+			bigIcon[0],
+			icon[1],
 			art,
-			0, //window.Game automatically calculates Price and BaseCps
+			0, // The game automatically calculates Price and BaseCps
 			cpsFunc,
 			buyFunction
 		)
@@ -91,32 +105,31 @@ export class Building extends window.Game.Object {
 		createHooks(this)
 		//Manually relink canvases and contexts because Orteil made it so new buildings break the old canvas and context links
 		for (const i in window.Game.ObjectsById) {
-			if (parseInt(i) > 0) {
-				const me = window.Game.ObjectsById[i]
-				me.canvas = window.l(`rowCanvas${i}`)
-				me.ctx = me.canvas.getContext("2d")
-				//Relink their events too
-				window.AddEvent(me.canvas, "mouseover", () => {
-					me.mouseOn = true
-				})
-				window.AddEvent(me.canvas, "mouseout", () => {
-					me.mouseOn = false
-				})
-				window.AddEvent(me.canvas, "mousemove", e => {
-					const box = me.canvas.getBoundingClientRect()
-					me.mousePos[0] = e.pageX - box.left
-					me.mousePos[1] = e.pageY - box.top
-				})
-				//Restore minigames
-				if (me.minigame && me.minigameLoaded) {
-					const save = me.minigame.save()
-					me.minigame.launch()
-					me.minigame.load(save)
-				}
+			if (parseInt(i) <= 0) continue
+			const me = window.Game.ObjectsById[i]
+			me.canvas = window.l(`rowCanvas${i}`)
+			me.ctx = me.canvas.getContext("2d")
+			//Relink their events too
+			window.AddEvent(me.canvas, "mouseover", () => {
+				me.mouseOn = true
+			})
+			window.AddEvent(me.canvas, "mouseout", () => {
+				me.mouseOn = false
+			})
+			window.AddEvent(me.canvas, "mousemove", e => {
+				const box = me.canvas.getBoundingClientRect()
+				me.mousePos[0] = e.pageX - box.left
+				me.mousePos[1] = e.pageY - box.top
+			})
+			//Restore minigames
+			if (me.minigame && me.minigameLoaded) {
+				const save = me.minigame.save()
+				me.minigame.launch()
+				me.minigame.load(save)
 			}
 		}
-		const localBuildingLink = bigIcon[2] || master.buildingLink + "",
-			localIconLink = icon[2] || master.iconLink + ""
+		this.buildingLink = bigIcon[2] || master.buildingLink + ""
+		this.iconLink = icon[2] || master.iconLink + ""
 		// This is the name, description, and icon used during Business Season
 		if (foolObject) window.Game.foolObjects[name] = foolObject
 		// The name of this building's golden cookie buff and debuff
@@ -125,49 +138,26 @@ export class Building extends window.Game.Object {
 
 		//CCSE.ReplaceBuilding(name)
 
-		if (localIconLink) {
+		if (this.iconLink) {
 			master.buildingHooks[this.name].tooltip.push((ret: string) =>
 				this.locked
 					? ret
 					: ret.replace(
 							"background-position",
-							`background-image:url(${localIconLink});background-position`
+							`background-image:url(${this.iconLink});background-position`
 					  )
 			)
 		}
 
-		/*if (CCSE.save.Buildings[name]) {
-			var saved = CCSE.save.Buildings[name]
-			me.amount = saved.amount
-			me.bought = saved.bought
-			me.totalCookies = saved.totalCookies
-			me.level = saved.level
-			me.muted = saved.muted
-			me.free = saved.free ? saved.free : 0 // Left this out earlier, can't expect it to be there
-			me.minigameSave = saved.minigameSave
-
-			window.Game.BuildingsOwned += me.amount
-		} else {
-			var saved = {}
-			saved.amount = 0
-			saved.bought = 0
-			saved.totalCookies = 0
-			saved.level = 0
-			saved.muted = 0
-			saved.minigameSave = ""
-
-			CCSE.save.Buildings[name] = saved
-		}*/
-
 		window.Game.BuildStore()
-		if (localBuildingLink) {
+		if (this.buildingLink) {
 			master.hooks.postBuildStore.push(() => {
 				window.l(
 					`productIcon${this.id}`
-				).style.backgroundImage = `url(${localBuildingLink})`
+				).style.backgroundImage = `url(${this.buildingLink})`
 				window.l(
 					`productIconOff${this.id}`
-				).style.backgroundImage = `url(${localBuildingLink})`
+				).style.backgroundImage = `url(${this.buildingLink})`
 			})
 		}
 		window.Game.BuildStore()
@@ -179,8 +169,8 @@ export class Building extends window.Game.Object {
 		muteDiv.className = "tinyProductIcon"
 		muteDiv.id = `mutedProduct${this.id}`
 		muteDiv.style.display = "none"
-		if (localBuildingLink)
-			muteDiv.style.backgroundImage = `url(${localBuildingLink})`
+		if (this.buildingLink)
+			muteDiv.style.backgroundImage = `url(${this.buildingLink})`
 		muteDiv.style.backgroundPositionX = `-${icon[0]}px`
 		muteDiv.style.backgroundPositionY = `-${icon[1]}px`
 		muteDiv.addEventListener("click", () => {
