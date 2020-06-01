@@ -96,5 +96,8 @@ export class TieredUpgrade extends Upgrade {
 		if (tier === "fortune") window.Game.Objects[building].fortune = this
 		if (typeof tier === "number")
 			this.order = (window.Game.Objects[building].id + 1) * 100 + tier
+		// Manually patch order since Orteil doesn't like consistency
+		this.order -=
+			Math.max(0, Math.min(window.Game.Objects[building].id - 4, 3)) * 75
 	}
 }
