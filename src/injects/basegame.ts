@@ -33,18 +33,16 @@ export function main(): Promise<Record<string, Function[]>> {
 					// Cppkies injection
 					switch (Game.onMenu) {
 						case "prefs":
-							for(const i in Cppkies.hooks.customOptionsMenu) Cppkies.hooks.customOptionsMenu[i]();
-							break;
+							for(const i in Cppkies.hooks.customOptionsMenu) Cppkies.hooks.customOptionsMenu[i]()
+							break
 						case "stats":
-							for(const i in Cppkies.hooks.customStatsMenu) Cppkies.hooks.customStatsMenu[i]();
-							break;
+							for(const i in Cppkies.hooks.customStatsMenu) Cppkies.hooks.customStatsMenu[i]()
+							break
 						case "log":
-							for(const i in Cppkies.hooks.customInfoMenu) Cppkies.hooks.customInfoMenu[i]();
-							break;
-						default:
-							break;
+							for(const i in Cppkies.hooks.customInfoMenu) Cppkies.hooks.customInfoMenu[i]()
+							break
 					}
-					for(const i in Cppkies.hooks.customMenu) Cppkies.hooks.customMenu[i]();
+					for(const i in Cppkies.hooks.customMenu) Cppkies.hooks.customMenu[i]()
 					`,
 					"before"
 				)
@@ -69,7 +67,7 @@ export function main(): Promise<Record<string, Function[]>> {
 					"if (Game.prefs.showBackupWarning==1)",
 					`
 					// Cppkies injection
-					for(const i in Cppkies.hooks.customLoad) Cppkies.hooks.customLoad[i](); 
+					for(const i in Cppkies.hooks.customLoad) Cppkies.hooks.customLoad[i]()
 					`,
 					"before"
 				)
@@ -80,12 +78,25 @@ export function main(): Promise<Record<string, Function[]>> {
 					null,
 					`
 					// Cppkies injection
-					for(const i in Cppkies.hooks.customReset) Cppkies.hooks.customReset[i](hard);
+					for(const i in Cppkies.hooks.customReset) Cppkies.hooks.customReset[i](hard)
 					`,
 					"before"
 				)
 			}),
-
+			//// -- Tiers -- ////
+			new Injection("customGetIcon", () => {
+				window.Game.GetIcon = injectCode(
+					window.Game.GetIcon,
+					"return [col,Game.Tiers[tier].iconRow];",
+					`
+					let icon = [col, Game.Tiers[tier].iconRow]
+					// Cppkies Injection
+					for(const i in Cppkies.hooks.customGetIcon) icon = Cppkies.hooks.customGetIcon[i](type, tier, icon) || icon
+					return icon
+`,
+					"replace"
+				)
+			}),
 			//// -- Sugar Lump -- ////
 			// TODO Rewrite Game.computeLumpType
 			// TODO Cppkies.hooks.customComputeLumpType
@@ -112,7 +123,7 @@ export function main(): Promise<Record<string, Function[]>> {
 					window.Game.Objects.Grandma.art.pic,
 					"return choose(list)+'.png'",
 					`// Cppkies injection
-					list = list.concat(Cppkies.hooks.customGrandmaPic.map(val=>val() || null).filter(val=>val !== null))
+					list = list.concat(Cppkies.hooks.customGrandmaPic.map(val=> val() || null).filter(val=>val !== null))
 					`,
 					"before"
 				)
@@ -126,7 +137,10 @@ export function main(): Promise<Record<string, Function[]>> {
 		window.Game.Loader.Load = injectCode(
 			window.Game.Loader.Load,
 			"img.src=this.domain",
-			"img.src=(assets[i].indexOf('http') !== -1 ? \"\" : this.domain)",
+			`
+			// Cppkies injection
+			img.src = (assets[i].indexOf('http') !== -1 ? "" : this.domain)
+`,
 			"replace"
 		)
 		resolve(dummy)
