@@ -11,13 +11,13 @@ export default class Tier {
 	*/
 	special: boolean
 	req?: string
-	price: number
 	upgrades: Upgrade[] = []
 	/**
 	 * Adds a new tier to the game for upgrades and achievements
 	 * @param name The name of the new tier
 	 * @param sampleIcon A sample of an icon using the tier
 	 * @param color The color of the tier
+	 * @param price The base price of tiered upgrades
 	 * @param special Indicates if the tier shouldn't be accounted for tiered upgrades
 	 * @param unlock How many buildings are needed for the upgrade
 	 * @param achievUnlock How many buildings are needed for the achievement
@@ -28,6 +28,7 @@ export default class Tier {
 		public name: string,
 		sampleIcon: Icon,
 		public color: string,
+		public price: number,
 		special = false,
 		public unlock: number | "auto" | null = null,
 		achievUnlock: number | "auto" | null = null,
