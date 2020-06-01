@@ -3,7 +3,7 @@ import { main } from "./injects/basegame"
 import { Cppkies as CppkiesType } from "./gameType"
 import { Building, defaultCps, defaultOnBuy } from "./buildings"
 import master from "./vars"
-import { Upgrade, HeavenlyUpgrade } from "./upgrade"
+import { Upgrade, HeavenlyUpgrade, TieredUpgrade } from "./upgrade"
 import { initSave, SaveType, saveAll } from "./saves"
 import LocalStorageWrapper from "./lib/localstorage"
 import { prod } from "../isprod.json"
@@ -22,6 +22,7 @@ if (window.Cppkies) {
 	CppkiesExport.Building = Building
 	CppkiesExport.Upgrade = Upgrade
 	CppkiesExport.HeavenlyUpgrade = HeavenlyUpgrade
+	CppkiesExport.TieredUpgrade = TieredUpgrade
 	CppkiesExport.Tier = Tier
 	CppkiesExport.injectCode = injectCode
 	CppkiesExport.DEFAULT_CPS = defaultCps

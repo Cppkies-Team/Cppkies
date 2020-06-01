@@ -1,13 +1,12 @@
-import gameType, { Icon } from "./gameType"
+import { Icon } from "./gameType"
 import master from "./vars"
 import { loadUpgrade } from "./saves"
 import { CommonValue } from "./helpers"
-declare let Game: gameType
 
 /**
  * The class for upgrades
  */
-export class Upgrade extends Game.Upgrade {
+export class Upgrade extends window.Game.Upgrade {
 	/**
 	 * Creates an upgrade
 	 * @param name The name of the upgrade
@@ -76,5 +75,26 @@ export class HeavenlyUpgrade extends Upgrade {
 		}
 		window.Game.PrestigeUpgrades.push(this)
 		window.Game.UpgradePositions[this.id] = position
+	}
+}
+
+export class TieredUpgrade extends Upgrade {
+	constructor(
+		name: string,
+		description: string,
+		building: string,
+		tier: string | number
+	) {
+		super(
+			name,
+			description,
+			window.Game.Objects[building].basePrice * window.Game.Tiers[tier].price,
+			window.Game.GetIcon(building, tier)
+		)
+		window.Game.SetTier(building, tier)
+		this.buildingTie1 = window.Game.Objects[building]
+		if (tier === "fortune") window.Game.Objects[building].fortune = this
+		if (typeof tier === "number")
+			this.order = (window.Game.Objects[building].id + 1) * 100 + tier
 	}
 }

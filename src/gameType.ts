@@ -2,9 +2,8 @@
 
 import { CommonValue } from "./helpers"
 import { Building } from "./buildings"
-import { Upgrade } from "./upgrade"
+import { Upgrade, HeavenlyUpgrade, TieredUpgrade } from "./upgrade"
 import { SaveType } from "./saves"
-import { HeavenlyUpgrade } from "./heavenlyupgrade"
 import Tier from "./tiers"
 export default interface Game {
 	Launch: Function
@@ -571,6 +570,7 @@ export interface Cppkies {
 	buildingLink: string
 	Building: typeof Building | null
 	Upgrade: typeof Upgrade | null
+	TieredUpgrade: typeof TieredUpgrade | null
 	Tier: typeof Tier | null
 	HeavenlyUpgrade: typeof HeavenlyUpgrade | null
 	save: SaveType | null
