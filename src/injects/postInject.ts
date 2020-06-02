@@ -9,6 +9,12 @@ export default function postInject(): void {
 					icon[2] = val.iconLink
 			})
 			return icon
+		},
+		(type: string, _tier: string | number, icon: Icon) => {
+			master.customBuildings.forEach(val => {
+				if (val.name === type && val.iconLink) icon[2] = val.iconLink
+			})
+			return icon
 		}
 	)
 }
