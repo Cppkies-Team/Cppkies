@@ -1,7 +1,7 @@
 import { Icon } from "./gameType"
 import master from "./vars"
 import { loadUpgrade } from "./saves"
-import { CommonValue } from "./helpers"
+import { CommonValue, toSentenseCase } from "./helpers"
 import { resolveAlias } from "./spritesheets"
 
 /**
@@ -81,6 +81,13 @@ export class HeavenlyUpgrade extends Upgrade {
 }
 
 export class TieredUpgrade extends Upgrade {
+	/**
+	 * Creates a tiered upgrade
+	 * @param name The name of the tiered upgrade
+	 * @param description The description of the upgrade
+	 * @param building The building it boosts
+	 * @param tier The upgrade's tier
+	 */
 	constructor(
 		name: string,
 		description: string,
@@ -101,5 +108,37 @@ export class TieredUpgrade extends Upgrade {
 		// Manually patch order since Orteil doesn't like consistency
 		this.order -=
 			Math.max(0, Math.min(window.Game.Objects[building].id - 4, 3)) * 75
+	}
+}
+
+export class GrandmaSynergy extends Upgrade {
+	constructor(
+		name: string,
+		quote: string,
+		buildingName: string,
+		grandmaPicture?: string
+	) {
+		const building = window.Game.Objects[buildingName]
+		let grandmaNumber: string | number = building.id - 1
+		if (grandmaNumber === 1) grandmaNumber = "grandma"
+		else grandmaNumber = `${grandmaNumber} grandmas`
+		super(
+			name,
+			`Grandmas are <b>twice</b> as efficient.${toSentenseCase(
+				building.plural
+			)} gain <b>+1% CpS</b> per ${grandmaNumber}.<q>${quote}</q>`,
+			building.basePrice * window.Game.Tiers[2].price,
+			[10, 9],
+			function() {
+				window.Game.Objects.Grandma.redraw()
+			}
+		)
+		building.grandma = this
+		this.buildingTie = building
+		window.Game.GrandmaSynergies.push(this.name)
+		if (grandmaPicture)
+			master.hooks.customGrandmaPic.push(() => {
+				if (this.bought) return grandmaPicture
+			})
 	}
 }

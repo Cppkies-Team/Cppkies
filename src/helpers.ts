@@ -76,3 +76,11 @@ export function injectCode(
 export function applyAllProps(targObj, srcObj): void {
 	for (const i in srcObj) targObj[i] = srcObj
 }
+
+/**
+ * Converts a string to sentense case, AKA first letter upper, all next lower
+ * @param strign
+ */
+export function toSentenseCase(strign: string): string {
+	return strign.charAt(0).toUpperCase() + strign.slice(1).toLowerCase()
+}

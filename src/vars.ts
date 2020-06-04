@@ -1,6 +1,11 @@
 import { getSave } from "./saves"
 import { Building, defaultOnBuy, defaultCps } from "./buildings"
-import { Upgrade, TieredUpgrade, HeavenlyUpgrade } from "./upgrade"
+import {
+	Upgrade,
+	TieredUpgrade,
+	HeavenlyUpgrade,
+	GrandmaSynergy,
+} from "./upgrade"
 import Tier from "./tiers"
 import { injectCode } from "./helpers"
 import { relinkColumn } from "./spritesheets"
@@ -25,6 +30,7 @@ const master: Cppkies = {
 	TieredUpgrade,
 	Tier,
 	HeavenlyUpgrade,
+	GrandmaSynergy,
 	injectCode,
 	DEFAULT_ONBUY: defaultOnBuy,
 	DEFAULT_CPS: defaultCps,

@@ -2,7 +2,12 @@
 
 import { injectCode } from "./helpers"
 import { Building } from "./buildings"
-import { Upgrade, HeavenlyUpgrade, TieredUpgrade } from "./upgrade"
+import {
+	Upgrade,
+	HeavenlyUpgrade,
+	TieredUpgrade,
+	GrandmaSynergy,
+} from "./upgrade"
 import { SaveType } from "./saves"
 import Tier from "./tiers"
 import { Hooks } from "./injects/basegame"
@@ -577,6 +582,7 @@ export interface Cppkies {
 	TieredUpgrade: typeof TieredUpgrade
 	Tier: typeof Tier
 	HeavenlyUpgrade: typeof HeavenlyUpgrade
+	GrandmaSynergy: typeof GrandmaSynergy
 	save: SaveType
 	onLoad: Function[]
 	DEFAULT_ONBUY: () => void
