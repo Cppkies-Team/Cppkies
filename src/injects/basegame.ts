@@ -214,7 +214,6 @@ export function main(): Promise<Hooks> {
 			"Game.Unlock('Octillion fingers');",
 			`
  			// Cppkies injection
-			debugger
 			for(const i in this.tieredUpgrades) {
 				if (isNaN(parseInt(i))) break
 				if (this.amount >= window.Game.Tiers[this.tieredUpgrades[i].tier].unlock - 50) this.tieredUpgrades[i].unlock()
