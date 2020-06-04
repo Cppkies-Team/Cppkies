@@ -9,6 +9,7 @@ import LocalStorageWrapper from "./lib/localstorage"
 import { prod } from "../isprod.json"
 import postInject from "./injects/postInject"
 import Tier from "./tiers"
+import { relinkColumn } from "./spritesheets"
 
 let CppkiesExport: CppkiesType
 
@@ -27,6 +28,7 @@ if (window.Cppkies) {
 	CppkiesExport.injectCode = injectCode
 	CppkiesExport.DEFAULT_CPS = defaultCps
 	CppkiesExport.DEFAULT_ONBUY = defaultOnBuy
+	CppkiesExport.icons.relinkColumn = relinkColumn
 	//Since we can't trust our data...
 	master.save = (new LocalStorageWrapper("cppkiesSave")
 		.store as unknown) as SaveType

@@ -20,5 +20,9 @@ const master: CppkiesType = {
 	injectCode: null,
 	DEFAULT_ONBUY: null,
 	DEFAULT_CPS: null,
+	icons: {
+		relinkColumn: null,
+		relinkRow: null,
+	},
 }
 export default master

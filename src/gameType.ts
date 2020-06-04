@@ -580,6 +580,10 @@ export interface Cppkies {
 	customBuildings: Building[]
 	customUpgrades: Upgrade[]
 	customTiers: Tier[]
+	icons: {
+		relinkColumn: (link: string, matrix: string[] | string[][]) => Promise<void>
+		relinkRow: (link: string, matrix: string[] | string[][]) => Promise<void>
+	}
 }
 export interface FoolBuilding {
 	name: string
