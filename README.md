@@ -4,11 +4,17 @@
 
 ## Table of Contents
 
-- [What Is Cppkies?](#What-is-Cppkies?)
-- [Documentation](#Documentation)
-- [Examples](#Examples)
-- [Roadmap](#Roadmap)
-- [Credits](#Credits)
+- [Cppkies](#cppkies)
+  - [Table of Contents](#table-of-contents)
+  - [What is Cppkies](#what-is-cppkies)
+  - [Documentation](#documentation)
+  - [Examples](#examples)
+    - [Think Tank Building](#think-tank-building)
+    - [LumpExample](#lumpexample)
+    - [BuffExample](#buffexample)
+    - [MinigameExample](#minigameexample)
+  - [Roadmap](#roadmap)
+  - [Credits](#credits)
 
 ## What is Cppkies
 
@@ -32,9 +38,9 @@ This addon provides an example of creating a new lump type.
 
 This addon provides an example of creating a new buff type, and adding a buff type to golden cookies.
 
-### [MinigameExample](https://github.com/Cppkies-Team/examples/tree/master/MinigameExample)
+### [MinigameExample](https://github.com/Cppkies-Team/examples/tree/master/MinigameExample) 
 
-This addon provides an example of creating a new plant<!--, and maybe a new soil type. Not sure if it's possible.-->, a new spell, and a new pantheon spirit.
+This addon provides an example of creating a new plant, and a new soil type, a new spell, and a new pantheon spirit.
 
 ## Roadmap
 
@@ -56,7 +62,7 @@ This addon provides an example of creating a new plant<!--, and maybe a new soil
 - [TheGLander](https://github.com/TheGLander) (ʐ̈ MANNNNNNN#2006) :
   - Programmer
 - [Bob](https://github.com/MasterOfBob777) (MasterOfBob777#8346) :
-  - Programmer
+  - Wiki Editor
 - [TheSkullyKO](https://github.com/TheSkullyKO) (Mistow OwO#0245) :
   - Helped with Ideas
 - [Klattmose](https://github.com/klattmose/) :

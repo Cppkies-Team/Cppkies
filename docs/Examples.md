@@ -14,4 +14,4 @@ This addon provides an example of creating a new buff type, and adding a buff ty
 
 ### [MinigameExample](https://github.com/Cppkies-Team/examples/tree/master/MinigameExample)
 
-This addon provides an example of creating a new plant<!--, and maybe a new soil type. Not sure if it's possible.-->, a new spell, and a new pantheon spirit.
+This addon provides an example of creating a new plant, a new soil, a new spell, and a new pantheon spirit.

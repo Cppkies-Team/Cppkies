@@ -8,7 +8,7 @@ Cppkies is a modding framework for the game [Cookie Clicker](https://orteil.dash
 - [TheGLander](https://github.com/TheGLander) (ʐ̈ MANNNNNNN#2006) :
   - Programmer
 - [Bob](https://github.com/MasterOfBob777) (MasterOfBob777#8346) :
-  - Programmer
+  - Wiki Editor
 - [TheSkullyKO](https://github.com/TheSkullyKO) (Mistow OwO#0245) :
   - Helped with Ideas
 - [Klattmose](https://github.com/klattmose/) :
