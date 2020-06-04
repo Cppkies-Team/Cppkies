@@ -1,8 +1,14 @@
-import { Cppkies as CppkiesType } from "./gameType"
+import { getSave } from "./saves"
+import { Building, defaultOnBuy, defaultCps } from "./buildings"
+import { Upgrade, TieredUpgrade, HeavenlyUpgrade } from "./upgrade"
+import Tier from "./tiers"
+import { injectCode } from "./helpers"
+import { relinkColumn } from "./spritesheets"
+import { Cppkies } from "./gameType"
 
 //The *main* variable
-const master: CppkiesType = {
-	hooks: {},
+const master: Cppkies = {
+	hooks: null,
 	iconLink: "",
 	buildingLink: "",
 	buildingHooks: {},
@@ -10,18 +16,18 @@ const master: CppkiesType = {
 	customBuildings: [],
 	customUpgrades: [],
 	customTiers: [],
-	save: null,
+	save: getSave(),
 	onLoad: [],
-	Building: null,
-	Upgrade: null,
-	TieredUpgrade: null,
-	Tier: null,
-	HeavenlyUpgrade: null,
-	injectCode: null,
-	DEFAULT_ONBUY: null,
-	DEFAULT_CPS: null,
+	Building,
+	Upgrade,
+	TieredUpgrade,
+	Tier,
+	HeavenlyUpgrade,
+	injectCode,
+	DEFAULT_ONBUY: defaultOnBuy,
+	DEFAULT_CPS: defaultCps,
 	icons: {
-		relinkColumn: null,
+		relinkColumn: relinkColumn,
 		relinkRow: null,
 	},
 }

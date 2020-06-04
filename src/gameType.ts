@@ -1,10 +1,11 @@
 /*eslint @typescript-eslint/no-explicit-any:0*/
 
-import { CommonValue } from "./helpers"
+import { injectCode } from "./helpers"
 import { Building } from "./buildings"
 import { Upgrade, HeavenlyUpgrade, TieredUpgrade } from "./upgrade"
 import { SaveType } from "./saves"
 import Tier from "./tiers"
+import { Hooks } from "./injects/basegame"
 export default interface Game {
 	Launch: Function
 	version: number
@@ -554,29 +555,23 @@ export default interface Game {
 	choiceSelectorOn: number
 }
 export type Icon = [number, number, string?]
+
 export interface Cppkies {
-	injectCode: (
-		func: Function,
-		source: CommonValue<string> | null,
-		target: CommonValue<string>,
-		where: "before" | "replace" | "after"
-	) => Function | null
-	hooks: {
-		[key: string]: Function[]
-	}
+	injectCode: typeof injectCode
+	hooks: Hooks
 	buildingHooks: Record<string, Record<string, Function[]>>
 	buildingHooksById: Record<string, Function[]>[]
 	iconLink: string
 	buildingLink: string
-	Building: typeof Building | null
-	Upgrade: typeof Upgrade | null
-	TieredUpgrade: typeof TieredUpgrade | null
-	Tier: typeof Tier | null
-	HeavenlyUpgrade: typeof HeavenlyUpgrade | null
-	save: SaveType | null
+	Building: typeof Building
+	Upgrade: typeof Upgrade
+	TieredUpgrade: typeof TieredUpgrade
+	Tier: typeof Tier
+	HeavenlyUpgrade: typeof HeavenlyUpgrade
+	save: SaveType
 	onLoad: Function[]
-	DEFAULT_ONBUY: () => void | null
-	DEFAULT_CPS: (me: Building) => number | null
+	DEFAULT_ONBUY: () => void
+	DEFAULT_CPS: (me: Building) => number
 	customBuildings: Building[]
 	customUpgrades: Upgrade[]
 	customTiers: Tier[]

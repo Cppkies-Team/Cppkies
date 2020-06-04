@@ -1,41 +1,19 @@
-import { injectCode } from "./helpers"
 import { main } from "./injects/basegame"
-import { Cppkies as CppkiesType } from "./gameType"
-import { Building, defaultCps, defaultOnBuy } from "./buildings"
+
 import master from "./vars"
-import { Upgrade, HeavenlyUpgrade, TieredUpgrade } from "./upgrade"
-import { initSave, SaveType, saveAll } from "./saves"
-import LocalStorageWrapper from "./lib/localstorage"
+import { saveAll } from "./saves"
 import { prod } from "../isprod.json"
 import postInject from "./injects/postInject"
-import Tier from "./tiers"
-import { relinkColumn } from "./spritesheets"
 
-let CppkiesExport: CppkiesType
+let CppkiesExport: typeof master
 
 //Check if Cppkies is already created
 if (window.Cppkies) {
 	//If so, just reexport it
 	CppkiesExport = window.Cppkies
 } else {
-	//Set it to master, and set some stuff
 	CppkiesExport = master
-	CppkiesExport.Building = Building
-	CppkiesExport.Upgrade = Upgrade
-	CppkiesExport.HeavenlyUpgrade = HeavenlyUpgrade
-	CppkiesExport.TieredUpgrade = TieredUpgrade
-	CppkiesExport.Tier = Tier
-	CppkiesExport.injectCode = injectCode
-	CppkiesExport.DEFAULT_CPS = defaultCps
-	CppkiesExport.DEFAULT_ONBUY = defaultOnBuy
-	CppkiesExport.icons.relinkColumn = relinkColumn
-	//Since we can't trust our data...
-	master.save = (new LocalStorageWrapper("cppkiesSave")
-		.store as unknown) as SaveType
-	//Create a save if it doesn't exist
-	if (!master.save.exists) {
-		initSave()
-	}
+
 	window.Game.customSave.push(saveAll)
 
 	//Inject maingame and create hooks

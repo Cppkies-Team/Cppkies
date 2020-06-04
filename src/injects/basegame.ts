@@ -1,11 +1,64 @@
 import { injectCode } from "../helpers"
 import { Injection } from "./generic"
+import { Icon } from "../gameType"
 
+export interface Hooks {
+	//! Custom menus
+	/**
+	 * Allows you to add entries to all menus
+	 */
+	customMenu: (() => void)[]
+	/**
+	 * Allows you to add entries to the options menu
+	 */
+	customOptionsMenu: (() => void)[]
+	/**
+	 * Allows you to add entries to the stats menu
+	 */
+	customStatsMenu: (() => void)[]
+	/**
+	 * Allows you to add entries to the info menu
+	 */
+	customInfoMenu: (() => void)[]
+
+	//! Data manipulation
+
+	/**
+	 * Allows you to execute a function on data load, useful for custom data loading
+	 */
+	customLoad: (() => void)[]
+
+	/**
+	 * Allows you to execute a function on data load, useful for custom data resetting
+	 * @param hard whether or not this is a hard reset
+	 */
+	customReset: ((hard: boolean) => void)[]
+	//! Tiers
+	/**
+	 * Overrides for icons gotten from GetIcon
+	 * @param type The type of icon, either a building name or "Kitten"
+	 * @param tier The tier of the icon, gotten from Tier.iconRow
+	 * @param icon The current icon
+	 * @returns An icon
+	 */
+	customGetIcon: ((type: string, tier: string | number, icon: Icon) => Icon)[]
+
+	//! Buildings
+	/**
+	 * Called after BuildStore, used internally
+	 */
+	postBuildStore: (() => void)[]
+	/**
+	 * Adds grandma options, must return a truthy value to be considered an image
+	 * @returns A link to an image, or a falsy value
+	 */
+	customGrandmaPic: (() => string | null)[]
+}
 /**
  * Creates the function hooks for base game
  * @returns A promise
  */
-export function main(): Promise<Record<string, Function[]>> {
+export function main(): Promise<Hooks> {
 	return new Promise(resolve => {
 		const dummy = {}
 		const injections: Array<Injection> = [
@@ -59,7 +112,7 @@ export function main(): Promise<Record<string, Function[]>> {
 
 			customReset(hard)
 			Allows you to execute a function on data load, useful for custom data resetting
-			hard: bool - whether or not this is a hard reset
+			hard: boolean - whether or not this is a hard reset
 			*/
 			new Injection("customLoad", () => {
 				window.Game.LoadSave = injectCode(
@@ -84,13 +137,20 @@ export function main(): Promise<Record<string, Function[]>> {
 				)
 			}),
 			//// -- Tiers -- ////
+			/**
+				customGetIcon(type, tier, icon)
+				Overrides for icons gotten from GetIcon
+				type: string - The type of icon, either a building name or "Kitten"
+				tier: string - The tier of the icon, gotten from Tier.iconRow
+				icon: Icon - the current icon
+			 */
 			new Injection("customGetIcon", () => {
 				window.Game.GetIcon = injectCode(
 					window.Game.GetIcon,
 					"return [col,Game.Tiers[tier].iconRow];",
 					`
-					let icon = [col, Game.Tiers[tier].iconRow]
 					// Cppkies Injection
+					let icon = [col, Game.Tiers[tier].iconRow]
 					for(const i in Cppkies.hooks.customGetIcon) icon = Cppkies.hooks.customGetIcon[i](type, tier, icon) || icon
 					return icon
 `,
@@ -110,6 +170,9 @@ export function main(): Promise<Record<string, Function[]>> {
 			//// -- Menus -- ////
 			// TODO Patch disabled buttons(?)
 			//// -- Buildings -- ////
+			/**
+				Called after BuildStore, used internally
+			 */
 			new Injection("postBuildStore", () => {
 				window.Game.BuildStore = injectCode(
 					window.Game.BuildStore,
@@ -118,12 +181,15 @@ export function main(): Promise<Record<string, Function[]>> {
 					"after"
 				)
 			}),
+			/**
+				Adds grandma options, must return a truthy value to be considered an image
+			 */
 			new Injection("customGrandmaPic", () => {
 				window.Game.Objects.Grandma.art.pic = injectCode(
 					window.Game.Objects.Grandma.art.pic,
 					"return choose(list)+'.png'",
 					`// Cppkies injection
-					list = list.concat(Cppkies.hooks.customGrandmaPic.map(val=> val() || null).filter(val=>val !== null))
+					list = list.concat(Cppkies.hooks.customGrandmaPic.map(val=> val()).filter(val => val))
 					`,
 					"before"
 				)
@@ -156,6 +222,6 @@ export function main(): Promise<Record<string, Function[]>> {
 `,
 			"after"
 		)
-		resolve(dummy)
+		resolve(dummy as Hooks)
 	})
 }
