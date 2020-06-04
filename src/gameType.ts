@@ -6,6 +6,9 @@ import { Upgrade, HeavenlyUpgrade, TieredUpgrade } from "./upgrade"
 import { SaveType } from "./saves"
 import Tier from "./tiers"
 import { Hooks } from "./injects/basegame"
+/**
+ * The Game object, generated automatically
+ */
 export default interface Game {
 	Launch: Function
 	version: number
@@ -554,8 +557,14 @@ export default interface Game {
 	defaultBg: string
 	choiceSelectorOn: number
 }
+/**
+ * The icon type used in Cookie Clicker
+ */
 export type Icon = [number, number, string?]
 
+/**
+ * The Cppkies object interface
+ */
 export interface Cppkies {
 	injectCode: typeof injectCode
 	hooks: Hooks

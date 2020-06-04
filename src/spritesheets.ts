@@ -32,7 +32,18 @@ export function resolveAlias(name: string): string {
 	return name
 }
 
+/**
+ * A universal version of Icon which is not restricted to CC
+ */
 export type UniversalIcon = [number, number]
+/**
+ * Relocates the icons on an iconsheets
+ * @param link The link to the original file
+ * @param icons The definition of iconName: iconPosition
+ * @param matrix The matrix of icon names
+ * @param iconSize The size of a single icon
+ * @param size The size of the new spritesheet
+ */
 function relink(
 	link: string,
 	icons: Record<string, UniversalIcon>,
@@ -77,6 +88,9 @@ function relink(
 		})
 	})
 }
+/**
+ * Additional icons which aren't defined with tiers
+ */
 const extraColumnIcons: Record<string, UniversalIcon> = {
 	"3d": [0, 21],
 	milestone1: [0, 22],
@@ -86,6 +100,11 @@ const extraColumnIcons: Record<string, UniversalIcon> = {
 	level1: [0, 26],
 	level2: [0, 27],
 }
+/**
+ * Relocates the icons for a column and automatically aliases it
+ * @param link The link to the original, unordered iconsheet
+ * @param matrix The matrix of
+ */
 export async function relinkColumn(
 	link: string,
 	matrix: string[] | string[][]

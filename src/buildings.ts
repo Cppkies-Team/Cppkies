@@ -4,6 +4,9 @@ import { injectCode } from "./helpers"
 import { Injection } from "./injects/generic"
 import { loadBuilding } from "./saves"
 
+/**
+ * The art of a building, used for drawing the drawing in the middle
+ */
 interface Art {
 	base?: string
 	xV?: number

@@ -6,7 +6,9 @@ import { injectCode } from "./helpers"
 import { relinkColumn } from "./spritesheets"
 import { Cppkies } from "./gameType"
 
-//The *main* variable
+/**
+ * The main object which is exported by Cppkies
+ */
 const master: Cppkies = {
 	hooks: null,
 	iconLink: "",
