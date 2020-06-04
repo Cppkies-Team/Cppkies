@@ -114,6 +114,13 @@ export class TieredUpgrade extends Upgrade {
 }
 
 export class GrandmaSynergy extends Upgrade {
+	/**
+	 * Creates a grandma synergy upgrade
+	 * @param name The name for the upgrade(Usually something like "_ Grandmas")
+	 * @param quote The flavor text of the upgrade
+	 * @param buildingName The building to be tied with
+	 * @param grandmaPicture Optional, the picture of the grandma to use in grandma art
+	 */
 	constructor(
 		name: string,
 		quote: string,
@@ -142,5 +149,48 @@ export class GrandmaSynergy extends Upgrade {
 			master.hooks.customGrandmaPic.push(() => {
 				if (this.bought) return grandmaPicture
 			})
+	}
+}
+
+export class SynergyUpgrade extends Upgrade {
+	/**
+	 * Creates a synergy upgrade
+	 * @param name The name for the upgrade
+	 * @param desc The flavor text for it
+	 * @param building1Name The first building
+	 * @param building2Name The second building
+	 * @param tier The synergy tier **Warning: The tier must have a req field**
+	 */
+	constructor(
+		name: string,
+		desc: string,
+		building1Name: string,
+		building2Name: string,
+		tier: string | number
+	) {
+		let building1 = window.Game.Objects[building1Name]
+		let building2 = window.Game.Objects[building2Name]
+		if (building1.basePrice > building2.basePrice) {
+			building1 = window.Game.Objects[building2Name]
+			building2 = window.Game.Objects[building1Name]
+		} //swap
+		desc = `${toSentenseCase(
+			building1.plural
+		)} gain <b>+5% CpS</b> per ${building2.name.toLowerCase()}.<br>${toSentenseCase(
+			building2.plural
+		)} gain <b>+0.1% CpS</b> per 
+			${building1.name.toLowerCase()}.<q>${desc}</q>`
+		super(
+			name,
+			desc,
+			(building1.basePrice * 10 + building2.basePrice * 1) *
+				window.Game.Tiers[tier].price,
+			window.Game.GetIcon(building1Name, tier)
+		)
+		this.tier = tier
+		this.buildingTie1 = building1
+		this.buildingTie2 = building2
+		building1.synergies.push(this)
+		building2.synergies.push(this)
 	}
 }

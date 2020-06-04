@@ -5,6 +5,7 @@ import {
 	TieredUpgrade,
 	HeavenlyUpgrade,
 	GrandmaSynergy,
+	SynergyUpgrade,
 } from "./upgrade"
 import Tier from "./tiers"
 import { injectCode } from "./helpers"
@@ -31,6 +32,7 @@ const master: Cppkies = {
 	Tier,
 	HeavenlyUpgrade,
 	GrandmaSynergy,
+	SynergyUpgrade,
 	injectCode,
 	DEFAULT_ONBUY: defaultOnBuy,
 	DEFAULT_CPS: defaultCps,

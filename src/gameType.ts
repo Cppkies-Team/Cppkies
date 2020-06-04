@@ -7,6 +7,7 @@ import {
 	HeavenlyUpgrade,
 	TieredUpgrade,
 	GrandmaSynergy,
+	SynergyUpgrade,
 } from "./upgrade"
 import { SaveType } from "./saves"
 import Tier from "./tiers"
@@ -583,6 +584,7 @@ export interface Cppkies {
 	Tier: typeof Tier
 	HeavenlyUpgrade: typeof HeavenlyUpgrade
 	GrandmaSynergy: typeof GrandmaSynergy
+	SynergyUpgrade: typeof SynergyUpgrade
 	save: SaveType
 	onLoad: Function[]
 	DEFAULT_ONBUY: () => void
