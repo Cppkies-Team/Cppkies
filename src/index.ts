@@ -13,9 +13,7 @@ if (window.Cppkies) {
 	CppkiesExport = window.Cppkies
 } else {
 	CppkiesExport = master
-
 	window.Game.customSave.push(saveAll)
-
 	//Inject maingame and create hooks
 	main().then(answer => {
 		CppkiesExport.hooks = answer

@@ -3,6 +3,7 @@ import master from "./vars"
 import { injectCode } from "./helpers"
 import { Injection } from "./injects/generic"
 import { loadBuilding } from "./saves"
+import { resolveAlias } from "./spritesheets"
 
 /**
  * The art of a building, used for drawing the drawing in the middle
@@ -132,7 +133,7 @@ export class Building extends window.Game.Object {
 			}
 		}
 		this.buildingLink = bigIcon[2] || master.buildingLink + ""
-		this.iconLink = icon[2] || master.iconLink + ""
+		this.iconLink = resolveAlias(icon[2] || master.iconLink + "")
 		// This is the name, description, and icon used during Business Season
 		if (foolObject) window.Game.foolObjects[name] = foolObject
 		// The name of this building's golden cookie buff and debuff

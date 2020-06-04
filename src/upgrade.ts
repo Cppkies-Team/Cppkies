@@ -2,6 +2,7 @@ import { Icon } from "./gameType"
 import master from "./vars"
 import { loadUpgrade } from "./saves"
 import { CommonValue } from "./helpers"
+import { resolveAlias } from "./spritesheets"
 
 /**
  * The class for upgrades
@@ -24,6 +25,7 @@ export class Upgrade extends window.Game.Upgrade {
 		buyFunc: () => void = (): void => {}
 	) {
 		if (!icon[2]) icon[2] = master.iconLink + ""
+		icon[2] = resolveAlias(icon[2])
 		super(
 			name,
 			typeof desc === "function" ? "" : desc,

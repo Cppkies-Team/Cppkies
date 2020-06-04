@@ -1,7 +1,10 @@
 import { Icon } from "./gameType"
 
-// Resolve and aliases
-const aliases: Record<string, string> = {}
+// Resolve aliases
+/**
+ * Currently defined alias
+ */
+export const aliases: Record<string, string> = {}
 let steppedAliases: string[] = []
 /**
  * Creates an alias from an old name to a new one
@@ -77,8 +80,8 @@ function relink(
 					references[i][1] * iconSize[1],
 					iconSize[0],
 					iconSize[1],
-					icons[i][0],
-					icons[i][1],
+					icons[i][0] * iconSize[0],
+					icons[i][1] * iconSize[1],
 					iconSize[0],
 					iconSize[1]
 				)
@@ -112,10 +115,9 @@ export async function relinkColumn(
 	const columnIcons: Record<string, UniversalIcon> = { ...extraColumnIcons }
 	// Automatically generate normal tiers
 	for (const i in window.Game.Tiers)
-		columnIcons[window.Game.Tiers[i].name.toLowerCase()] = columnIcons[i] = [
-			0,
-			window.Game.Tiers[i].iconRow,
-		]
+		columnIcons[window.Game.Tiers[i].name.toLowerCase()] = columnIcons[
+			i.toString()
+		] = [0, window.Game.Tiers[i].iconRow]
 	alias(
 		link,
 		await relink(
@@ -125,10 +127,57 @@ export async function relinkColumn(
 			[48, 48],
 			[
 				48,
-				Object.values(columnIcons).reduce(
+				(Object.values(columnIcons).reduce(
 					(acc, value) => Math.max(acc, value[1]),
 					-Infinity
-				) + 1,
+				) +
+					1) *
+					48,
+			]
+		)
+	)
+}
+
+/**
+ * Additional icons which aren't defined with buildings
+ */
+const extraRowIcons: Record<string, UniversalIcon> = {
+	research: [9, 0],
+	cookie: [10, 0],
+	mouse: [11, 0],
+	multicursor: [12, 0],
+}
+/**
+ * Relocates the icons for a row and automatically aliases it
+ * @param link The link to the original, unordered iconsheet
+ * @param matrix The matrix of
+ */
+export async function relinkRow(
+	link: string,
+	matrix: string[] | string[][]
+): Promise<void> {
+	const rowIcons: Record<string, UniversalIcon> = { ...extraRowIcons }
+	// Automatically generate normal buildings
+	for (const i in window.Game.ObjectsById)
+		rowIcons[window.Game.ObjectsById[i].single.toLowerCase()] = rowIcons[i] = [
+			window.Game.Tiers[i].icon,
+			0,
+		]
+	alias(
+		link,
+		await relink(
+			link,
+			rowIcons,
+			matrix,
+			[48, 48],
+			[
+				(Object.values(rowIcons).reduce(
+					(acc, value) => Math.max(acc, value[0]),
+					-Infinity
+				) +
+					1) *
+					48,
+				48,
 			]
 		)
 	)
