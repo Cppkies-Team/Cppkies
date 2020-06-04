@@ -96,7 +96,9 @@ export class TieredUpgrade extends Upgrade {
 	) {
 		super(
 			name,
-			description,
+			`${toSentenseCase(
+				window.Game.Objects[building].plural
+			)} are <b>twice</b> as efficient.<q>${description}</q>`,
 			window.Game.Objects[building].basePrice * window.Game.Tiers[tier].price,
 			window.Game.GetIcon(building, tier)
 		)
