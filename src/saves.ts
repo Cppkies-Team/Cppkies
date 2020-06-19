@@ -3,6 +3,7 @@ import { Building } from "./buildings"
 import { Upgrade } from "./upgrade"
 import { applyAllProps } from "./helpers"
 import LocalStorageWrapper from "./lib/localstorage"
+let save: SaveType = null
 /**
  * The save type for Cppkies
  */
@@ -65,10 +66,10 @@ export const DEFAULT_MOD_SAVE: ModSave = {
  * Creates a save for Cppkies
  */
 export function initSave(): void {
-	master.save.mods = {}
-	master.save.foreign = DEFAULT_MOD_SAVE
-	master.save.saveVer = 0
-	master.save.exists = true
+	save.mods = {}
+	save.foreign = DEFAULT_MOD_SAVE
+	save.saveVer = 0
+	save.exists = true
 }
 /**
  * Loads the building save data
@@ -76,7 +77,7 @@ export function initSave(): void {
  */
 export function loadBuilding(building: Building): BuildingSave {
 	//Use names because ID conflicts
-	return master.save.foreign.buildings[building.name] || DEFAULT_BUILDING_SAVE
+	return save.foreign.buildings[building.name] || DEFAULT_BUILDING_SAVE
 }
 /**
  * Saves a building
@@ -92,7 +93,7 @@ export function saveBuilding({
 	minigameSave,
 	name,
 }: Building): void {
-	master.save.foreign.buildings[name] = {
+	save.foreign.buildings[name] = {
 		amount,
 		bought,
 		free,
@@ -107,14 +108,14 @@ export function saveBuilding({
  * @param upgrade The upgrade to load
  */
 export function loadUpgrade(upgrade: Upgrade): UpgradeSave {
-	return master.save.foreign.upgrades[upgrade.name] || DEFAULT_UPGRADE_SAVE
+	return save.foreign.upgrades[upgrade.name] || DEFAULT_UPGRADE_SAVE
 }
 /**
  * Saves an upgrade
  * @param upgrade The upgrade to save
  */
 export function saveUpgrade(upgrade: Upgrade): void {
-	master.save.foreign.upgrades[upgrade.name] = {
+	save.foreign.upgrades[upgrade.name] = {
 		unlocked: upgrade.unlocked,
 		bought: upgrade.bought,
 	}
@@ -144,8 +145,7 @@ export function saveAll(): void {
 
 export function getSave(): SaveType {
 	//Since we can't trust our data...
-	const save = (new LocalStorageWrapper("cppkiesSave")
-		.store as unknown) as SaveType
+	save = (new LocalStorageWrapper("cppkiesSave").store as unknown) as SaveType
 	//Create a save if it doesn't exist
 	if (!save.exists) {
 		initSave()

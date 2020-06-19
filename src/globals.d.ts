@@ -9,9 +9,10 @@ declare global {
 	interface Window {
 		Game: Game
 		Beautify: Function
-		Cppkies: Cppkies
+		Cppkies?: Cppkies
 		l: lType
 		AddEvent: AddEventType
 		PlaySound: PlaySoundType
+		CPPKIES_ONLOAD?: Function[]
 	}
 }
