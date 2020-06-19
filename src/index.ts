@@ -28,6 +28,17 @@ if (window.Cppkies) {
 				return true
 			},
 		})
+		//Do the same for CPPKIES_ONLOAD
+		if (!window.CPPKIES_ONLOAD) window.CPPKIES_ONLOAD = []
+		//Run all onLoad events
+		window.CPPKIES_ONLOAD.forEach(val => val())
+		//Force all new onLoad events to run
+		window.CPPKIES_ONLOAD = new Proxy(master.onLoad, {
+			set: (_target, key, value): boolean => {
+				if (key !== "length") value()
+				return true
+			},
+		})
 		postInject()
 		//Force manual addition since in-module injects b r e a k
 		window.Cppkies = CppkiesExport
