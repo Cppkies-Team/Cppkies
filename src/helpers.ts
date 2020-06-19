@@ -26,13 +26,15 @@ export function escapeRegExp(str: string): string {
  * @param source What to replace, can be null for slicing
  * @param target What to put instead of (or before/after) the source
  * @param where Where to insert or replace your injection
+ * @param context The optional context to use
  * @helper
  */
 export function injectCode(
 	func: Function,
 	source: CommonValue<string> | CommonValue<RegExp> | null,
 	target: CommonValue<string>,
-	where: "before" | "replace" | "after"
+	where: "before" | "replace" | "after",
+	context: object = {}
 ): Function {
 	let newFuncStr = func.toString()
 	const sliceMode = source === null
@@ -63,7 +65,14 @@ export function injectCode(
 		default:
 			throw new Error('where Parameter must be "before", "replace" or "after"')
 	}
-	const newFunc = new Function(`return (${newFuncStr})`)()
+	let contextStr = ""
+	for (const i in context) {
+		contextStr += `var ${i} = globalThis.tempCtx.${i}\n`
+	}
+	globalThis.tempCtx = context
+	const newFunc = new Function(
+		`${contextStr}globalThis.tempCtx = null\nreturn (${newFuncStr})`
+	)()
 	newFunc.prototype = func.prototype
 	return newFunc
 }
