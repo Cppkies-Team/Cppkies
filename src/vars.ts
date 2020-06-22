@@ -10,13 +10,13 @@ import {
 import Tier from "./tiers"
 import { injectCode } from "./helpers"
 import { relinkColumn } from "./spritesheets"
-import { Cppkies } from "./gameType"
+import { Hooks } from "./injects/basegame"
 
 /**
  * The main object which is exported by Cppkies
  */
-const master: Cppkies = {
-	hooks: null,
+const master = {
+	hooks: null as Hooks,
 	iconLink: "",
 	buildingLink: "",
 	buildingHooks: {},
