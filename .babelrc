@@ -7,6 +7,9 @@
 	"env": {
 		"production": {
 			"presets": ["minify"]
+		},
+		"test": {
+			"plugins": ["@babel/plugin-transform-modules-commonjs"]
 		}
 	}
 }

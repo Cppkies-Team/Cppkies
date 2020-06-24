@@ -1,0 +1,18 @@
+{
+	"compilerOptions": {
+		"module": "esnext",
+		"lib": ["DOM"],
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"declaration": true,
+
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"types": [
+			"jest",
+			"jest-environment-puppeteer",
+			"expect-puppeteer",
+			"puppeteer"
+		]
+	}
+}
