@@ -12,10 +12,12 @@ export default async function(): Promise<void> {
 		})
 	})()
 	await await page.evaluate(() => {
-		Game.LoadMod("http://localhost:5501/dist/index.js")
-		if (!globalThis.CPPKIES_ONLOAD) globalThis.CPPKIES_ONLOAD = []
 		return new Promise(resolve => {
-			globalThis.CPPKIES_ONLOAD.push(() => resolve())
+			setTimeout(() => {
+				Game.LoadMod("http://localhost:5501/dist/index.js")
+				if (!globalThis.CPPKIES_ONLOAD) globalThis.CPPKIES_ONLOAD = []
+				globalThis.CPPKIES_ONLOAD.push(() => resolve())
+			}, 1000)
 		})
 	})
 	// Transfer Game and Cppkies into global scope

@@ -16,7 +16,10 @@ it("Should be able to create buildings", async () => {
 					"Test",
 					[0, 0],
 					[0, 0],
-					{},
+					{
+						bg: "bank",
+						base: "bank",
+					},
 					Cppkies.DEFAULT_CPS,
 					Cppkies.DEFAULT_ONBUY,
 					{
@@ -48,7 +51,10 @@ it("Should warn on invalid icon", async () => {
 				"Test",
 				[1, 0],
 				[0, 0],
-				{},
+				{
+					bg: "bank",
+					base: "bank",
+				},
 				Cppkies.DEFAULT_CPS,
 				Cppkies.DEFAULT_ONBUY,
 				{
@@ -63,4 +69,37 @@ it("Should warn on invalid icon", async () => {
 			"All icon sheets must follow an order, see https://cppkies.js.org/#/CommonProblems#IconOrder"
 		)
 	).toBe(true)
+})
+
+it("Should load data on reload", async () => {
+	await page.evaluate(() => {
+		Game.Objects["Test building"].amount = 12345
+		Game.WriteSave()
+	})
+	page.reload()
+	await preparePage()
+	expect(
+		await page.evaluate(
+			() =>
+				new Cppkies.Building(
+					"Test building",
+					"test|tests|tested|[X] more test|[X] more tests",
+					"Test",
+					[0, 0],
+					[0, 0],
+					{
+						bg: "bank",
+						base: "bank",
+					},
+					Cppkies.DEFAULT_CPS,
+					Cppkies.DEFAULT_ONBUY,
+					{
+						desc: "Test fool",
+						icon: [0, 0],
+						name: "Test building fool",
+					},
+					["Test BS", "Test BD"]
+				).amount
+		)
+	).toBe(12345)
 })
