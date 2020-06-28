@@ -2,14 +2,14 @@ import Game, {
 	l as lType,
 	AddEvent as AddEventType,
 	PlaySound as PlaySoundType,
-	Cppkies,
 } from "./gameType"
+import master from "./vars"
 
 declare global {
 	interface Window {
 		Game: Game
 		Beautify: Function
-		Cppkies?: Cppkies
+		Cppkies: typeof master | null
 		l: lType
 		AddEvent: AddEventType
 		PlaySound: PlaySoundType
