@@ -77,3 +77,4 @@ export declare function loadAll(): void;
  * Saves everything
  */
 export declare function saveAll(): void;
+export declare function getSave(): SaveType;

@@ -1,8 +1,6 @@
-import { CommonValue } from "./helpers";
-import { Building } from "./buildings";
-import { Upgrade } from "./upgrade";
-import { SaveType } from "./saves";
-import { HeavenlyUpgrade } from "./heavenlyupgrade";
+/**
+ * The Game object, generated automatically
+ */
 export default interface Game {
     Launch: Function;
     version: number;
@@ -551,26 +549,13 @@ export default interface Game {
     defaultBg: string;
     choiceSelectorOn: number;
 }
+/**
+ * The icon type used in Cookie Clicker
+ */
 export declare type Icon = [number, number, string?];
-export interface Cppkies {
-    injectCode: (func: Function, source: CommonValue<string> | null, target: CommonValue<string>, where: "before" | "replace" | "after") => Function | null;
-    hooks: {
-        [key: string]: Function[];
-    };
-    buildingHooks: Record<string, Record<string, Function[]>>;
-    buildingHooksById: Record<string, Function[]>[];
-    iconLink: string;
-    buildingLink: string;
-    Building: typeof Building | null;
-    Upgrade: typeof Upgrade | null;
-    HeavenlyUpgrade: typeof HeavenlyUpgrade | null;
-    save: SaveType | null;
-    onLoad: Function[];
-    DEFAULT_ONBUY: () => void | null;
-    DEFAULT_CPS: (me: Building) => number | null;
-    customBuildings: Building[];
-    customUpgrades: Upgrade[];
-}
+/**
+ * The Cppkies object interface
+ */
 export interface FoolBuilding {
     name: string;
     desc: string;

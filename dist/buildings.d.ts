@@ -1,5 +1,7 @@
 import gameType, { FoolBuilding, Icon } from "./gameType";
-declare let Game: gameType;
+/**
+ * The art of a building, used for drawing the drawing in the middle
+ */
 interface Art {
     base?: string;
     xV?: number;
@@ -21,7 +23,9 @@ export declare function createHooks(building: Building | gameType["Object"]): vo
 /**
  * The building class for creating new buildings
  */
-export declare class Building extends Game.Object {
+export declare class Building extends window.Game.Object {
+    iconLink: string;
+    bigIconLink: string;
     /**
      * Creates a new building and creates the hooks for it
      * @param name The name of the building

@@ -11,7 +11,7 @@
 		"watch": "echo {\\\"prod\\\":false} > isprod.json && export NODE_ENV=\"development\"&&npm run build -- --watch",
 		"eslint": "npx eslint ./src/**/*.ts ./src/*.ts ./*.js",
 		"eslint:fix": "npm run eslint -- --fix",
-		"preprod": "rm -rf ./dist/src/"
+		"preprod": "cp -r ./dist/src/* ./dist/ && rm -r dist/src"
 	},
 	"husky": {
 		"hooks": {

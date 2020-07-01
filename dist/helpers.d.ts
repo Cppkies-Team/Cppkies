@@ -20,6 +20,18 @@ export declare function escapeRegExp(str: string): string;
  * @param source What to replace, can be null for slicing
  * @param target What to put instead of (or before/after) the source
  * @param where Where to insert or replace your injection
+ * @param context The optional context to use
  * @helper
  */
-export declare function injectCode(func: Function, source: CommonValue<string> | CommonValue<RegExp> | null, target: CommonValue<string>, where: "before" | "replace" | "after"): Function;
+export declare function injectCode(func: Function, source: CommonValue<string> | CommonValue<RegExp> | null, target: CommonValue<string>, where: "before" | "replace" | "after", context?: object): Function;
+/**
+ * Applies all props to an object via mutating
+ * @param targObj The object which will be mutated
+ * @param srcObj The object which properties will be applied to the target object
+ */
+export declare function applyAllProps(targObj: any, srcObj: any): void;
+/**
+ * Converts a string to sentense case, AKA first letter upper, all next lower
+ * @param strign
+ */
+export declare function toSentenseCase(strign: string): string;
