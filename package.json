@@ -4,7 +4,7 @@
 	"description": "Cppkies is a modding framework for the game Cookie Clicker. It intends to make modding the game very simple.",
 	"main": "./dist/index.js",
 	"scripts": {
-		"test": "npx http-server && npx jest",
+		"test": "npx jest",
 		"code-test": "npm run prodBuild && npm run eslint",
 		"build": "npx rollup -c",
 		"prodBuild": "echo {\\\"prod\\\":true} > isprod.json && export NODE_ENV=\"production\" && npm run build && npm run preprod",
