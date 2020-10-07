@@ -102,3 +102,15 @@ typings/
 
 # TernJS port file
 .tern-port
+
+#ESLint files
+.eslintignore
+.eslintrc.json
+
+#Prettier files
+.prettierrc
+
+#VSCode files
+.vscode
+Cppkies.code-workspace
+
