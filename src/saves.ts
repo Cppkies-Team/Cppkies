@@ -2,7 +2,6 @@ import master from "./vars"
 import { Building } from "./buildings"
 import { Upgrade } from "./upgrade"
 import { applyAllProps } from "./helpers"
-import LocalStorageWrapper from "./lib/localstorage"
 let save: SaveType = null
 /**
  * The save type for Cppkies
@@ -66,10 +65,7 @@ export const DEFAULT_MOD_SAVE: ModSave = {
  * Creates a save for Cppkies
  */
 export function initSave(): void {
-	save.mods = {}
-	save.foreign = DEFAULT_MOD_SAVE
-	save.saveVer = 0
-	save.exists = true
+	save = { mods: {}, foreign: DEFAULT_MOD_SAVE, saveVer: 0, exists: true }
 }
 /**
  * Loads the building save data
@@ -144,11 +140,20 @@ export function saveAll(): void {
 }
 
 export function getSave(): SaveType {
-	//Since we can't trust our data...
-	save = (new LocalStorageWrapper("cppkiesSave").store as unknown) as SaveType
-	//Create a save if it doesn't exist
-	if (!save.exists) {
+	return save
+}
+
+export function importSave(data: string): void {
+	try {
+		save = JSON.parse(data)
+		if (!save.exists) initSave()
+	} catch {
 		initSave()
 	}
-	return save
+	loadAll()
+}
+
+export function exportSave(): string {
+	saveAll()
+	return JSON.stringify(save)
 }

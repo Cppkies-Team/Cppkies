@@ -1,7 +1,7 @@
 import { main } from "./injects/basegame"
 
 import master from "./vars"
-import { saveAll } from "./saves"
+import { exportSave, importSave } from "./saves"
 import { prod } from "../isprod.json"
 import postInject from "./injects/postInject"
 
@@ -27,6 +27,13 @@ if (window.Cppkies) {
 			32,
 			prod ? 17 : 21,
 		] as unknown) as string)
+		if (!Game.modSaveData["cppkies"]) Game.modSaveData["cppkies"] = "{}"
+		Game.registerMod("cppkies", {
+			// eslint-disable-next-line @typescript-eslint/no-empty-function
+			init: () => {},
+			save: exportSave,
+			load: importSave,
+		})
 		Game.Win("Third-party")
 		//Run all onLoad events
 		master.onLoad.forEach(val => val())

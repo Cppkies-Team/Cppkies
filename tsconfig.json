@@ -10,5 +10,5 @@
 		"allowUmdGlobalAccess": true,
 		"incremental": true
 	},
-	"exclude": ["./dist"]
+	"exclude": ["./dist", "./tests"]
 }

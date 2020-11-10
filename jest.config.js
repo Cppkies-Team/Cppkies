@@ -13,4 +13,5 @@ module.exports = {
 		...tsjPreset.transform,
 	},
 	moduleFileExtensions: [...["js", "json", "jsx", "ts", "tsx", "node"], "d.ts"],
+	setupFilesAfterEnv: ["./tests/startServer.ts"],
 }

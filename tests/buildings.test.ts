@@ -4,7 +4,7 @@ import puppeteer, { Page } from "puppeteer"
 let page: Page = null
 
 beforeAll(async () => {
-	page = await (await puppeteer.launch({ headless: false })).newPage()
+	page = await (await puppeteer.launch()).newPage()
 	await preparePage(page)
 })
 
@@ -96,12 +96,15 @@ it("Should load data on reload", async () => {
 			},
 			["Test BS", "Test BD"]
 		).amount = 12345
+		// @ts-ignore
+		Game.WriteSave()
 	})
 
 	// Wait for save
 	await page.waitFor(1000 * 0.5)
 
 	await preparePage(page)
+
 	expect(
 		await page.evaluate(
 			() =>

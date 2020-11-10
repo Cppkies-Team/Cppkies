@@ -78,3 +78,5 @@ export declare function loadAll(): void;
  */
 export declare function saveAll(): void;
 export declare function getSave(): SaveType;
+export declare function importSave(data: string): void;
+export declare function exportSave(): string;
