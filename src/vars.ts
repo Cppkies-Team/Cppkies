@@ -12,6 +12,7 @@ import { injectCode } from "./helpers"
 import { relinkColumn } from "./spritesheets"
 import { Hooks } from "./injects/basegame"
 
+// TODO:Reorganize this to not have anything *created* here
 /**
  * The main object which is exported by Cppkies
  */
@@ -37,7 +38,7 @@ const master = {
 	DEFAULT_ONBUY: defaultOnBuy,
 	DEFAULT_CPS: defaultCps,
 	icons: {
-		relinkColumn: relinkColumn,
+		relinkColumn,
 		relinkRow: null,
 	},
 }

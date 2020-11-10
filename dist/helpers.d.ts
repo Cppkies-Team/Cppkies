@@ -29,7 +29,7 @@ export declare function injectCode<T extends Function>(func: T, source: CommonVa
  * @param targObj The object which will be mutated
  * @param srcObj The object which properties will be applied to the target object
  */
-export declare function applyAllProps(targObj: any, srcObj: any): void;
+export declare function applyAllProps(targObj: object, srcObj: object): void;
 /**
  * Converts a string to sentense case, AKA first letter upper, all next lower
  * @param strign

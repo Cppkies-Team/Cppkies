@@ -82,8 +82,8 @@ export function injectCode<T extends Function>(
  * @param srcObj The object which properties will be applied to the target object
  */
 
-export function applyAllProps(targObj, srcObj): void {
-	for (const i in srcObj) targObj[i] = srcObj
+export function applyAllProps(targObj: object, srcObj: object): void {
+	for (const i in srcObj) targObj[i] = srcObj[i]
 }
 
 /**
