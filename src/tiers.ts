@@ -11,7 +11,7 @@ export default class Tier implements Game.Tier {
 		Indicates if the tier shouldn't be accounted for tiered upgrades
 	*/
 	special: boolean
-	req: string
+	req?: string
 	upgrades: Game.TieredUpgradeClass<this["name"]>[] = []
 
 	unlock: number

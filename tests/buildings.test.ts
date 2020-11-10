@@ -96,7 +96,6 @@ it("Should load data on reload", async () => {
 			},
 			["Test BS", "Test BD"]
 		).amount = 12345
-		// @ts-ignore
 		Game.WriteSave()
 	})
 

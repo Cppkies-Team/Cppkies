@@ -23,14 +23,9 @@ if (window.Cppkies) {
 	//Inject maingame and create hooks
 	main().then(answer => {
 		CppkiesExport.hooks = answer
-		Game.Notify("Cppkies loaded!", "", ([
-			32,
-			prod ? 17 : 21,
-		] as unknown) as string)
+		Game.Notify("Cppkies loaded!", "", [32, prod ? 17 : 21])
 		if (!Game.modSaveData["cppkies"]) Game.modSaveData["cppkies"] = "{}"
 		Game.registerMod("cppkies", {
-			// eslint-disable-next-line @typescript-eslint/no-empty-function
-			init: () => {},
 			save: exportSave,
 			load: importSave,
 		})
