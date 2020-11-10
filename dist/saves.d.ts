@@ -1,5 +1,6 @@
 import { Building } from "./buildings";
 import { Upgrade } from "./upgrade";
+export declare let save: SaveType;
 /**
  * The save type for Cppkies
  */
@@ -77,6 +78,5 @@ export declare function loadAll(): void;
  * Saves everything
  */
 export declare function saveAll(): void;
-export declare function getSave(): SaveType;
 export declare function importSave(data: string): void;
 export declare function exportSave(): string;

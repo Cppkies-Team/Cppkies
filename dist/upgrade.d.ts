@@ -1,5 +1,6 @@
 /// <reference types="cookieclicker" />
 import { CommonValue } from "./helpers";
+export declare const customUpgrades: Upgrade[];
 /**
  * The class for upgrades
  */

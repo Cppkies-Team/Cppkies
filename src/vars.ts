@@ -1,5 +1,11 @@
-import { getSave } from "./saves"
-import { Building, defaultOnBuy, defaultCps } from "./buildings"
+import { save } from "./saves"
+import {
+	Building,
+	defaultOnBuy,
+	defaultCps,
+	customBuildings,
+	buildingHooks,
+} from "./buildings"
 import {
 	Upgrade,
 	TieredUpgrade,
@@ -7,12 +13,11 @@ import {
 	GrandmaSynergy,
 	SynergyUpgrade,
 } from "./upgrade"
-import Tier from "./tiers"
+import Tier, { customTiers } from "./tiers"
 import { injectCode } from "./helpers"
-import { relinkColumn } from "./spritesheets"
+import { relinkColumn, relinkRow } from "./spritesheets"
 import { Hooks } from "./injects/basegame"
 
-// TODO:Reorganize this to not have anything *created* here
 /**
  * The main object which is exported by Cppkies
  */
@@ -20,12 +25,12 @@ const master = {
 	hooks: null as Hooks,
 	iconLink: "",
 	buildingLink: "",
-	buildingHooks: {},
+	buildingHooks,
 	buildingHooksById: [],
-	customBuildings: [] as Building[],
+	customBuildings,
 	customUpgrades: [] as Upgrade[],
-	customTiers: [] as Tier[],
-	save: getSave(),
+	customTiers,
+	save,
 	onLoad: [] as (() => void)[],
 	Building,
 	Upgrade,
@@ -39,7 +44,7 @@ const master = {
 	DEFAULT_CPS: defaultCps,
 	icons: {
 		relinkColumn,
-		relinkRow: null,
+		relinkRow,
 	},
 }
 export default master

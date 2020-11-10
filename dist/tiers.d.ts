@@ -1,4 +1,5 @@
 /// <reference types="cookieclicker" />
+export declare const customTiers: Tier[];
 export default class Tier implements Game.Tier {
     name: string;
     color: string;

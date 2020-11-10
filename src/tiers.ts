@@ -1,4 +1,7 @@
 import master from "./vars"
+
+export const customTiers: Tier[] = []
+
 export default class Tier implements Game.Tier {
 	achievUnlock: number
 	iconRow: number
@@ -62,6 +65,7 @@ export default class Tier implements Game.Tier {
 			Analyze sample icon
 		*/
 		this.iconRow = sampleIcon[1]
+		if (master.iconLink) this.iconLink = master.iconLink
 		if (sampleIcon[2]) this.iconLink = sampleIcon[2]
 		if (keyName === "auto")
 			if (!special)
@@ -72,6 +76,6 @@ export default class Tier implements Game.Tier {
 			else this.keyName = name
 		else this.keyName = keyName
 		Game.Tiers[this.keyName] = this
-		master.customTiers.push(this)
+		customTiers.push(this)
 	}
 }

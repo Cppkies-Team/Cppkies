@@ -3,6 +3,8 @@ import { loadUpgrade } from "./saves"
 import { CommonValue, toSentenseCase } from "./helpers"
 import { resolveAlias } from "./spritesheets"
 
+export const customUpgrades: Upgrade[] = []
+
 /**
  * The class for upgrades
  */
@@ -36,7 +38,7 @@ export class Upgrade extends Game.Upgrade {
 		if (typeof desc === "function") this.descFunc = desc
 		if (typeof price === "function") this.priceFunc = price
 		if (typeof icon === "function") this.iconFunction = icon
-		master.customUpgrades.push(this)
+		customUpgrades.push(this)
 		const loadProps = loadUpgrade(this)
 		for (const i in loadProps) this[i] = loadProps[i]
 	}

@@ -2,7 +2,7 @@ import master from "./vars"
 import { Building } from "./buildings"
 import { Upgrade } from "./upgrade"
 import { applyAllProps } from "./helpers"
-let save: SaveType = null
+export let save: SaveType = null
 /**
  * The save type for Cppkies
  */
@@ -142,10 +142,6 @@ export function saveAll(): void {
 	for (const i in master.customBuildings)
 		saveBuilding(master.customBuildings[i])
 	for (const i in master.customUpgrades) saveUpgrade(master.customUpgrades[i])
-}
-
-export function getSave(): SaveType {
-	return save
 }
 
 export function importSave(data: string): void {

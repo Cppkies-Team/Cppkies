@@ -4,16 +4,19 @@ import { Injection } from "./injects/generic"
 import { loadBuilding } from "./saves"
 import { resolveAlias } from "./spritesheets"
 
-/**
- * The art of a building, used for drawing the drawing in the middle
- */
-
+export const buildingHooks: Record<string, BuildingHooks> = {}
+export const customBuildings: Building[] = []
 /**
  * Creates the hooks for a building
  * @param building The building to create hooks for
  */
+
+export interface BuildingHooks {
+	tooltip: ((this: Game.Object, ret: string) => string | null)[]
+}
+
 export function createHooks(building: Building | Game.Object): void {
-	const injections: Injection[] = [
+	const injections = [
 		new Injection("tooltip", () => {
 			building.tooltip = injectCode(
 				injectCode(building.tooltip, "return", "let ret = ", "replace"),
@@ -33,7 +36,7 @@ export function createHooks(building: Building | Game.Object): void {
 		dummy[inject.value] = inject.defValue
 		if (inject.func) inject.func()
 	})
-	master.buildingHooks[building.name] = dummy
+	buildingHooks[building.name] = (dummy as unknown) as BuildingHooks
 }
 
 /**
@@ -90,7 +93,7 @@ export class Building extends Game.Object {
 			cpsFunc,
 			buyFunction
 		)
-		master.customBuildings.push(this)
+		customBuildings.push(this)
 		// Create hooks
 		createHooks(this)
 		//Manually relink canvases and contexts because Orteil made it so new buildings break the old canvas and context links
@@ -126,10 +129,8 @@ export class Building extends Game.Object {
 		// The name of this building's golden cookie buff and debuff
 		if (buildingSpecial) Game.goldenCookieBuildingBuffs[name] = buildingSpecial
 
-		//CCSE.ReplaceBuilding(name)
-
 		if (this.iconLink) {
-			master.buildingHooks[this.name].tooltip.push((ret: string) =>
+			buildingHooks[this.name].tooltip.push((ret: string) =>
 				this.locked
 					? ret
 					: ret.replace(

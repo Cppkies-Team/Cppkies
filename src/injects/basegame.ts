@@ -159,7 +159,7 @@ export function main(): Promise<Hooks> {
 					return icon
 `,
 					"replace"
-				) as typeof Game.GetIcon
+				)
 			}),
 			//// -- Sugar Lump -- ////
 			// TODO Rewrite Game.computeLumpType
@@ -227,7 +227,7 @@ export function main(): Promise<Hooks> {
 			}
 `,
 			"after"
-		) as (this: Game.Object) => void
+		)
 		resolve(dummy as Hooks)
 	})
 }

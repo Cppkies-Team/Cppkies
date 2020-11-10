@@ -1,11 +1,13 @@
 /// <reference types="cookieclicker" />
-/**
- * The art of a building, used for drawing the drawing in the middle
- */
+export declare const buildingHooks: Record<string, BuildingHooks>;
+export declare const customBuildings: Building[];
 /**
  * Creates the hooks for a building
  * @param building The building to create hooks for
  */
+export interface BuildingHooks {
+    tooltip: ((this: Game.Object, ret: string) => string | null)[];
+}
 export declare function createHooks(building: Building | Game.Object): void;
 /**
  * The building class for creating new buildings

@@ -2,7 +2,7 @@ import { Building } from "./buildings";
 import { Upgrade, TieredUpgrade, HeavenlyUpgrade, GrandmaSynergy, SynergyUpgrade } from "./upgrade";
 import Tier from "./tiers";
 import { injectCode } from "./helpers";
-import { relinkColumn } from "./spritesheets";
+import { relinkColumn, relinkRow } from "./spritesheets";
 import { Hooks } from "./injects/basegame";
 /**
  * The main object which is exported by Cppkies
@@ -11,7 +11,7 @@ declare const master: {
     hooks: Hooks;
     iconLink: string;
     buildingLink: string;
-    buildingHooks: {};
+    buildingHooks: Record<string, import("./buildings").BuildingHooks>;
     buildingHooksById: any[];
     customBuildings: Building[];
     customUpgrades: Upgrade[];
@@ -30,7 +30,7 @@ declare const master: {
     DEFAULT_CPS: (me: Building) => number;
     icons: {
         relinkColumn: typeof relinkColumn;
-        relinkRow: any;
+        relinkRow: typeof relinkRow;
     };
 };
 export default master;
