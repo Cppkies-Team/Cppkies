@@ -12,6 +12,7 @@ import {
 	HeavenlyUpgrade,
 	GrandmaSynergy,
 	SynergyUpgrade,
+	customUpgrades,
 } from "./upgrade"
 import Tier, { customTiers } from "./tiers"
 import { injectCode } from "./helpers"
@@ -28,7 +29,7 @@ const master = {
 	buildingHooks,
 	buildingHooksById: [],
 	customBuildings,
-	customUpgrades: [] as Upgrade[],
+	customUpgrades,
 	customTiers,
 	save,
 	onLoad: [] as (() => void)[],
