@@ -65,7 +65,12 @@ export const DEFAULT_MOD_SAVE: ModSave = {
  * Creates a save for Cppkies
  */
 export function initSave(): void {
-	save = { mods: {}, foreign: DEFAULT_MOD_SAVE, saveVer: 0, exists: true }
+	master.save = save = {
+		mods: {},
+		foreign: DEFAULT_MOD_SAVE,
+		saveVer: 0,
+		exists: true,
+	}
 }
 /**
  * Loads the building save data
@@ -145,7 +150,7 @@ export function getSave(): SaveType {
 
 export function importSave(data: string): void {
 	try {
-		save = JSON.parse(data)
+		master.save = save = JSON.parse(data)
 		if (!save.exists) initSave()
 	} catch {
 		initSave()

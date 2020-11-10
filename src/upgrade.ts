@@ -82,17 +82,18 @@ export class HeavenlyUpgrade extends Upgrade implements Game.HeavenlyUpgrade {
 	}
 }
 
-function isFortune<Tier extends string>(
+function isFortune<Tier extends string | number>(
 	upgrade: TieredUpgrade<Tier | "fortune">
 ): upgrade is TieredUpgrade<"fortune"> {
 	return upgrade.tier === "fortune"
 }
 
-export class TieredUpgrade<Tier extends string> extends Upgrade
+export class TieredUpgrade<Tier extends string | number = string | number>
+	extends Upgrade
 	implements Game.TieredUpgradeClass<Tier> {
 	buildingTie: Game.Object
 	buildingTie1: Game.Object
-
+	tier: Tier
 	pool: ""
 
 	/**
@@ -105,17 +106,19 @@ export class TieredUpgrade<Tier extends string> extends Upgrade
 	constructor(
 		name: string,
 		description: string,
-		building: Game.Object,
-		public tier: Tier
+		building: Game.Object | string,
+		tier: Tier
 	) {
+		if (typeof building === "string") building = Game.Objects[building]
 		super(
 			name,
 			`${toSentenseCase(
 				building.plural
 			)} are <b>twice</b> as efficient.<q>${description}</q>`,
-			building.basePrice * Game.Tiers[tier].price,
+			building.basePrice * Game.Tiers[tier.toString()].price,
 			Game.GetIcon(building.name, tier)
 		)
+
 		Game.SetTier(building.name, tier)
 
 		this.buildingTie1 = building
@@ -142,9 +145,10 @@ export class GrandmaSynergy extends Upgrade
 	constructor(
 		name: string,
 		quote: string,
-		building: Game.Object,
+		building: Game.Object | string,
 		grandmaPicture?: string
 	) {
+		if (typeof building === "string") building = Game.Objects[building]
 		let grandmaNumber: string | number = building.id - 1
 		if (grandmaNumber === 1) grandmaNumber = "grandma"
 		else grandmaNumber = `${grandmaNumber} grandmas`
@@ -184,10 +188,12 @@ export class SynergyUpgrade<Tier extends string> extends Upgrade
 	constructor(
 		name: string,
 		desc: string,
-		building1: Game.Object,
-		building2: Game.Object,
+		building1: Game.Object | string,
+		building2: Game.Object | string,
 		tier: Tier
 	) {
+		if (typeof building1 === "string") building1 = Game.Objects[building1]
+		if (typeof building2 === "string") building2 = Game.Objects[building2]
 		desc = `${toSentenseCase(
 			building1.plural
 		)} gain <b>+5% CpS</b> per ${building2.name.toLowerCase()}.<br>${toSentenseCase(

@@ -33,10 +33,10 @@ export declare class HeavenlyUpgrade extends Upgrade implements Game.HeavenlyUpg
      */
     constructor(name: string, desc: CommonValue<string>, price: CommonValue<number>, icon: CommonValue<Game.Icon>, position: [number, number], parents?: (string | number)[], buyFunc?: () => void);
 }
-export declare class TieredUpgrade<Tier extends string> extends Upgrade implements Game.TieredUpgradeClass<Tier> {
-    tier: Tier;
+export declare class TieredUpgrade<Tier extends string | number = string | number> extends Upgrade implements Game.TieredUpgradeClass<Tier> {
     buildingTie: Game.Object;
     buildingTie1: Game.Object;
+    tier: Tier;
     pool: "";
     /**
      * Creates a tiered upgrade
@@ -45,7 +45,7 @@ export declare class TieredUpgrade<Tier extends string> extends Upgrade implemen
      * @param building The building it boosts
      * @param tier The upgrade's tier
      */
-    constructor(name: string, description: string, building: Game.Object, tier: Tier);
+    constructor(name: string, description: string, building: Game.Object | string, tier: Tier);
 }
 export declare class GrandmaSynergy extends Upgrade implements Game.GrandmaSynergyClass {
     buildingTie: Game.Object;
@@ -57,7 +57,7 @@ export declare class GrandmaSynergy extends Upgrade implements Game.GrandmaSyner
      * @param buildingName The building to be tied with
      * @param grandmaPicture Optional, the picture of the grandma to use in grandma art
      */
-    constructor(name: string, quote: string, building: Game.Object, grandmaPicture?: string);
+    constructor(name: string, quote: string, building: Game.Object | string, grandmaPicture?: string);
 }
 export declare class SynergyUpgrade<Tier extends string> extends Upgrade implements Game.SynergyUpgradeClass<Tier> {
     buildingTie1: Game.Object;
@@ -72,5 +72,5 @@ export declare class SynergyUpgrade<Tier extends string> extends Upgrade impleme
      * @param building2Name The second building
      * @param tier The synergy tier **Warning: The tier must have a req field**
      */
-    constructor(name: string, desc: string, building1: Game.Object, building2: Game.Object, tier: Tier);
+    constructor(name: string, desc: string, building1: Game.Object | string, building2: Game.Object | string, tier: Tier);
 }
