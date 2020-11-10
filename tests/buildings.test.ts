@@ -1,10 +1,14 @@
-import "expect-puppeteer"
 import preparePage from "./setup-page"
-import Game from "../src/gameType"
-declare let Game: Game
-declare let Cppkies: typeof import("../dist").default
+import puppeteer, { Page } from "puppeteer"
 
-beforeAll(preparePage)
+let page: Page = null
+
+beforeAll(async () => {
+	page = await (await puppeteer.launch({ headless: false })).newPage()
+	await preparePage(page)
+})
+
+jest.setTimeout(60000)
 
 it("Should be able to create buildings", async () => {
 	expect(
@@ -73,16 +77,36 @@ it("Should warn on invalid icon", async () => {
 
 it("Should load data on reload", async () => {
 	await page.evaluate(() => {
-		Game.Objects["Test building"].amount = 12345
-		Game.WriteSave()
+		new Cppkies.Building(
+			"Save test building",
+			"test|tests|tested|[X] more test|[X] more tests",
+			"Test",
+			[0, 0],
+			[0, 0],
+			{
+				bg: "bank",
+				base: "bank",
+			},
+			Cppkies.DEFAULT_CPS,
+			Cppkies.DEFAULT_ONBUY,
+			{
+				desc: "Test fool",
+				icon: [0, 0],
+				name: "Test building fool",
+			},
+			["Test BS", "Test BD"]
+		).amount = 12345
 	})
-	page.reload()
-	await preparePage()
+
+	// Wait for save
+	await page.waitFor(1000 * 0.5)
+
+	await preparePage(page)
 	expect(
 		await page.evaluate(
 			() =>
 				new Cppkies.Building(
-					"Test building",
+					"Save test building",
 					"test|tests|tested|[X] more test|[X] more tests",
 					"Test",
 					[0, 0],
@@ -102,4 +126,8 @@ it("Should load data on reload", async () => {
 				).amount
 		)
 	).toBe(12345)
+})
+
+afterAll(async () => {
+	page.browser().close()
 })

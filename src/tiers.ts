@@ -1,8 +1,6 @@
-import { Upgrade } from "./upgrade"
-import { Icon } from "./gameType"
 import master from "./vars"
-export default class Tier {
-	achievUnlock?: number
+export default class Tier implements Game.Tier {
+	achievUnlock: number
 	iconRow: number
 	iconLink?: string
 
@@ -10,8 +8,13 @@ export default class Tier {
 		Indicates if the tier shouldn't be accounted for tiered upgrades
 	*/
 	special: boolean
-	req?: string
-	upgrades: Upgrade[] = []
+	req: string
+	upgrades: Game.TieredUpgradeClass<this["name"]>[] = []
+
+	unlock: number
+	price: number
+	keyName: string
+
 	/**
 	 * Adds a new tier to the game for upgrades and achievements
 	 * @param name The name of the new tier
@@ -26,26 +29,35 @@ export default class Tier {
 	 */
 	constructor(
 		public name: string,
-		sampleIcon: Icon,
+		sampleIcon: Game.Icon,
 		public color: string,
 		special = false,
-		public price: number | "auto" = "auto",
-		public unlock: number | "auto" | null = null,
+		price: number | "auto" = "auto",
+		unlock: number | "auto" | null = null,
 		achievUnlock: number | "auto" | null = null,
 		req: string | null = null,
-		public keyName: string | "auto" = "auto"
+		keyName: string | "auto" = "auto"
 	) {
 		this.special = special
+
 		if (unlock === null) this.unlock = -1
+		if (typeof unlock === "number") this.unlock = unlock
+		if ((special === false && unlock === null) || unlock === "auto")
+			this.unlock = Game.Tiers[parseInt(this.keyName) - 1].unlock + 50
+
 		if (typeof achievUnlock === "number") this.achievUnlock = achievUnlock
+		if ((special === false && achievUnlock === null) || achievUnlock === "auto")
+			this.achievUnlock =
+				Game.Tiers[parseInt(this.keyName) - 1].achievUnlock + 50
 		if (req) this.req = req
 		if (price === "auto")
 			this.price =
-				window.Game.Tiers[
-					Object.keys(window.Game.Tiers)
+				Game.Tiers[
+					Object.keys(Game.Tiers)
 						.filter(val => !isNaN(parseInt(val)))
 						.length.toString()
 				].price * 1e8
+		else this.price = price
 		/*
 			Analyze sample icon
 		*/
@@ -54,16 +66,12 @@ export default class Tier {
 		if (keyName === "auto")
 			if (!special)
 				this.keyName = (
-					Object.keys(window.Game.Tiers).filter(val => !isNaN(parseInt(val)))
-						.length + 1
+					Object.keys(Game.Tiers).filter(val => !isNaN(parseInt(val))).length +
+					1
 				).toString()
 			else this.keyName = name
-		if ((special === false && unlock === null) || unlock === "auto")
-			this.unlock = window.Game.Tiers[parseInt(this.keyName) - 1].unlock + 50
-		if ((special === false && achievUnlock === null) || achievUnlock === "auto")
-			this.achievUnlock =
-				window.Game.Tiers[parseInt(this.keyName) - 1].achievUnlock + 50
-		window.Game.Tiers[this.keyName] = this
+		else this.keyName = keyName
+		Game.Tiers[this.keyName] = this
 		master.customTiers.push(this)
 	}
 }

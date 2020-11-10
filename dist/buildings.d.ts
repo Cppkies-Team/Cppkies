@@ -1,31 +1,18 @@
-import gameType, { FoolBuilding, Icon } from "./gameType";
+/// <reference types="cookieclicker" />
 /**
  * The art of a building, used for drawing the drawing in the middle
  */
-interface Art {
-    base?: string;
-    xV?: number;
-    yV?: number;
-    w?: number;
-    h?: number;
-    rows?: number;
-    x?: number;
-    y?: number;
-    pic?: string;
-    bg?: string;
-    frames?: number;
-}
 /**
  * Creates the hooks for a building
  * @param building The building to create hooks for
  */
-export declare function createHooks(building: Building | gameType["Object"]): void;
+export declare function createHooks(building: Building | Game.Object): void;
 /**
  * The building class for creating new buildings
  */
-export declare class Building extends window.Game.Object {
+export declare class Building extends Game.Object {
     iconLink: string;
-    bigIconLink: string;
+    buildingLink: string;
     /**
      * Creates a new building and creates the hooks for it
      * @param name The name of the building
@@ -39,7 +26,7 @@ export declare class Building extends window.Game.Object {
      * @param foolObject The fool building to display during business day
      * @param buildingSpecial The building special and building debuff
      */
-    constructor(name: string, commonName: string, desc: string, icon: Icon, bigIcon: Icon, art: Art, cpsFunc: (me: Building) => number, buyFunction: () => void, foolObject: FoolBuilding, buildingSpecial: [string, string]);
+    constructor(name: string, commonName: string, desc: string, icon: Game.Icon, bigIcon: Game.Icon, art: Game.Art, cpsFunc: (me: Building) => number, buyFunction: () => void, foolObject: Game.FoolBuilding, buildingSpecial: [string, string]);
 }
 /**
  * The recommended function to pass in building CpsFunc
@@ -50,4 +37,3 @@ export declare const defaultCps: (me: Building) => number;
  * The reccomended function to pass in building BuyFunc
  */
 export declare const defaultOnBuy: () => void;
-export {};

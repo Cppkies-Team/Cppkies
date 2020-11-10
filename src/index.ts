@@ -7,18 +7,27 @@ import postInject from "./injects/postInject"
 
 let CppkiesExport: typeof master
 
+declare global {
+	interface Window {
+		Cppkies: typeof master | undefined
+		CPPKIES_ONLOAD: (() => void)[] | undefined
+	}
+}
+
 //Check if Cppkies is already created
 if (window.Cppkies) {
 	//If so, just reexport it
 	CppkiesExport = window.Cppkies
 } else {
 	CppkiesExport = master
-	window.Game.customSave.push(saveAll)
 	//Inject maingame and create hooks
 	main().then(answer => {
 		CppkiesExport.hooks = answer
-		window.Game.Notify("Cppkies loaded!", "", [32, prod ? 17 : 21])
-		window.Game.Win("Third-party")
+		Game.Notify("Cppkies loaded!", "", ([
+			32,
+			prod ? 17 : 21,
+		] as unknown) as string)
+		Game.Win("Third-party")
 		//Run all onLoad events
 		master.onLoad.forEach(val => val())
 		//Force all new onLoad events to run

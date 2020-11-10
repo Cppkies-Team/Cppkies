@@ -1,4 +1,4 @@
-import { Icon } from "../gameType";
+/// <reference types="cookieclicker" />
 export interface Hooks {
     /**
      * Allows you to add entries to all menus
@@ -32,7 +32,7 @@ export interface Hooks {
      * @param icon The current icon
      * @returns An icon
      */
-    customGetIcon: ((type: string, tier: string | number, icon: Icon) => Icon)[];
+    customGetIcon: ((type: string, tier: string | number, icon: Game.Icon) => Game.Icon)[];
     /**
      * Called after BuildStore, used internally
      */

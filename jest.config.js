@@ -4,7 +4,6 @@ const { defaults: tsjPreset } = require("ts-jest/presets")
 /** @typedef {import('ts-jest')} */
 /** @type {import('@jest/types').Config.InitialOptions} */
 module.exports = {
-	preset: "jest-puppeteer",
 	globals: {
 		"ts-jest": {
 			tsConfig: "./tests/tsconfig.json",
@@ -13,4 +12,5 @@ module.exports = {
 	transform: {
 		...tsjPreset.transform,
 	},
+	moduleFileExtensions: [...["js", "json", "jsx", "ts", "tsx", "node"], "d.ts"],
 }

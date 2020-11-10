@@ -1,1 +1,1 @@
-import "expect-puppeteer";
+export {};

@@ -1,20 +1,19 @@
-import { Upgrade } from "./upgrade";
-import { Icon } from "./gameType";
-export default class Tier {
+/// <reference types="cookieclicker" />
+export default class Tier implements Game.Tier {
     name: string;
     color: string;
-    price: number | "auto";
-    unlock: number | "auto" | null;
-    keyName: string | "auto";
-    achievUnlock?: number;
+    achievUnlock: number;
     iconRow: number;
     iconLink?: string;
     /**
         Indicates if the tier shouldn't be accounted for tiered upgrades
     */
     special: boolean;
-    req?: string;
-    upgrades: Upgrade[];
+    req: string;
+    upgrades: Game.TieredUpgradeClass<this["name"]>[];
+    unlock: number;
+    price: number;
+    keyName: string;
     /**
      * Adds a new tier to the game for upgrades and achievements
      * @param name The name of the new tier
@@ -27,5 +26,5 @@ export default class Tier {
      * @param req Which upgrade is required to unlock the upgrades
      * @param keyName Optional, the key for tiers, used in everything
      */
-    constructor(name: string, sampleIcon: Icon, color: string, special?: boolean, price?: number | "auto", unlock?: number | "auto" | null, achievUnlock?: number | "auto" | null, req?: string | null, keyName?: string | "auto");
+    constructor(name: string, sampleIcon: Game.Icon, color: string, special?: boolean, price?: number | "auto", unlock?: number | "auto" | null, achievUnlock?: number | "auto" | null, req?: string | null, keyName?: string | "auto");
 }

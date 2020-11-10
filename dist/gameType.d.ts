@@ -1,3 +1,8 @@
+declare class UndocumentedClassInstance {
+    [x: string]: any;
+    constructor(...props: any);
+}
+declare type UndocumentedClass = typeof UndocumentedClassInstance;
 /**
  * The Game object, generated automatically
  */
@@ -383,7 +388,7 @@ export default interface Game {
     ObjectsById: Array<any>;
     ObjectsN: number;
     BuildingsOwned: number;
-    Object: any;
+    Object: UndocumentedClass;
     DrawBuildings: Function;
     sortSprites: Function;
     sortSpritesById: Function;
@@ -402,12 +407,12 @@ export default interface Game {
     ClickProduct: Function;
     mutedBuildingTooltip: Function;
     upgradesToRebuild: number;
-    Upgrades: Array<any>;
-    UpgradesById: Array<any>;
+    Upgrades: Array<Game["Upgrade"]>;
+    UpgradesById: Array<Game["Upgrade"]>;
     UpgradesN: number;
     UpgradesInStore: Array<any>;
     UpgradesOwned: number;
-    Upgrade: any;
+    Upgrade: UndocumentedClass;
     storeBuyAll: Function;
     vault: Array<any>;
     CountsAsUpgradeOwned: Function;
@@ -465,11 +470,11 @@ export default interface Game {
     goldenCookieUpgrades: Array<any>;
     cookieUpgrades: Array<any>;
     UpgradePositions: object;
-    Achievements: Array<any>;
-    AchievementsById: Array<any>;
+    Achievements: Array<Game["Achievement"]>;
+    AchievementsById: Array<Game["Achievement"]>;
     AchievementsN: number;
     AchievementsOwned: number;
-    Achievement: Function;
+    Achievement: UndocumentedClass;
     Win: Function;
     RemoveAchiev: Function;
     CountsAsAchievementOwned: Function;
@@ -564,3 +569,4 @@ export interface FoolBuilding {
 export declare type AddEvent = (htmlElement: HTMLElement, eventName: string, eventFunction: (e: Event | any) => void) => void;
 export declare type l = (name: string) => HTMLElement;
 export declare type PlaySound = (url: string, volume?: number, pitch?: number) => void;
+export {};

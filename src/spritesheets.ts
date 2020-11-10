@@ -1,5 +1,3 @@
-import { Icon } from "./gameType"
-
 // Resolve aliases
 /**
  * Currently defined alias
@@ -58,7 +56,7 @@ function relink(
 		if (!(matrix[0] instanceof Array)) matrix = [matrix as string[]]
 		matrix = matrix as string[][]
 		//Collect references
-		const references: Record<string, Icon> = {}
+		const references: Record<string, Game.Icon> = {}
 		for (const y in matrix)
 			for (const x in matrix[y]) {
 				matrix[y][x] = matrix[y][x].toString().toLowerCase()
@@ -114,10 +112,10 @@ export async function relinkColumn(
 ): Promise<void> {
 	const columnIcons: Record<string, UniversalIcon> = { ...extraColumnIcons }
 	// Automatically generate normal tiers
-	for (const i in window.Game.Tiers)
-		columnIcons[window.Game.Tiers[i].name.toLowerCase()] = columnIcons[
+	for (const i in Game.Tiers)
+		columnIcons[Game.Tiers[i].name.toLowerCase()] = columnIcons[
 			i.toString()
-		] = [0, window.Game.Tiers[i].iconRow]
+		] = [0, Game.Tiers[i].iconRow]
 	alias(
 		link,
 		await relink(
@@ -158,9 +156,9 @@ export async function relinkRow(
 ): Promise<void> {
 	const rowIcons: Record<string, UniversalIcon> = { ...extraRowIcons }
 	// Automatically generate normal buildings
-	for (const i in window.Game.ObjectsById)
-		rowIcons[window.Game.ObjectsById[i].single.toLowerCase()] = rowIcons[i] = [
-			window.Game.Tiers[i].icon,
+	for (const i in Game.ObjectsById)
+		rowIcons[Game.ObjectsById[i].single.toLowerCase()] = rowIcons[i] = [
+			Game.Tiers[i].iconRow,
 			0,
 		]
 	alias(

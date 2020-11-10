@@ -116,8 +116,8 @@ export function loadUpgrade(upgrade: Upgrade): UpgradeSave {
  */
 export function saveUpgrade(upgrade: Upgrade): void {
 	save.foreign.upgrades[upgrade.name] = {
-		unlocked: upgrade.unlocked,
-		bought: upgrade.bought,
+		unlocked: !!upgrade.unlocked,
+		bought: !!upgrade.bought,
 	}
 }
 /**
@@ -127,11 +127,11 @@ export function saveUpgrade(upgrade: Upgrade): void {
 export function loadAll(): void {
 	for (const i in master.customBuildings) {
 		const me = master.customBuildings[i]
-		applyAllProps(window.Game.Objects[me.name], loadBuilding(me))
+		applyAllProps(Game.Objects[me.name], loadBuilding(me))
 	}
 	for (const i in master.customUpgrades) {
 		const me = master.customUpgrades[i]
-		applyAllProps(window.Game.Upgrades[me.name], loadUpgrade(me))
+		applyAllProps(Game.Upgrades[me.name], loadUpgrade(me))
 	}
 }
 /**

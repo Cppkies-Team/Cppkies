@@ -1,6 +1,6 @@
 import { injectCode } from "../helpers"
 import { Injection } from "./generic"
-import { Icon } from "../gameType"
+//import { Icon } from "../types/gameType"
 
 export interface Hooks {
 	//! Custom menus
@@ -41,7 +41,11 @@ export interface Hooks {
 	 * @param icon The current icon
 	 * @returns An icon
 	 */
-	customGetIcon: ((type: string, tier: string | number, icon: Icon) => Icon)[]
+	customGetIcon: ((
+		type: string,
+		tier: string | number,
+		icon: Game.Icon
+	) => Game.Icon)[]
 
 	//! Buildings
 	/**
@@ -79,8 +83,8 @@ export function main(): Promise<Hooks> {
 			Allows you to add entries to all menus
 			*/
 			new Injection("customMenu", () => {
-				window.Game.UpdateMenu = injectCode(
-					window.Game.UpdateMenu,
+				Game.UpdateMenu = injectCode(
+					Game.UpdateMenu,
 					null,
 					`
 					// Cppkies injection
@@ -115,8 +119,8 @@ export function main(): Promise<Hooks> {
 			hard: boolean - whether or not this is a hard reset
 			*/
 			new Injection("customLoad", () => {
-				window.Game.LoadSave = injectCode(
-					window.Game.LoadSave,
+				Game.LoadSave = injectCode(
+					Game.LoadSave,
 					"if (Game.prefs.showBackupWarning==1)",
 					`
 					// Cppkies injection
@@ -126,8 +130,8 @@ export function main(): Promise<Hooks> {
 				)
 			}),
 			new Injection("customReset", () => {
-				window.Game.Reset = injectCode(
-					window.Game.Reset,
+				Game.Reset = injectCode(
+					Game.Reset,
 					null,
 					`
 					// Cppkies injection
@@ -145,8 +149,8 @@ export function main(): Promise<Hooks> {
 				icon: Icon - the current icon
 			 */
 			new Injection("customGetIcon", () => {
-				window.Game.GetIcon = injectCode(
-					window.Game.GetIcon,
+				Game.GetIcon = injectCode(
+					Game.GetIcon,
 					"return [col,Game.Tiers[tier].iconRow];",
 					`
 					// Cppkies Injection
@@ -155,7 +159,7 @@ export function main(): Promise<Hooks> {
 					return icon
 `,
 					"replace"
-				)
+				) as typeof Game.GetIcon
 			}),
 			//// -- Sugar Lump -- ////
 			// TODO Rewrite Game.computeLumpType
@@ -174,8 +178,8 @@ export function main(): Promise<Hooks> {
 				Called after BuildStore, used internally
 			 */
 			new Injection("postBuildStore", () => {
-				window.Game.BuildStore = injectCode(
-					window.Game.BuildStore,
+				Game.BuildStore = injectCode(
+					Game.BuildStore,
 					null,
 					";\nfor(const i in Cppkies.hooks.postBuildStore) Cppkies.hooks.postBuildStore[i]()",
 					"after"
@@ -185,14 +189,17 @@ export function main(): Promise<Hooks> {
 				Adds grandma options, must return a truthy value to be considered an image
 			 */
 			new Injection("customGrandmaPic", () => {
-				window.Game.Objects.Grandma.art.pic = injectCode(
-					window.Game.Objects.Grandma.art.pic,
+				Game.Objects.Grandma.art.pic = injectCode(
+					Game.Objects.Grandma.art.pic as (
+						building: Game.Object,
+						i: number
+					) => string,
 					"return choose(list)+'.png'",
 					`// Cppkies injection
 					list = list.concat(Cppkies.hooks.customGrandmaPic.map(val=> val()).filter(val => val))
 					`,
 					"before"
-				)
+				) as (building: Game.Object, i: number) => string
 			}),
 		]
 		injections.forEach(inject => {
@@ -200,8 +207,8 @@ export function main(): Promise<Hooks> {
 			inject.func?.()
 		})
 		//Misc stuff
-		window.Game.Loader.Load = injectCode(
-			window.Game.Loader.Load,
+		Game.Loader.Load = injectCode(
+			Game.Loader.Load,
 			"img.src=this.domain",
 			`
 			// Cppkies injection
@@ -209,18 +216,18 @@ export function main(): Promise<Hooks> {
 `,
 			"replace"
 		)
-		window.Game.Objects.Cursor.buyFunction = injectCode(
-			window.Game.Objects.Cursor.buyFunction,
+		Game.Objects.Cursor.buyFunction = injectCode(
+			Game.Objects.Cursor.buyFunction,
 			"Game.Unlock('Octillion fingers');",
 			`
  			// Cppkies injection
 			for(const i in this.tieredUpgrades) {
 				if (isNaN(parseInt(i))) break
-				if (this.amount >= window.Game.Tiers[this.tieredUpgrades[i].tier].unlock - 50) this.tieredUpgrades[i].unlock()
+				if (this.amount >= Game.Tiers[this.tieredUpgrades[i].tier].unlock - 50) this.tieredUpgrades[i].unlock()
 			}
 `,
 			"after"
-		)
+		) as (this: Game.Object) => void
 		resolve(dummy as Hooks)
 	})
 }

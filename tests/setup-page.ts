@@ -1,13 +1,15 @@
-import Game from "../src/gameType"
-declare let Game: Game
-declare let Cppkies: typeof import("../dist").default
+import { Page } from "puppeteer"
 
-export default async function(): Promise<void> {
+export default async function(page: Page): Promise<void> {
 	await page.goto("https://orteil.dashnet.org/cookieclicker")
+	await page.waitFor(1000 * 0.5)
 	await ((): Promise<void> => {
 		return new Promise(res => {
-			setTimeout(() => {
-				if (page.evaluate(() => Game && Game.ready)) res()
+			const timeoutId = setInterval(async () => {
+				if (await page.evaluate(() => Game && Game.ready)) {
+					clearInterval(timeoutId)
+					res()
+				}
 			}, 100)
 		})
 	})()
@@ -20,6 +22,7 @@ export default async function(): Promise<void> {
 			}, 1000)
 		})
 	})
+
 	// Transfer Game and Cppkies into global scope
 	//globalThis.Game = await page.evaluate(() => globalThis.Game)
 	//globalThis.Cppkies = await page.evaluate(() => globalThis.Cppkies)

@@ -8,5 +8,6 @@
 		"krumblor",
 		"prefs",
 		"targ"
-	]
+	],
+	"cmake.configureOnOpen": false
 }

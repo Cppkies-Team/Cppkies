@@ -13,11 +13,11 @@ declare const master: {
     buildingLink: string;
     buildingHooks: {};
     buildingHooksById: any[];
-    customBuildings: any[];
-    customUpgrades: any[];
-    customTiers: any[];
+    customBuildings: Building[];
+    customUpgrades: Upgrade[];
+    customTiers: Tier[];
     save: import("./saves").SaveType;
-    onLoad: any[];
+    onLoad: (() => void)[];
     Building: typeof Building;
     Upgrade: typeof Upgrade;
     TieredUpgrade: typeof TieredUpgrade;

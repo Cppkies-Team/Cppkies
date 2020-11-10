@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"module": "esnext",
+		"module": "CommonJS",
 		"lib": ["DOM"],
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
@@ -8,11 +8,6 @@
 
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
-		"types": [
-			"jest",
-			"jest-environment-puppeteer",
-			"expect-puppeteer",
-			"puppeteer"
-		]
+		"types": ["jest", "puppeteer", "cookieclicker"]
 	}
 }

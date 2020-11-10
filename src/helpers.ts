@@ -29,13 +29,13 @@ export function escapeRegExp(str: string): string {
  * @param context The optional context to use
  * @helper
  */
-export function injectCode(
-	func: Function,
+export function injectCode<T extends Function>(
+	func: T,
 	source: CommonValue<string> | CommonValue<RegExp> | null,
 	target: CommonValue<string>,
 	where: "before" | "replace" | "after",
 	context: object = {}
-): Function {
+): T {
 	let newFuncStr = func.toString()
 	const sliceMode = source === null
 	let regex: RegExp

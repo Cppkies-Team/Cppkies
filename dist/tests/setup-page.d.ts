@@ -1,1 +1,2 @@
-export default function (): Promise<void>;
+import { Page } from "puppeteer";
+export default function (page: Page): Promise<void>;

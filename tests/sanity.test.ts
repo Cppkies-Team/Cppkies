@@ -1,13 +1,22 @@
-import "expect-puppeteer"
-import Game from "../src/gameType"
-declare let Game: Game
+/*import GameT from "../src/types/gameType"
+declare let Game: typeof GameT*/
+jest.setTimeout(60000)
+import puppeteer, { Page } from "puppeteer"
+
+let page: Page = null
 
 beforeAll(async () => {
+	page = await (await puppeteer.launch()).newPage()
 	await page.goto("https://orteil.dashnet.org/cookieclicker")
 	await ((): Promise<void> => {
 		return new Promise(res => {
-			setTimeout(() => {
-				if (page.evaluate(() => Game && Game.ready)) res()
+			const timeoutId = setInterval(() => {
+				setTimeout(() => {
+					if (page.evaluate(() => Game && Game.ready)) {
+						clearInterval(timeoutId)
+						res()
+					}
+				}, 2000)
 			}, 100)
 		})
 	})()
@@ -18,11 +27,6 @@ describe("Sanity checks", () => {
 	/*it("Should reference dashnet", async () => {
 		await expect(page).toMatch(/dashnet/i)
 	})*/
-	it("No Cppkies or CCSE should be present", async () => {
-		expect(
-			await page.evaluate(() => globalThis.CCSE || globalThis.Cppkies)
-		).toBeUndefined()
-	})
 
 	it("Should be able to load mods", async () => {
 		await page.evaluate(() =>
@@ -36,8 +40,10 @@ describe("Sanity checks", () => {
 			Game.LoadMod("http://localhost:5501/dist/index.js")
 			if (!globalThis.CPPKIES_ONLOAD) globalThis.CPPKIES_ONLOAD = []
 			return new Promise(resolve => {
-				globalThis.CPPKIES_ONLOAD.push(() => resolve())
+				;(globalThis.CPPKIES_ONLOAD as (() => void)[]).push(resolve)
 			})
 		})
 	})
 })
+
+afterAll(() => page.browser().close())

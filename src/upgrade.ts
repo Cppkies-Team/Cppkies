@@ -1,4 +1,3 @@
-import { Icon } from "./gameType"
 import master from "./vars"
 import { loadUpgrade } from "./saves"
 import { CommonValue, toSentenseCase } from "./helpers"
@@ -7,7 +6,7 @@ import { resolveAlias } from "./spritesheets"
 /**
  * The class for upgrades
  */
-export class Upgrade extends window.Game.Upgrade {
+export class Upgrade extends Game.Upgrade {
 	/**
 	 * Creates an upgrade
 	 * @param name The name of the upgrade
@@ -20,7 +19,7 @@ export class Upgrade extends window.Game.Upgrade {
 		name: string,
 		desc: CommonValue<string>,
 		price: CommonValue<number>,
-		icon: CommonValue<Icon>,
+		icon: CommonValue<Game.Icon>,
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		buyFunc: () => void = (): void => {}
 	) {
@@ -33,6 +32,7 @@ export class Upgrade extends window.Game.Upgrade {
 			typeof icon === "function" ? [0, 0] : icon,
 			buyFunc
 		)
+
 		if (typeof desc === "function") this.descFunc = desc
 		if (typeof price === "function") this.priceFunc = price
 		if (typeof icon === "function") this.iconFunction = icon
@@ -45,7 +45,11 @@ export class Upgrade extends window.Game.Upgrade {
 /**
  * The class for heavenly upgrades
  */
-export class HeavenlyUpgrade extends Upgrade {
+export class HeavenlyUpgrade extends Upgrade implements Game.HeavenlyUpgrade {
+	posX: number
+	posY: number
+
+	pool = "prestige" as const
 	/**
 	 * Creates a heavenly upgrade
 	 * @param name The name for it
@@ -60,27 +64,37 @@ export class HeavenlyUpgrade extends Upgrade {
 		name: string,
 		desc: CommonValue<string>,
 		price: CommonValue<number>,
-		icon: CommonValue<Icon>,
+		icon: CommonValue<Game.Icon>,
 		position: [number, number],
-		public parents: (string | number)[] = ["Legacy"],
+		parents: (string | number)[] = ["Legacy"],
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		buyFunc: () => void = (): void => {}
 	) {
 		super(name, desc, price, icon, buyFunc)
-		this.pool = "prestige"
+
 		this.posX = position[0]
 		this.posY = position[1]
-		for (const i in this.parents) {
-			const me = this.parents[i]
-			//Try both by name and by id
-			this.parents[i] = window.Game.Upgrades[me] || window.Game.UpgradesById[me]
-		}
-		window.Game.PrestigeUpgrades.push(this)
-		window.Game.UpgradePositions[this.id] = position
+
+		this.parents = parents.map(id => Game.Upgrades[id] || Game.UpgradesById[id])
+
+		Game.PrestigeUpgrades.push(this)
+		Game.UpgradePositions[this.id] = position
 	}
 }
 
-export class TieredUpgrade extends Upgrade {
+function isFortune<Tier extends string>(
+	upgrade: TieredUpgrade<Tier | "fortune">
+): upgrade is TieredUpgrade<"fortune"> {
+	return upgrade.tier === "fortune"
+}
+
+export class TieredUpgrade<Tier extends string> extends Upgrade
+	implements Game.TieredUpgradeClass<Tier> {
+	buildingTie: Game.Object
+	buildingTie1: Game.Object
+
+	pool: ""
+
 	/**
 	 * Creates a tiered upgrade
 	 * @param name The name of the tiered upgrade
@@ -91,29 +105,33 @@ export class TieredUpgrade extends Upgrade {
 	constructor(
 		name: string,
 		description: string,
-		building: string,
-		tier: string | number
+		building: Game.Object,
+		public tier: Tier
 	) {
 		super(
 			name,
 			`${toSentenseCase(
-				window.Game.Objects[building].plural
+				building.plural
 			)} are <b>twice</b> as efficient.<q>${description}</q>`,
-			window.Game.Objects[building].basePrice * window.Game.Tiers[tier].price,
-			window.Game.GetIcon(building, tier)
+			building.basePrice * Game.Tiers[tier].price,
+			Game.GetIcon(building.name, tier)
 		)
-		window.Game.SetTier(building, tier)
-		this.buildingTie1 = window.Game.Objects[building]
-		if (tier === "fortune") window.Game.Objects[building].fortune = this
-		if (typeof tier === "number")
-			this.order = (window.Game.Objects[building].id + 1) * 100 + tier
+		Game.SetTier(building.name, tier)
+
+		this.buildingTie1 = building
+		if (isFortune(this)) {
+			building.fortune = this
+		}
+		if (typeof tier === "number") this.order = (building.id + 1) * 100 + tier
 		// Manually patch order since Orteil doesn't like consistency
-		this.order -=
-			Math.max(0, Math.min(window.Game.Objects[building].id - 4, 3)) * 75
+		this.order -= Math.max(0, Math.min(building.id - 4, 3)) * 75
 	}
 }
 
-export class GrandmaSynergy extends Upgrade {
+export class GrandmaSynergy extends Upgrade
+	implements Game.GrandmaSynergyClass {
+	buildingTie: Game.Object
+	pool: ""
 	/**
 	 * Creates a grandma synergy upgrade
 	 * @param name The name for the upgrade(Usually something like "_ Grandmas")
@@ -124,10 +142,9 @@ export class GrandmaSynergy extends Upgrade {
 	constructor(
 		name: string,
 		quote: string,
-		buildingName: string,
+		building: Game.Object,
 		grandmaPicture?: string
 	) {
-		const building = window.Game.Objects[buildingName]
 		let grandmaNumber: string | number = building.id - 1
 		if (grandmaNumber === 1) grandmaNumber = "grandma"
 		else grandmaNumber = `${grandmaNumber} grandmas`
@@ -136,15 +153,13 @@ export class GrandmaSynergy extends Upgrade {
 			`Grandmas are <b>twice</b> as efficient.${toSentenseCase(
 				building.plural
 			)} gain <b>+1% CpS</b> per ${grandmaNumber}.<q>${quote}</q>`,
-			building.basePrice * window.Game.Tiers[2].price,
+			building.basePrice * Game.Tiers[2].price,
 			[10, 9],
-			function() {
-				window.Game.Objects.Grandma.redraw()
-			}
+			Game.Objects.Grandma.redraw
 		)
 		building.grandma = this
 		this.buildingTie = building
-		window.Game.GrandmaSynergies.push(this.name)
+		Game.GrandmaSynergies.push(this.name)
 		if (grandmaPicture)
 			master.hooks.customGrandmaPic.push(() => {
 				if (this.bought) return grandmaPicture
@@ -152,7 +167,12 @@ export class GrandmaSynergy extends Upgrade {
 	}
 }
 
-export class SynergyUpgrade extends Upgrade {
+export class SynergyUpgrade<Tier extends string> extends Upgrade
+	implements Game.SynergyUpgradeClass<Tier> {
+	buildingTie1: Game.Object
+	buildingTie2: Game.Object
+	tier: Tier
+	pool: ""
 	/**
 	 * Creates a synergy upgrade
 	 * @param name The name for the upgrade
@@ -164,16 +184,10 @@ export class SynergyUpgrade extends Upgrade {
 	constructor(
 		name: string,
 		desc: string,
-		building1Name: string,
-		building2Name: string,
-		tier: string | number
+		building1: Game.Object,
+		building2: Game.Object,
+		tier: Tier
 	) {
-		let building1 = window.Game.Objects[building1Name]
-		let building2 = window.Game.Objects[building2Name]
-		if (building1.basePrice > building2.basePrice) {
-			building1 = window.Game.Objects[building2Name]
-			building2 = window.Game.Objects[building1Name]
-		} //swap
 		desc = `${toSentenseCase(
 			building1.plural
 		)} gain <b>+5% CpS</b> per ${building2.name.toLowerCase()}.<br>${toSentenseCase(
@@ -184,8 +198,8 @@ export class SynergyUpgrade extends Upgrade {
 			name,
 			desc,
 			(building1.basePrice * 10 + building2.basePrice * 1) *
-				window.Game.Tiers[tier].price,
-			window.Game.GetIcon(building1Name, tier)
+				Game.Tiers[tier].price,
+			Game.GetIcon(building1.name, tier)
 		)
 		this.tier = tier
 		this.buildingTie1 = building1

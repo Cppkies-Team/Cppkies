@@ -1,4 +1,3 @@
-import gameType, { FoolBuilding, Icon } from "./gameType"
 import master from "./vars"
 import { injectCode } from "./helpers"
 import { Injection } from "./injects/generic"
@@ -8,25 +7,12 @@ import { resolveAlias } from "./spritesheets"
 /**
  * The art of a building, used for drawing the drawing in the middle
  */
-interface Art {
-	base?: string
-	xV?: number
-	yV?: number
-	w?: number
-	h?: number
-	rows?: number
-	x?: number
-	y?: number
-	pic?: string
-	bg?: string
-	frames?: number
-}
 
 /**
  * Creates the hooks for a building
  * @param building The building to create hooks for
  */
-export function createHooks(building: Building | gameType["Object"]): void {
+export function createHooks(building: Building | Game.Object): void {
 	const injections: Injection[] = [
 		new Injection("tooltip", () => {
 			building.tooltip = injectCode(
@@ -53,9 +39,9 @@ export function createHooks(building: Building | gameType["Object"]): void {
 /**
  * The building class for creating new buildings
  */
-export class Building extends window.Game.Object {
+export class Building extends Game.Object {
 	iconLink: string
-	bigIconLink: string
+	buildingLink: string
 	/**
 	 * Creates a new building and creates the hooks for it
 	 * @param name The name of the building
@@ -73,12 +59,12 @@ export class Building extends window.Game.Object {
 		name: string,
 		commonName: string,
 		desc: string,
-		icon: Icon,
-		bigIcon: Icon,
-		art: Art,
+		icon: Game.Icon,
+		bigIcon: Game.Icon,
+		art: Game.Art,
 		cpsFunc: (me: Building) => number,
 		buyFunction: () => void,
-		foolObject: FoolBuilding,
+		foolObject: Game.FoolBuilding,
 		buildingSpecial: [string, string]
 	) {
 		//Warn about enforced orders
@@ -108,19 +94,20 @@ export class Building extends window.Game.Object {
 		// Create hooks
 		createHooks(this)
 		//Manually relink canvases and contexts because Orteil made it so new buildings break the old canvas and context links
-		for (const i in window.Game.ObjectsById) {
+		for (const i in Game.ObjectsById) {
 			if (parseInt(i) <= 0) continue
-			const me = window.Game.ObjectsById[i]
-			me.canvas = window.l(`rowCanvas${i}`)
+			const me = Game.ObjectsById[i]
+			me.canvas = window.l(`rowCanvas${i}`) as HTMLCanvasElement
+			if (!me.canvas) continue
 			me.ctx = me.canvas.getContext("2d")
 			//Relink their events too
-			window.AddEvent(me.canvas, "mouseover", () => {
+			me.canvas.addEventListener("mouseover", () => {
 				me.mouseOn = true
 			})
-			window.AddEvent(me.canvas, "mouseout", () => {
+			me.canvas.addEventListener("mouseout", () => {
 				me.mouseOn = false
 			})
-			window.AddEvent(me.canvas, "mousemove", e => {
+			me.canvas.addEventListener("mousemove", e => {
 				const box = me.canvas.getBoundingClientRect()
 				me.mousePos[0] = e.pageX - box.left
 				me.mousePos[1] = e.pageY - box.top
@@ -135,10 +122,9 @@ export class Building extends window.Game.Object {
 		this.buildingLink = bigIcon[2] || master.buildingLink + ""
 		this.iconLink = resolveAlias(icon[2] || master.iconLink + "")
 		// This is the name, description, and icon used during Business Season
-		if (foolObject) window.Game.foolObjects[name] = foolObject
+		if (foolObject) Game.foolObjects[name] = foolObject
 		// The name of this building's golden cookie buff and debuff
-		if (buildingSpecial)
-			window.Game.goldenCookieBuildingBuffs[name] = buildingSpecial
+		if (buildingSpecial) Game.goldenCookieBuildingBuffs[name] = buildingSpecial
 
 		//CCSE.ReplaceBuilding(name)
 
@@ -153,7 +139,7 @@ export class Building extends window.Game.Object {
 			)
 		}
 
-		window.Game.BuildStore()
+		Game.BuildStore()
 		if (this.buildingLink) {
 			master.hooks.postBuildStore.push(() => {
 				window.l(
@@ -164,10 +150,10 @@ export class Building extends window.Game.Object {
 				).style.backgroundImage = `url(${this.buildingLink})`
 			})
 		}
-		window.Game.BuildStore()
-		this.canvas = window.l(`rowCanvas${this.id}`)
+		Game.BuildStore()
+		this.canvas = window.l(`rowCanvas${this.id}`) as HTMLCanvasElement
 		this.ctx = this.canvas.getContext("2d")
-		this.context = this.ctx
+		//this.context = this.ctx
 		this.pics = []
 		const muteDiv = document.createElement("div")
 		muteDiv.className = "tinyProductIcon"
@@ -188,7 +174,7 @@ export class Building extends window.Game.Object {
 		window.AddEvent(this.canvas, "mouseout", () => {
 			this.mouseOn = false
 		})
-		window.AddEvent(this.canvas, "mousemove", e => {
+		this.canvas.addEventListener("mousemove", e => {
 			const box = this.canvas.getBoundingClientRect()
 			this.mousePos[0] = e.pageX - box.left
 			this.mousePos[1] = e.pageY - box.top
@@ -197,7 +183,7 @@ export class Building extends window.Game.Object {
 		// Load the save stuff
 		const loadProps = loadBuilding(this)
 		for (const i in loadProps) this[i] = loadProps[i]
-		window.Game.recalculateGains = 1
+		Game.recalculateGains = 1
 	}
 }
 /**
@@ -205,16 +191,16 @@ export class Building extends window.Game.Object {
  * @param me Itself
  */
 export const defaultCps = (me: Building): number =>
-	window.Game.GetTieredCpsMult(me) * window.Game.magicCpS(me.name) * me.baseCps
+	Game.GetTieredCpsMult(me) * Game.magicCpS(me.name) * me.baseCps
 /**
  * The reccomended function to pass in building BuyFunc
  */
 export const defaultOnBuy = function(): void {
-	window.Game.UnlockTiered(this)
+	Game.UnlockTiered(this)
 	if (
-		this.amount >= window.Game.SpecialGrandmaUnlock &&
-		window.Game.Objects["Grandma"].amount > 0 &&
+		this.amount >= Game.SpecialGrandmaUnlock &&
+		Game.Objects["Grandma"].amount > 0 &&
 		this.grandma
 	)
-		window.Game.Unlock(this.grandma.name)
+		Game.Unlock(this.grandma.name)
 }
