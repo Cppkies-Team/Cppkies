@@ -8,15 +8,15 @@ let page: Page = null
 beforeAll(async () => {
 	page = await (await puppeteer.launch()).newPage()
 	await page.goto("https://orteil.dashnet.org/cookieclicker")
+	await page.waitFor(1000 * 1.5)
 	await ((): Promise<void> => {
 		return new Promise(res => {
 			const timeoutId = setInterval(() => {
-				setTimeout(() => {
-					if (page.evaluate(() => Game && Game.ready)) {
-						clearInterval(timeoutId)
-						res()
-					}
-				}, 2000)
+				if (page.isClosed()) clearInterval(timeoutId)
+				if (page.evaluate(() => Game && Game.ready)) {
+					clearInterval(timeoutId)
+					res()
+				}
 			}, 100)
 		})
 	})()

@@ -2,10 +2,11 @@ import { Page } from "puppeteer"
 
 export default async function(page: Page): Promise<void> {
 	await page.goto("https://orteil.dashnet.org/cookieclicker")
-	await page.waitFor(1000 * 0.5)
+	await page.waitFor(1000 * 1.5)
 	await ((): Promise<void> => {
 		return new Promise(res => {
 			const timeoutId = setInterval(async () => {
+				if (page.isClosed()) clearInterval(timeoutId)
 				if (await page.evaluate(() => Game && Game.ready)) {
 					clearInterval(timeoutId)
 					res()

@@ -100,7 +100,7 @@ it("Should load data on reload", async () => {
 	})
 
 	// Wait for save
-	await page.waitFor(1000 * 0.5)
+	await page.waitFor(1000 * 1.5)
 
 	await preparePage(page)
 
