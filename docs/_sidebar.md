@@ -1,5 +1,4 @@
 - Getting Started
-  - [Introduction](Intro.md)
   - [Setup](Setup.md)
   - [Creating an Upgrade](tutorials/Upgrades.md)
   - [Creating a Building](tutorials/Buildings.md)

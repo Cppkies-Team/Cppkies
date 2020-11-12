@@ -128,6 +128,9 @@ export class TieredUpgrade<Tier extends string | number = string | number>
 			this.order = 19000
 			building.fortune = this
 		}
+		if (!isNaN(parseInt(tier.toString()))) {
+			tier = parseInt(tier.toString()) as Tier
+		}
 		if (typeof tier === "number") {
 			this.order = (building.id + 1) * 100 + tier
 			// Manually patch order since Orteil doesn't like consistency

@@ -1,6 +1,6 @@
 # Icon
 
-The Icon type allows to set the position of the icon in an iconsheet and set the source.
+Icons are small pieces of art, they are 48 by 48, and can provide a source.
 
 ## Type
 

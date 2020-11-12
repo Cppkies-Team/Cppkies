@@ -1,10 +1,10 @@
 # Roadmap
 
 - [x] Buildings
-- [ ] Upgrades
+- [x] Upgrades
   - [ ] Fortune Upgrades
   - [ ] Seasonal Upgrades
-  - [ ] Heavenly Upgrades
+  - [x] Heavenly Upgrades
 - [ ] Achievements
 - [ ] Buffs
 - [ ] Garden Hooks

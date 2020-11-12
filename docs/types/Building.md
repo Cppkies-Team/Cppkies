@@ -1,7 +1,5 @@
 # Buildings
 
-:warning: Warning! This page is talking about a future API/ an API on the beta branch :warning:
-
 Buildings are the main way you make cookies in Cookie Clicker, in the original API, buildings are called objects, which can be confused with the builtin `Object` wrapper class.
 
 Buildings are classes, so they must be initialized with the `new` keyword.

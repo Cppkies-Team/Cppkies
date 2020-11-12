@@ -2,7 +2,7 @@
 
 There are 2 ways of using Cppkies, installing with NPM or importing though `Game.LoadMod`.
 
-### Using NPM - TS
+### Using NPM - JS or TS
 
 Using Cppkies with NPM is the recommended way of using Cppkies, since you can split your code into files and use typescript.
 
@@ -17,10 +17,8 @@ yarn add cppkies
 Then you can use a bundler, like Webpack or Rollup, to bundle them.
 
 ```ts
-import * as Cppkies from "cppkies"
-Cppkies.onLoad.push(() => {
-	new Cppkies.Upgrade("Hello, World!", "My first upgrade!", 7, [10, 5])
-})
+import * as Cppkies from "cppkies"rm
+new Cppkies.Upgrade("Hello, World!", "My first upgrade!", 7, [10, 5])
 ```
 
 ### Importing through `Game.LoadMod` - JS
@@ -37,15 +35,13 @@ For example:
 
 ```js
 Game.LoadMod("https://unpkg.com/cppkies")
-Cppkies.onLoad.push(() => {
+if (!window.CPPKIES_ONLOAD) CPPKIES_ONLOAD = []
+CPPKIES_ONLOAD.push(() => {
 	new Cppkies.Upgrade("Hello, World!", "My first upgrade!", 7, [10, 5])
 })
 ```
 
 ### Setting up your Workspace - TS
 
-<!-- Basically just creating a main mod file and explaining the benefits of separating your projects code into multiple files -->
-
-### Creating your addon's backbone - JS & TS
-
-<!-- All this would be is a simple explanation of pushing to functions, setting up Cppkies.onLoad, etc. -->
+If you want to use webpack or rollup, use must use [npm](https://npmjs.org) which is bundled with node, download for can be found for it [here](https://nodejs.org/en/download). After creating a `package.json`(`npm init`), you must setup rollup or webpack,
+documentation for which can be found here ([rollup](https://rollupjs.org/guide/en/#quick-start), [webpack](https://webpack.js.org/concepts/)).
