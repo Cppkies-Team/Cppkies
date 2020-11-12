@@ -125,11 +125,14 @@ export class TieredUpgrade<Tier extends string | number = string | number>
 
 		this.buildingTie1 = building
 		if (isFortune(this)) {
+			this.order = 19000
 			building.fortune = this
 		}
-		if (typeof tier === "number") this.order = (building.id + 1) * 100 + tier
-		// Manually patch order since Orteil doesn't like consistency
-		this.order -= Math.max(0, Math.min(building.id - 4, 3)) * 75
+		if (typeof tier === "number") {
+			this.order = (building.id + 1) * 100 + tier
+			// Manually patch order since Orteil doesn't like consistency
+			this.order -= Math.max(0, Math.min(building.id - 4, 3)) * 75
+		}
 	}
 }
 
@@ -165,6 +168,7 @@ export class GrandmaSynergy extends Upgrade
 		)
 		building.grandma = this
 		this.buildingTie = building
+		this.order = 250 + (building.id / 12) * 5
 		Game.GrandmaSynergies.push(this.name)
 		if (grandmaPicture)
 			master.hooks.customGrandmaPic.push(() => {
@@ -212,6 +216,7 @@ export class SynergyUpgrade<Tier extends string> extends Upgrade
 		this.tier = tier
 		this.buildingTie1 = building1
 		this.buildingTie2 = building2
+		this.order = 5000
 		building1.synergies.push(this)
 		building2.synergies.push(this)
 	}
