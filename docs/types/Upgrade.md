@@ -2,7 +2,7 @@
 
 Upgrades are items than can be bought for cookies and they modify the production of cookies.
 
-Buildings are classes, so they must be initialized with the `new` keyword.
+Upgrades are classes, so they must be initialized with the `new` keyword.
 
 By default, upgrades are never unlocked and do nothing.
 
