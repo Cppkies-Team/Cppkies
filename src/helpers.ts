@@ -36,6 +36,11 @@ export function injectCode<T extends Function>(
 	where: "before" | "replace" | "after",
 	context: object = {}
 ): T {
+	// Sanity check
+	for (const i in context) {
+		if (!/[a-zA-Z_$][0-9a-zA-Z_$]*/.test(i))
+			throw new Error("Invalid context variable name!")
+	}
 	let newFuncStr = func.toString()
 	const sliceMode = source === null
 	let regex: RegExp

@@ -12,6 +12,8 @@
   - [Building](types/Building.md)
   - [Hooks](types/Hooks.md)
   - [Icon](types/Icon.md)
+  - [Upgrade](types/Upgrade.md)
+  - [Heavenly upgrade](types/HeavenlyUpgrade.md)
 
 - [Examples](Examples.md)
 - [Roadmap](Roadmap.md)

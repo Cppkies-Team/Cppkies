@@ -1,14 +1,14 @@
 # Upgrade
 
-Upgrades are items than can be bought for cookies and they modify the production of cookies.
+Upgrades are items that can be bought in the store, in the rightmost panel of the game.
 
-Buildings are classes, so they must be initialized with the `new` keyword.
+On their own, upgrades do nothing; they only record whether they are unlocked/bought or not. You need to write the code to unlock upgrades and modify gameplay somewhere else, calling `Game.Unlock` to unlock upgrades, and `Game.Has` to check whether an upgrade was bought.
 
-By default, upgrades are never unlocked and do nothing.
+Cppkies will automatically save whether the upgrade was unlocked/bought or not, so you don't have to manage this. This data is recorded to your save file's mod data.
 
 ## Example
 
-```ts
+```js
 new Cppkies.Upgrade(
 	"Useless upgrade",
 	"Does <b>nothing</b><q>Nice one!</q>",
@@ -29,41 +29,27 @@ new Cppkies.Upgrade(
 
 There are different sub-types of upgrades which have automatically generated parameters such as `order`, `desc`, unlock conditions, etc.
 
+Heavenly upgrades are drastically different and are located on [a different page](types/HeavenlyUpgrade.md).
+
 ### Tiered Upgrade
+
+Tiered upgrades are upgrades which multiply the production of a building by 2, they are automatically unlocked at a multiple of 50 of the building.
 
 1. `name` - `string` The name of the tiered upgrade
 2. `description` - `string` The quote (flavor text) of the upgrade
-3. `building` - `string |`[`Game.Object`](./Building.md) The building it boosts
-4. `tier` - `string | number` The upgrade's tier
+3. `building` - `string |`[`Game.Object`](types/Building.md) The building it boosts
+4. `tier` - `string | number` The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), `synergy2`(Synergy II), etc.
 
 #### Example
 
-```ts
+```js
 new Cppkies.TieredUpgrade(
 	"Stacked cursors",
-	"Never synchronized with eachover",
+	"Some quote here I don't know",
 	"Cursor",
-	"7"
+	"7" // The 7th normal tier, Jetmint
 )
 ```
 
-### Heavenly Upgrade
+<!--TODO: CursorUpgrade, MouseUpgrade, KittenUpgrade-->
 
-1. `name` - `string` The name for the heavenly upgrade
-2. `desc` The description of the heavenly upgrade
-3. `price` - The price of the heavenly upgrade (in Heavenly Chips)
-4. `icon` - [`Icon`](./Icon.md) The icon for the heavenly upgrade
-5. `position` - `[number, number]` The position of it on the heavenly map screen
-6. `parents` - `(number | string)[]` The heavenly upgrade's parents, can be mixed ID's with names
-7. `buyFunc` - `() => void` The function which gets called on being bought
-
-#### Example
-
-```ts
-new Cppkies.HeavenlyUpgrade(
-	"Heavenly uselessness",
-	"Does absolutely <b>nothing</b>.",
-	123,
-	[1, 7]
-)
-```
