@@ -26,4 +26,4 @@
 
 - [Examples](Examples.md)
 - [Roadmap](Roadmap.md)
-- [Changelog](CHANGELOG.md)
+- [Changelog](Changelog.md)

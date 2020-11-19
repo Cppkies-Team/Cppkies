@@ -24,3 +24,5 @@ new Cppkies.HeavenlyUpgrade(
 	["Legacy"]
 )
 ```
+
+<!--TODO: PseudoCookieUpgrade, `showIf` -->
