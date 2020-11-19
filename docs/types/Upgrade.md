@@ -4,6 +4,8 @@ Upgrades are items that can be bought in the store, in the rightmost panel of th
 
 On their own, upgrades do nothing; they only record whether they are unlocked/bought or not. You need to write the code to unlock upgrades and modify gameplay somewhere else, calling `Game.Unlock` to unlock upgrades, and `Game.Has` to check whether an upgrade was bought.
 
+Upgrades are classes, so they must be initialized with the `new` keyword.
+
 Cppkies will automatically save whether the upgrade was unlocked/bought or not, so you don't have to manage this. This data is recorded to your save file's mod data.
 
 ## Example
