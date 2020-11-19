@@ -59,6 +59,8 @@ function relink(
 		const references: Record<string, Game.Icon> = {}
 		for (const y in matrix)
 			for (const x in matrix[y]) {
+				// Ignore if falsy
+				if (!matrix[y][x]) continue
 				matrix[y][x] = matrix[y][x].toString().toLowerCase()
 				if (!(matrix[y][x] in icons)) throw new Error("Invalid icon name")
 				references[matrix[y][x]] = [parseInt(x), parseInt(y)]
@@ -144,6 +146,7 @@ const extraRowIcons: Record<string, UniversalIcon> = {
 	cookie: [10, 0],
 	mouse: [11, 0],
 	multicursor: [12, 0],
+	kitten: [18, 0],
 }
 /**
  * Relocates the icons for a row and automatically aliases it
@@ -158,7 +161,7 @@ export async function relinkRow(
 	// Automatically generate normal buildings
 	for (const i in Game.ObjectsById)
 		rowIcons[Game.ObjectsById[i].single.toLowerCase()] = rowIcons[i] = [
-			Game.Tiers[i].iconRow,
+			Game.ObjectsById[i].iconColumn,
 			0,
 		]
 	alias(

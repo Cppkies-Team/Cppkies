@@ -20,7 +20,7 @@ new Cppkies.HeavenlyUpgrade(
 	"Does absolutely <b>nothing</b>.",
 	123,
 	[1, 7],
-	[6, -197], // The position of the upgrade, right above
+	[6, -197], // The position of the upgrade, right above Legacy
 	["Legacy"]
 )
 ```

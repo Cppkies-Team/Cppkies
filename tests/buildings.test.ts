@@ -54,7 +54,7 @@ it("Should warn on invalid icon", async () => {
 					"Test building 2",
 					"test|tests|tested|[X] more test|[X] more tests",
 					"Test",
-					[1, 0],
+					[0, 1],
 					[0, 0],
 					{
 						bg: "bank",

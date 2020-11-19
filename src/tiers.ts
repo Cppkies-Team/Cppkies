@@ -1,3 +1,4 @@
+import { resolveAlias } from "./spritesheets"
 import master from "./vars"
 
 export const customTiers: Tier[] = []
@@ -43,6 +44,15 @@ export default class Tier implements Game.Tier {
 	) {
 		this.special = special
 
+		if (keyName === "auto")
+			if (!special)
+				this.keyName = (
+					Object.keys(Game.Tiers).filter(val => !isNaN(parseInt(val))).length +
+					1
+				).toString()
+			else this.keyName = name
+		else this.keyName = keyName
+
 		if (unlock === null) this.unlock = -1
 		if (typeof unlock === "number") this.unlock = unlock
 		if ((special === false && unlock === null) || unlock === "auto")
@@ -65,16 +75,7 @@ export default class Tier implements Game.Tier {
 			Analyze sample icon
 		*/
 		this.iconRow = sampleIcon[1]
-		if (master.iconLink) this.iconLink = master.iconLink
-		if (sampleIcon[2]) this.iconLink = sampleIcon[2]
-		if (keyName === "auto")
-			if (!special)
-				this.keyName = (
-					Object.keys(Game.Tiers).filter(val => !isNaN(parseInt(val))).length +
-					1
-				).toString()
-			else this.keyName = name
-		else this.keyName = keyName
+		this.iconLink = resolveAlias(sampleIcon[2] || master.iconLink + "")
 		Game.Tiers[this.keyName] = this
 		customTiers.push(this)
 	}

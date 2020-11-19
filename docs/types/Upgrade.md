@@ -33,7 +33,7 @@ Heavenly upgrades are drastically different and are located on [a different page
 
 ### Tiered Upgrade
 
-Tiered upgrades are upgrades which multiply the production of a building by 2, they are automatically unlocked at a multiple of 50 of the building.
+Tiered upgrades are upgrades which multiply the production of a building by 2, they are automatically unlocked at a multiple of 50 of the building. (Except for cursors)
 
 1. `name` - `string` The name of the tiered upgrade
 2. `description` - `string` The quote (flavor text) of the upgrade
@@ -44,12 +44,11 @@ Tiered upgrades are upgrades which multiply the production of a building by 2, t
 
 ```js
 new Cppkies.TieredUpgrade(
-	"Stacked cursors",
+	"Longer rolling pins",
 	"Some quote here I don't know",
-	"Cursor",
-	"7" // The 7th normal tier, Jetmint
+	"Grandma",
+	"13" // The 13th normal tier, Iridyum
 )
 ```
 
 <!--TODO: CursorUpgrade, MouseUpgrade, KittenUpgrade-->
-

@@ -72,12 +72,12 @@ export class Building extends Game.Object {
 	) {
 		//Warn about enforced orders
 		//TODO Create article
-		if (icon[0] !== 0) {
+		if (icon[1] !== 0) {
 			console.warn(
 				"All icon sheets must follow an order, see https://cppkies.js.org/#/CommonProblems#IconOrder"
 			)
 		}
-		if (bigIcon[1] !== 0) {
+		if (bigIcon[0] !== 0) {
 			console.warn(
 				"All big icon sheets must follow an order, see https://cppkies.js.org/#/CommonProblems#IconOrder"
 			)
@@ -86,8 +86,8 @@ export class Building extends Game.Object {
 			name,
 			commonName,
 			desc,
-			bigIcon[0],
-			icon[1],
+			bigIcon[1],
+			icon[0],
 			art,
 			0, // The game automatically calculates Price and BaseCps
 			cpsFunc,

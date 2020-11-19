@@ -1,8 +1,8 @@
-### Setup
+# Setup
 
 There are 2 ways of using Cppkies, installing with NPM or importing though `Game.LoadMod`.
 
-### Using NPM - JS or TS
+## Using NPM - JS or TS
 
 Using Cppkies with NPM is the recommended way of using Cppkies, since you can split your code into files and use typescript.
 
@@ -21,7 +21,7 @@ import * as Cppkies from "cppkies"rm
 new Cppkies.Upgrade("Hello, World!", "My first upgrade!", 7, [10, 5])
 ```
 
-### Importing through `Game.LoadMod` - JS
+## Importing through `Game.LoadMod` - JS
 
 Importing Cppkies through `Game.LoadMod` is not recommended since you can't split your code into multiple files or use typescript.
 

@@ -1,8 +1,9 @@
 # Examples
 
-### [Think Tank Building](https://github.com/Cppkies-Team/examples/tree/master/ThinkTank)
+## [Think Tank Building](https://github.com/Cppkies-Team/examples/tree/master/ThinkTank)
 
 This addon provides an example on how to create a new building new upgrades and new achievements<!--Also could use this as a minigame creation example-->. Sprites by "Bt Y#0895".
+
 <!--
 ### [LumpExample](https://github.com/Cppkies-Team/examples/tree/master/LumpExample)
 
