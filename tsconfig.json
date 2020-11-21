@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"sourceMap": true,
 		"module": "esnext",
+		"target": "ES6",
 		"lib": ["dom", "ESNext"],
 		"esModuleInterop": true,
 		"declaration": true,

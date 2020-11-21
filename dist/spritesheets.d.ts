@@ -1,3 +1,4 @@
+/// <reference types="cookieclicker" />
 /**
  * Currently defined alias
  */
@@ -30,8 +31,10 @@ export declare type UniversalIcon = [number, number];
  * * Tier ids: `1`, `5`, `7`, etc.
  * * Tier names: `"jetmint"`, `"plain"`, etc.
  * * Non-standard tier icon tiers: `"3d"`, `"milestone1"`, `"milestone2"`, `"milestone3"`, `"krumblor"`, `"level1"`, `"level2"`
+ * @param offset The icon X to offset the column
+ * @param followAlias If true, the original image URI will be de-aliased (`relinkColumn`, `relinkRow` and `patchIconsheet` create an alias!)
  */
-export declare function relinkColumn(link: string, matrix: string[] | string[][]): Promise<void>;
+export declare function relinkColumn(link: string, matrix: string[] | string[][], offset?: number, followAlias?: boolean): Promise<void>;
 /**
  * Relocates the icons for a row and automatically aliases it
  * @param link The link to the original, unordered iconsheet
@@ -40,5 +43,15 @@ export declare function relinkColumn(link: string, matrix: string[] | string[][]
  * * Building ids: `1, `5`, `7`, etc.
  * * Building names: `"cursor"`, `"farm"`, etc.
  * * Non-standard tier icon tiers: `"research"`, `"cookie"`, `"mouse"`, `"multicursor"`, `"kitten"`
+ * @param offset The icon X to offset the column
+ * @param followAlias If true, the original image URI will be de-aliased (`relinkColumn`, `relinkRow` and `patchIconsheet` create an alias!)
  */
-export declare function relinkRow(link: string, matrix: string[] | string[][]): Promise<void>;
+export declare function relinkRow(link: string, matrix: string[] | string[][], offset?: number, followAlias?: boolean): Promise<void>;
+/**
+ * Patches an iconsheet with replacements
+ * @param link The link to the original, unpatched iconsheet
+ * @param replacements The replacements to make, first element in tuple is the original position,
+ * second is the icon to replace with
+ * @param followAlias If true, the original image URI will be de-aliased (`relinkColumn`, `relinkRow` and `patchIconsheet` create an alias!)
+ */
+export declare function patchIconsheet(link: string, replacements: [UniversalIcon, Game.Icon][], followAlias?: boolean): Promise<void>;

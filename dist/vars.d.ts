@@ -2,7 +2,7 @@ import { Building } from "./buildings";
 import { Upgrade, TieredUpgrade, HeavenlyUpgrade, GrandmaSynergy, SynergyUpgrade } from "./upgrade";
 import Tier from "./tiers";
 import { injectCode } from "./helpers";
-import { relinkColumn, relinkRow } from "./spritesheets";
+import { patchIconsheet, relinkColumn, relinkRow } from "./spritesheets";
 import { Hooks } from "./injects/basegame";
 /**
  * The main object which is exported by Cppkies
@@ -31,6 +31,7 @@ declare const master: {
     icons: {
         relinkColumn: typeof relinkColumn;
         relinkRow: typeof relinkRow;
+        patchIconsheet: typeof patchIconsheet;
     };
 };
 export default master;
