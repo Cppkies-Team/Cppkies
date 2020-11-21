@@ -50,8 +50,8 @@ export class Building extends Game.Object {
 	 * @param name The name of the building
 	 * @param commonName Various additional string for the building, split by |:  The name of the building, then in plural, how the building produced the cookies, the effect from sugar lumps, then in plural
 	 * @param desc The description of the building
-	 * @param icon The icon for the building (Only the column matters)
-	 * @param bigIcon The icon that shows up in store (Only the row matters)
+	 * @param icon The icon for the building (Only the column matters) (See http://cppkies.js.org/#/./CommonProblems?id=relink-column for instructions about the icons)
+	 * @param bigIcon The icon that shows up in store (Only the row matters) (See http://cppkies.js.org/#/./CommonProblems?id=big-icons for instructions about the big icons)
 	 * @param art The art for the building
 	 * @param cpsFunc The function to calculate CPS
 	 * @param buyFunction The function which gets called when it's bought
@@ -74,12 +74,12 @@ export class Building extends Game.Object {
 		//TODO Create article
 		if (icon[1] !== 0) {
 			console.warn(
-				"All icon sheets must follow an order, see https://cppkies.js.org/#/CommonProblems#IconOrder"
+				"All icon sheets must follow an order, see https://cppkies.js.org/#/CommonProblems#IconOrder?id=relink-column"
 			)
 		}
 		if (bigIcon[0] !== 0) {
 			console.warn(
-				"All big icon sheets must follow an order, see https://cppkies.js.org/#/CommonProblems#IconOrder"
+				"All big icon sheets must follow an order, see https://cppkies.js.org/#/CommonProblems#IconOrder?id=big-icons"
 			)
 		}
 		super(

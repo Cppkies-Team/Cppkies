@@ -3,7 +3,7 @@
   - [Setup](Setup.md)
   - Tutorials
 
-    - [Creating a Tier](tutorials/Tier.md)
+    - [Creating a Tier](tutorials/Tiers.md)
     - [Creating a Building](tutorials/Buildings.md)
     - [Creating new Achievements](tutorials/Achievements.md)
 
