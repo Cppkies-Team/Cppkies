@@ -72,7 +72,7 @@ it("Should warn on invalid icon", async () => {
 				return warnLog
 			})
 		).includes(
-			"All icon sheets must follow an order, see https://cppkies.js.org/#/CommonProblems#IconOrder"
+			"All icon sheets must follow an order, see https://cppkies.js.org/#/CommonProblems#IconOrder?id=relink-column"
 		)
 	).toBe(true)
 })
