@@ -23,6 +23,7 @@ if (window.Cppkies) {
 	//Inject maingame and create hooks
 	main().then(answer => {
 		CppkiesExport.hooks = answer
+		CppkiesExport.on = answer.on.bind(answer)
 		Game.Notify("Cppkies loaded!", "", [32, prod ? 17 : 21])
 		if (!Game.modSaveData["cppkies"]) Game.modSaveData["cppkies"] = "{}"
 		Game.registerMod("cppkies", {

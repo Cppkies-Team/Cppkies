@@ -24,6 +24,7 @@ import { Hooks } from "./injects/basegame"
  */
 const master = {
 	hooks: null as Hooks,
+	on: null as Hooks["on"],
 	iconLink: "",
 	buildingLink: "",
 	buildingHooks,

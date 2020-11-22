@@ -1,85 +1,84 @@
 import { injectCode } from "../helpers"
+import { ReturnableEventEmitter } from "../lib/eventemitter"
 import { Injection } from "./generic"
-//import { Icon } from "../types/gameType"
 
-export interface Hooks {
+export type Hooks = ReturnableEventEmitter<{
 	//! Custom menus
 	/**
 	 * Allows you to add entries to all menus
 	 */
-	customMenu: (() => void)[]
+	menu: void
 	/**
 	 * Allows you to add entries to the options menu
 	 */
-	customOptionsMenu: (() => void)[]
+	optionsMenu: void
 	/**
 	 * Allows you to add entries to the stats menu
 	 */
-	customStatsMenu: (() => void)[]
+	statsMenu: void
 	/**
 	 * Allows you to add entries to the info menu
 	 */
-	customInfoMenu: (() => void)[]
+	infoMenu: void
 
 	//! Data manipulation
 
 	/**
 	 * Allows you to execute a function on data load, useful for custom data loading
-	 */
-	customLoad: (() => void)[]
+	 *
+	customLoad: void
 
 	/**
 	 * Allows you to execute a function on data load, useful for custom data resetting
 	 * @param hard whether or not this is a hard reset
-	 */
-	customReset: ((hard: boolean) => void)[]
+	 *
+	customReset: boolean
+*/
 	//! Tiers
-	/**
-	 * Overrides for icons gotten from GetIcon
-	 * @param type The type of icon, either a building name or "Kitten"
-	 * @param tier The tier of the icon, gotten from Tier.iconRow
-	 * @param icon The current icon
-	 * @returns An icon
-	 */
-	customGetIcon: ((
-		type: string,
-		tier: string | number,
+
+	getIcon: {
+		type: string
+		tier: string | number
 		icon: Game.Icon
-	) => Game.Icon)[]
+	}
 
 	//! Buildings
 	/**
 	 * Called after BuildStore, used internally
 	 */
-	postBuildStore: (() => void)[]
+	buildStore: void
 	/**
 	 * Adds grandma options, must return a truthy value to be considered an image
 	 * @returns A link to an image, or a falsy value
 	 */
-	customGrandmaPic: (() => string | null)[]
-}
+	grandmaPic: string[]
+	//! Gameplay
+	rawCps: number
+	cps: number
+	cpsMult: number
+}>
 /**
  * Creates the function hooks for base game
  * @returns A promise
  */
 export function main(): Promise<Hooks> {
 	return new Promise(resolve => {
-		const dummy = {}
+		const emitter: Hooks = new ReturnableEventEmitter()
 		const injections: Array<Injection> = [
 			//// -- Custom menus -- ////
 			/*
 			Hooks that allow you to add new stuff do the menu 
 
-			customOptionsMenu()
+			"optionsMenu"
 			Allows you to add entries to the options menu
 
-			customStatsMenu()
+			"statsMenu"
 			Allows you to add entries to the stats menu
 
-			customInfoMenu()
+			"logMenu"
 			Allows you to add entries to the info menu
 
-			customMenu()
+			"menu"
 			Allows you to add entries to all menus
 			*/
 			new Injection("customMenu", () => {
@@ -90,34 +89,30 @@ export function main(): Promise<Hooks> {
 					// Cppkies injection
 					switch (Game.onMenu) {
 						case "prefs":
-							for(const i in Cppkies.hooks.customOptionsMenu) Cppkies.hooks.customOptionsMenu[i]()
+							Cppkies.hooks.emit("optionsMenu")
 							break
 						case "stats":
-							for(const i in Cppkies.hooks.customStatsMenu) Cppkies.hooks.customStatsMenu[i]()
+							Cppkies.hooks.emit("statsMenu")
 							break
 						case "log":
-							for(const i in Cppkies.hooks.customInfoMenu) Cppkies.hooks.customInfoMenu[i]()
+							Cppkies.hooks.emit("logMenu")
 							break
 					}
-					for(const i in Cppkies.hooks.customMenu) Cppkies.hooks.customMenu[i]()
+					Cppkies.hooks.emit("menu")
 					`,
 					"before"
 				)
 			}),
-			new Injection("customOptionsMenu"),
-			new Injection("customStatsMenu"),
-			new Injection("customInfoMenu"),
 			//// -- Data manipulation -- ////
+			// TODO: Will be a 0.3 thing
 			/*
 			General Description
-
-			customLoad() 
 			Allows you to execute a function on data load, useful for custom data loading
 
 			customReset(hard)
 			Allows you to execute a function on data load, useful for custom data resetting
 			hard: boolean - whether or not this is a hard reset
-			*/
+			
 			new Injection("customLoad", () => {
 				Game.LoadSave = injectCode(
 					Game.LoadSave,
@@ -139,25 +134,22 @@ export function main(): Promise<Hooks> {
 					`,
 					"before"
 				)
-			}),
+			}),*/
 			//// -- Tiers -- ////
 			/**
-				customGetIcon(type, tier, icon)
+				"customGetIcon"
 				Overrides for icons gotten from GetIcon
 				type: string - The type of icon, either a building name or "Kitten"
 				tier: string - The tier of the icon, gotten from Tier.iconRow
 				icon: Icon - the current icon
 			 */
-			new Injection("customGetIcon", () => {
+			new Injection("getIcon", () => {
 				Game.GetIcon = injectCode(
 					Game.GetIcon,
 					"return [col,Game.Tiers[tier].iconRow];",
 					`
 					// Cppkies Injection
-					let icon = [col, Game.Tiers[tier].iconRow]
-					for(const i in Cppkies.hooks.customGetIcon) icon = Cppkies.hooks.customGetIcon[i](type, tier, icon) || icon
-					return icon
-`,
+					return Cppkies.hooks.emit("getIcon", { icon: [col, Game.Tiers[tier].iconRow], tier: tier, type: type })`,
 					"replace"
 				)
 			}),
@@ -174,21 +166,15 @@ export function main(): Promise<Hooks> {
 			//// -- Menus -- ////
 			// TODO Patch disabled buttons(?)
 			//// -- Buildings -- ////
-			/**
-				Called after BuildStore, used internally
-			 */
-			new Injection("postBuildStore", () => {
+			new Injection("buildStore", () => {
 				Game.BuildStore = injectCode(
 					Game.BuildStore,
 					null,
-					";\nfor(const i in Cppkies.hooks.postBuildStore) Cppkies.hooks.postBuildStore[i]()",
+					`;\nCppkies.hooks.emit("buildStore")`,
 					"after"
 				)
 			}),
-			/**
-				Adds grandma options, must return a truthy value to be considered an image
-			 */
-			new Injection("customGrandmaPic", () => {
+			new Injection("grandmaPic", () => {
 				Game.Objects.Grandma.art.pic = injectCode(
 					Game.Objects.Grandma.art.pic as (
 						building: Game.Object,
@@ -196,14 +182,29 @@ export function main(): Promise<Hooks> {
 					) => string,
 					"return choose(list)+'.png'",
 					`// Cppkies injection
-					list = list.concat(Cppkies.hooks.customGrandmaPic.map(val=> val()).filter(val => val))
+					list = Cppkies.hooks.emit("grandmaPic", list)
 					`,
 					"before"
 				) as (building: Game.Object, i: number) => string
 			}),
+			//// -- Gameplay -- ////
+			new Injection("cps", () => {
+				Game.CalculateGains = injectCode(
+					Game.CalculateGains,
+					"Game.cookiesPsRaw=rawCookiesPs;",
+					'rawCookiesPs = Cppkies.hooks.emit("rawCps", rawCookiesPs);\n',
+					"before"
+				)
+				Game.CalculateGains = injectCode(
+					Game.CalculateGains,
+					"Game.cookiesPs=Game.runModHookOnValue('cps',Game.cookiesPs);",
+					`mult = Cppkies.hooks.emit("cpsMult", mult);
+Game.cookiesPs = Cppkies.hooks.emit("cps", Game.cookiesPs);\n`,
+					"before"
+				)
+			}),
 		]
 		injections.forEach(inject => {
-			dummy[inject.value] = inject.defValue
 			inject.func?.()
 		})
 		//Misc stuff
@@ -228,6 +229,6 @@ export function main(): Promise<Hooks> {
 `,
 			"after"
 		)
-		resolve(dummy as Hooks)
+		resolve(emitter)
 	})
 }

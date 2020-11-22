@@ -61,7 +61,7 @@ it("Should be able to convert string to building", async () => {
 			(id: number) =>
 				new Cppkies.TieredUpgrade(
 					"Tiered test",
-					"Hi there<q>Oh hi</q>",
+					"Hi there",
 					Game.ObjectsById[id].name,
 					1
 				).buildingTie.id,

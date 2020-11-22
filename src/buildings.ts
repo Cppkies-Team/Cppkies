@@ -100,7 +100,7 @@ export class Building extends Game.Object {
 		for (const i in Game.ObjectsById) {
 			if (parseInt(i) <= 0) continue
 			const me = Game.ObjectsById[i]
-			me.canvas = window.l(`rowCanvas${i}`) as HTMLCanvasElement
+			me.canvas = l(`rowCanvas${i}`) as HTMLCanvasElement
 			if (!me.canvas) continue
 			me.ctx = me.canvas.getContext("2d")
 			//Relink their events too
@@ -142,17 +142,17 @@ export class Building extends Game.Object {
 
 		Game.BuildStore()
 		if (this.buildingLink) {
-			master.hooks.postBuildStore.push(() => {
-				window.l(
+			master.hooks.on("buildStore", () => {
+				l(
 					`productIcon${this.id}`
 				).style.backgroundImage = `url(${this.buildingLink})`
-				window.l(
+				l(
 					`productIconOff${this.id}`
 				).style.backgroundImage = `url(${this.buildingLink})`
 			})
 		}
 		Game.BuildStore()
-		this.canvas = window.l(`rowCanvas${this.id}`) as HTMLCanvasElement
+		this.canvas = l(`rowCanvas${this.id}`) as HTMLCanvasElement
 		this.ctx = this.canvas.getContext("2d")
 		//this.context = this.ctx
 		this.pics = []
@@ -180,7 +180,7 @@ export class Building extends Game.Object {
 			this.mousePos[0] = e.pageX - box.left
 			this.mousePos[1] = e.pageY - box.top
 		})
-		window.l("buildingsMute").appendChild(muteDiv)
+		l("buildingsMute").appendChild(muteDiv)
 		// Load the save stuff
 		const loadProps = loadBuilding(this)
 		for (const i in loadProps) this[i] = loadProps[i]

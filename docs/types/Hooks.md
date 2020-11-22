@@ -4,24 +4,35 @@ Cppkies adds most of the custom APIs through hooks.
 
 Cppkies creates the hooks by injecting code into functions.
 
-Usually mods shouldn't use the hooks since most hooks are used for internal use in Cppkies.
-
 ## Hooks List
 
 ### Generic Hooks
 
 - Menu hooks
-  - `customMenu` - called when any menu is opened
-  - `customOptionsMenu` - called when the options menu is opened
-  - `customStatsMenu` - called when the stats menu is opened
-  - `customInfoMenu` - called when the info menu is opened
-- Data hooks
+  - `menu` - called when any menu is opened (`void`)
+  - `optionsMenu` - called when the options menu is opened (`void`)
+  - `statsMenu` - called when the stats menu is opened (`void`)
+  - `infoMenu` - called when the info menu is opened (`void`)
+    <!--- Data hooks
   - `customLoad` - called when a save is loaded
   - `customSave` - called when a save is saved
-  - `customReset` - called when a save is wiped, first parameter is if the reset is hard.
+  - `customReset` - called when a save is wiped, first parameter is if the reset is hard. -->
 - Buildings
-  - `customGrandmaPic` - called when rendering grandmas, must return a link for an image
-  - `postBuildStore` - called after `Game.BuildStore`
+  - `grandmaPic` - called when rendering grandmas, must return a link for an image (`string[]`)
+  - `buildStore` - called after `Game.BuildStore` (`void`)
+
+The hooks can be accessed via `Cppkies.on` or `Cppkies.hooks.on`
+
+Parameters:
+
+1. `name` - `string` Name of the hook, use one of the names above as valid names
+2. `func` - `(src: T) => T` The function to execute when the hook triggers, must pass the type of value as given, gives value can be seen in parentheses
+
+For example:
+
+```js
+Cppkies.on("cps", cps => cps * 2)
+```
 
 ### Building Hooks
 

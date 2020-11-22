@@ -3,10 +3,6 @@
  */
 type EventList<T> = { [P in keyof T]: ((src: T[P]) => T[P])[] }
 
-function isVoid(val: unknown): val is void {
-	return val === undefined
-}
-
 export class ReturnableEventEmitter<T extends { [key: string]: unknown }> {
 	_events = {} as EventList<T>
 
@@ -40,9 +36,9 @@ export class ReturnableEventEmitter<T extends { [key: string]: unknown }> {
 		this._events[name].splice(this._events[name].indexOf(func), 1)
 	}
 
-	// Sorry for the type mess, I blame typescript
+	// Sorry for the minor type mess, I blame typescript
 	/**
-	 * Emits the event, triggering all registered event listeners under the event name
+	 * Emits the event, triggering all registered event listeners under the event name and modifying the given value
 	 * @param name The name of the event
 	 * @param startingValue The starting value for the listeners
 	 */
@@ -51,7 +47,20 @@ export class ReturnableEventEmitter<T extends { [key: string]: unknown }> {
 		...startingValue: T[N] extends void ? [undefined?] : [T[N]]
 	): T[N] {
 		let retVal = startingValue[0]
-		for (const func of this._events[name]) retVal = func(retVal as T[N])
+		if (!this._events[name]) this._events[name] = []
+		for (const func of this._events[name]) retVal = func(retVal)
 		return retVal
+	}
+	/**
+	 * Emits the event, triggering all registered event listeners under the event name and *not* modifying the given value
+	 * @param name The name of the event
+	 * @param startingValue The starting value for the listeners
+	 */
+	constEmit<N extends keyof T>(
+		name: N,
+		...startingValue: T[N] extends void ? [undefined?] : [T[N]]
+	): void {
+		if (!this._events[name]) this._events[name] = []
+		for (const func of this._events[name]) func(startingValue[0])
 	}
 }

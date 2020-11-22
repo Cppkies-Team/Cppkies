@@ -174,8 +174,8 @@ export class GrandmaSynergy extends Upgrade
 		this.order = 250 + (building.id / 12) * 5
 		Game.GrandmaSynergies.push(this.name)
 		if (grandmaPicture)
-			master.hooks.customGrandmaPic.push(() => {
-				if (this.bought) return grandmaPicture
+			master.hooks.on("grandmaPic", src => {
+				if (this.bought) return [...src, grandmaPicture]
 			})
 	}
 }

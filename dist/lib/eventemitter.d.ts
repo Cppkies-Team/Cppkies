@@ -27,10 +27,16 @@ export declare class ReturnableEventEmitter<T extends {
      */
     off<N extends keyof T>(name: N, func: (src: T[N]) => T[N]): void;
     /**
-     * Emits the event, triggering all registered event listeners under the event name
+     * Emits the event, triggering all registered event listeners under the event name and modifying the given value
      * @param name The name of the event
      * @param startingValue The starting value for the listeners
      */
     emit<N extends keyof T>(name: N, ...startingValue: T[N] extends void ? [undefined?] : [T[N]]): T[N];
+    /**
+     * Emits the event, triggering all registered event listeners under the event name and *not* modifying the given value
+     * @param name The name of the event
+     * @param startingValue The starting value for the listeners
+     */
+    constEmit<N extends keyof T>(name: N, ...startingValue: T[N] extends void ? [undefined?] : [T[N]]): void;
 }
 export {};

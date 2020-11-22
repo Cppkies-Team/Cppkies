@@ -1,3 +1,4 @@
+/// <reference types="cookieclicker" />
 import { Building } from "./buildings";
 import { Upgrade, TieredUpgrade, HeavenlyUpgrade, GrandmaSynergy, SynergyUpgrade } from "./upgrade";
 import Tier from "./tiers";
@@ -9,6 +10,37 @@ import { Hooks } from "./injects/basegame";
  */
 declare const master: {
     hooks: Hooks;
+    on: <N extends "menu" | "optionsMenu" | "statsMenu" | "infoMenu" | "getIcon" | "buildStore" | "grandmaPic" | "rawCps" | "cps" | "cpsMult">(name: N, func: (src: {
+        menu: void;
+        optionsMenu: void;
+        statsMenu: void;
+        infoMenu: void;
+        getIcon: {
+            type: string;
+            tier: string | number;
+            icon: Game.Icon;
+        };
+        buildStore: void;
+        grandmaPic: string[];
+        rawCps: number;
+        cps: number;
+        cpsMult: number;
+    }[N]) => {
+        menu: void;
+        optionsMenu: void;
+        statsMenu: void;
+        infoMenu: void;
+        getIcon: {
+            type: string;
+            tier: string | number;
+            icon: Game.Icon;
+        };
+        buildStore: void;
+        grandmaPic: string[];
+        rawCps: number;
+        cps: number;
+        cpsMult: number;
+    }[N]) => void;
     iconLink: string;
     buildingLink: string;
     buildingHooks: Record<string, import("./buildings").BuildingHooks>;
