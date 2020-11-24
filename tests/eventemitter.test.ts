@@ -2,7 +2,7 @@ import { ReturnableEventEmitter } from "../src/lib/eventemitter"
 
 it("should be able to emit events", () => {
 	const ee = new ReturnableEventEmitter<{
-		eventName: void
+		eventName: [void, void]
 	}>()
 	let isTriggered = false
 	ee.on("eventName", () => (isTriggered = true))
@@ -12,7 +12,7 @@ it("should be able to emit events", () => {
 
 it("should be able to get emit return value", () => {
 	const ee = new ReturnableEventEmitter<{
-		eventName: number
+		eventName: [number, number]
 	}>()
 	ee.on("eventName", src => src * 2)
 	expect(ee.emit("eventName", 50)).toBe(100)
@@ -20,7 +20,7 @@ it("should be able to get emit return value", () => {
 
 it("should be able to correctly handle `once` registers", () => {
 	const ee = new ReturnableEventEmitter<{
-		eventName: void
+		eventName: [void, void]
 	}>()
 	let triggeredAmount = 0
 	ee.once("eventName", () => triggeredAmount++)
@@ -31,7 +31,7 @@ it("should be able to correctly handle `once` registers", () => {
 
 it("should be able to correctly handle unregisters", () => {
 	const ee = new ReturnableEventEmitter<{
-		eventName: void
+		eventName: [void, void]
 	}>()
 	let isTriggered = false
 	const listener = (): boolean => (isTriggered = true)

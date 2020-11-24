@@ -10,37 +10,49 @@ import { Hooks } from "./injects/basegame";
  */
 declare const master: {
     hooks: Hooks;
-    on: <N extends "menu" | "optionsMenu" | "statsMenu" | "infoMenu" | "getIcon" | "buildStore" | "grandmaPic" | "rawCps" | "cps" | "cpsMult">(name: N, func: (src: {
-        menu: void;
-        optionsMenu: void;
-        statsMenu: void;
-        infoMenu: void;
-        getIcon: {
+    on: <N extends "menu" | "optionsMenu" | "statsMenu" | "infoMenu" | "preSave" | "customReset" | "getIcon" | "buildStore" | "grandmaPic" | "rawCps" | "cps" | "cpsMult">(name: N, func: (src: {
+        menu: [void, void];
+        optionsMenu: [void, void];
+        statsMenu: [void, void];
+        infoMenu: [void, void];
+        preSave: [void, void];
+        customReset: [boolean, void];
+        getIcon: [{
             type: string;
             tier: string | number;
             icon: Game.Icon;
-        };
-        buildStore: void;
-        grandmaPic: string[];
-        rawCps: number;
-        cps: number;
-        cpsMult: number;
-    }[N]) => {
-        menu: void;
-        optionsMenu: void;
-        statsMenu: void;
-        infoMenu: void;
-        getIcon: {
+        }, {
             type: string;
             tier: string | number;
             icon: Game.Icon;
-        };
-        buildStore: void;
-        grandmaPic: string[];
-        rawCps: number;
-        cps: number;
-        cpsMult: number;
-    }[N]) => void;
+        }];
+        buildStore: [void, void];
+        grandmaPic: [string[], string[]];
+        rawCps: [number, number];
+        cps: [number, number];
+        cpsMult: [number, number];
+    }[N][0]) => {
+        menu: [void, void];
+        optionsMenu: [void, void];
+        statsMenu: [void, void];
+        infoMenu: [void, void];
+        preSave: [void, void];
+        customReset: [boolean, void];
+        getIcon: [{
+            type: string;
+            tier: string | number;
+            icon: Game.Icon;
+        }, {
+            type: string;
+            tier: string | number;
+            icon: Game.Icon;
+        }];
+        buildStore: [void, void];
+        grandmaPic: [string[], string[]];
+        rawCps: [number, number];
+        cps: [number, number];
+        cpsMult: [number, number];
+    }[N][1]) => void;
     iconLink: string;
     buildingLink: string;
     buildingHooks: Record<string, import("./buildings").BuildingHooks>;

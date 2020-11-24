@@ -18,7 +18,7 @@ export default {
 	},
 	plugins: [
 		typescript({
-			tsconfig: "./tsconfig.json",
+			tsconfig: production ? "./tsconfig.json" : "./tsconfig.dev.json",
 		}),
 		json(),
 		babel({

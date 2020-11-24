@@ -7,55 +7,61 @@ export type Hooks = ReturnableEventEmitter<{
 	/**
 	 * Allows you to add entries to all menus
 	 */
-	menu: void
+	menu: [void, void]
 	/**
 	 * Allows you to add entries to the options menu
 	 */
-	optionsMenu: void
+	optionsMenu: [void, void]
 	/**
 	 * Allows you to add entries to the stats menu
 	 */
-	statsMenu: void
+	statsMenu: [void, void]
 	/**
 	 * Allows you to add entries to the info menu
 	 */
-	infoMenu: void
+	infoMenu: [void, void]
 
 	//! Data manipulation
 
 	/**
-	 * Allows you to execute a function on data load, useful for custom data loading
-	 *
-	customLoad: void
+	 * Allows you to execute a function on before saving, useful for cleaning up data which will be invalid if no mod is present
+	 */
+	preSave: [void, void]
 
 	/**
 	 * Allows you to execute a function on data load, useful for custom data resetting
 	 * @param hard whether or not this is a hard reset
-	 *
-	customReset: boolean
-*/
+	 */
+	customReset: [boolean, void]
+
 	//! Tiers
 
-	getIcon: {
-		type: string
-		tier: string | number
-		icon: Game.Icon
-	}
+	getIcon: [
+		{
+			type: string
+			tier: string | number
+			icon: Game.Icon
+		},
+		{
+			type: string
+			tier: string | number
+			icon: Game.Icon
+		}
+	]
 
 	//! Buildings
 	/**
 	 * Called after BuildStore, used internally
 	 */
-	buildStore: void
+	buildStore: [void, void]
 	/**
-	 * Adds grandma options, must return a truthy value to be considered an image
-	 * @returns A link to an image, or a falsy value
+	 * Adds grandma options for the grandma art
 	 */
-	grandmaPic: string[]
+	grandmaPic: [string[], string[]]
 	//! Gameplay
-	rawCps: number
-	cps: number
-	cpsMult: number
+	rawCps: [number, number]
+	cps: [number, number]
+	cpsMult: [number, number]
 }>
 /**
  * Creates the function hooks for base game
@@ -104,37 +110,29 @@ export function main(): Promise<Hooks> {
 				)
 			}),
 			//// -- Data manipulation -- ////
-			// TODO: Will be a 0.3 thing
-			/*
-			General Description
-			Allows you to execute a function on data load, useful for custom data loading
 
-			customReset(hard)
-			Allows you to execute a function on data load, useful for custom data resetting
-			hard: boolean - whether or not this is a hard reset
-			
-			new Injection("customLoad", () => {
-				Game.LoadSave = injectCode(
-					Game.LoadSave,
-					"if (Game.prefs.showBackupWarning==1)",
+			new Injection("preSave", () => {
+				Game.WriteSave = injectCode(
+					Game.WriteSave,
+					null,
 					`
 					// Cppkies injection
-					for(const i in Cppkies.hooks.customLoad) Cppkies.hooks.customLoad[i]()
+					Cppkies.hooks.emit("preSave")
 					`,
 					"before"
 				)
 			}),
-			new Injection("customReset", () => {
+			new Injection("reset", () => {
 				Game.Reset = injectCode(
 					Game.Reset,
 					null,
 					`
 					// Cppkies injection
-					for(const i in Cppkies.hooks.customReset) Cppkies.hooks.customReset[i](hard)
+					Cppkies.hooks.emit("reset", hard)
 					`,
 					"before"
 				)
-			}),*/
+			}),
 			//// -- Tiers -- ////
 			/**
 				"customGetIcon"
@@ -157,8 +155,6 @@ export function main(): Promise<Hooks> {
 			// TODO Rewrite Game.computeLumpType
 			// TODO Cppkies.hooks.customComputeLumpType
 			// TODO Cppkies.hooks.customDoLumps
-			//// -- Economics -- ////
-			// TODO Cppkies.hooks.customCps
 			//// -- Shimmers -- ////
 			// TODO everything shimmer related
 			//// -- Prompts -- ////

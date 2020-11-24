@@ -13,13 +13,16 @@ Cppkies creates the hooks by injecting code into functions.
   - `optionsMenu` - called when the options menu is opened (`void`)
   - `statsMenu` - called when the stats menu is opened (`void`)
   - `infoMenu` - called when the info menu is opened (`void`)
-    <!--- Data hooks
-  - `customLoad` - called when a save is loaded
-  - `customSave` - called when a save is saved
-  - `customReset` - called when a save is wiped, first parameter is if the reset is hard. -->
-- Buildings
+- Data hooks
+  - `preSave` - called right before the game is saved
+  - `reset` - called when a save is wiped, first parameter is if the reset is hard. -->
+- Building hooks
   - `grandmaPic` - called when rendering grandmas, must return a link for an image (`string[]`)
   - `buildStore` - called after `Game.BuildStore` (`void`)
+- Gameplay hooks
+  - `cps` - called when CpS (cookies per second) is calculated (`number`)
+  - `rawCps` - called before `cps`, some calculations use raw CpS instead of normal CpS, for example, stocks (`number`)
+  - `cpsMult` - called when calculating CpS, is the multiplier of CpS, some calculations use the multiplier
 
 The hooks can be accessed via `Cppkies.on` or `Cppkies.hooks.on`
 
@@ -31,7 +34,7 @@ Parameters:
 For example:
 
 ```js
-Cppkies.on("cps", cps => cps * 2)
+Cppkies.on("cpsMult", mult => mult * 2)
 ```
 
 ### Building Hooks

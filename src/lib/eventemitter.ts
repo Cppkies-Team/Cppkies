@@ -1,9 +1,19 @@
+type EventListenerFunction<
+	T extends Record<string, [unknown, unknown]>,
+	N extends keyof T
+> = (src: T[N][0]) => T[N][1]
+
+type EventList<T extends Record<string, [unknown, unknown]>> = {
+	[P in keyof T]: EventListenerFunction<T, P>[]
+}
+
 /**
  * A small implementation of node's EventEmitter with return value support
  */
-type EventList<T> = { [P in keyof T]: ((src: T[P]) => T[P])[] }
 
-export class ReturnableEventEmitter<T extends { [key: string]: unknown }> {
+export class ReturnableEventEmitter<
+	T extends Record<string, [unknown, unknown]>
+> {
 	_events = {} as EventList<T>
 
 	/**
@@ -11,7 +21,7 @@ export class ReturnableEventEmitter<T extends { [key: string]: unknown }> {
 	 * @param name Name of the hook
 	 * @param func The event listener function
 	 */
-	on<N extends keyof T>(name: N, func: (src: T[N]) => T[N]): void {
+	on<N extends keyof T>(name: N, func: EventListenerFunction<T, N>): void {
 		if (!this._events[name]) {
 			this._events[name] = [func]
 		} else this._events[name].push(func)
@@ -21,7 +31,7 @@ export class ReturnableEventEmitter<T extends { [key: string]: unknown }> {
 	 * @param name Name of the hook
 	 * @param func The event listener function
 	 */
-	once<N extends keyof T>(name: N, func: (src: T[N]) => T[N]): void {
+	once<N extends keyof T>(name: N, func: EventListenerFunction<T, N>): void {
 		this.on(name, arg => {
 			this.off(name, func)
 			return func(arg)
@@ -32,7 +42,7 @@ export class ReturnableEventEmitter<T extends { [key: string]: unknown }> {
 	 * @param name Name of the hook
 	 * @param func The event listener function
 	 */
-	off<N extends keyof T>(name: N, func: (src: T[N]) => T[N]): void {
+	off<N extends keyof T>(name: N, func: EventListenerFunction<T, N>): void {
 		this._events[name].splice(this._events[name].indexOf(func), 1)
 	}
 
@@ -44,9 +54,9 @@ export class ReturnableEventEmitter<T extends { [key: string]: unknown }> {
 	 */
 	emit<N extends keyof T>(
 		name: N,
-		...startingValue: T[N] extends void ? [undefined?] : [T[N]]
-	): T[N] {
-		let retVal = startingValue[0]
+		...startingValue: T[N][0] extends void ? [undefined?] : [T[N][0]]
+	): T[N][1] {
+		let retVal: T[N][0] | T[N][1] = startingValue[0]
 		if (!this._events[name]) this._events[name] = []
 		for (const func of this._events[name]) retVal = func(retVal)
 		return retVal
@@ -58,7 +68,7 @@ export class ReturnableEventEmitter<T extends { [key: string]: unknown }> {
 	 */
 	constEmit<N extends keyof T>(
 		name: N,
-		...startingValue: T[N] extends void ? [undefined?] : [T[N]]
+		...startingValue: T[N][0] extends void ? [undefined?] : [T[N][0]]
 	): void {
 		if (!this._events[name]) this._events[name] = []
 		for (const func of this._events[name]) func(startingValue[0])

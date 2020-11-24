@@ -4,47 +4,48 @@ export declare type Hooks = ReturnableEventEmitter<{
     /**
      * Allows you to add entries to all menus
      */
-    menu: void;
+    menu: [void, void];
     /**
      * Allows you to add entries to the options menu
      */
-    optionsMenu: void;
+    optionsMenu: [void, void];
     /**
      * Allows you to add entries to the stats menu
      */
-    statsMenu: void;
+    statsMenu: [void, void];
     /**
      * Allows you to add entries to the info menu
      */
-    infoMenu: void;
+    infoMenu: [void, void];
     /**
-     * Allows you to execute a function on data load, useful for custom data loading
-     *
-    customLoad: void
-
+     * Allows you to execute a function on before saving, useful for cleaning up data which will be invalid if no mod is present
+     */
+    preSave: [void, void];
     /**
      * Allows you to execute a function on data load, useful for custom data resetting
      * @param hard whether or not this is a hard reset
-     *
-    customReset: boolean
-*/
-    getIcon: {
+     */
+    customReset: [boolean, void];
+    getIcon: [{
         type: string;
         tier: string | number;
         icon: Game.Icon;
-    };
+    }, {
+        type: string;
+        tier: string | number;
+        icon: Game.Icon;
+    }];
     /**
      * Called after BuildStore, used internally
      */
-    buildStore: void;
+    buildStore: [void, void];
     /**
-     * Adds grandma options, must return a truthy value to be considered an image
-     * @returns A link to an image, or a falsy value
+     * Adds grandma options for the grandma art
      */
-    grandmaPic: string[];
-    rawCps: number;
-    cps: number;
-    cpsMult: number;
+    grandmaPic: [string[], string[]];
+    rawCps: [number, number];
+    cps: [number, number];
+    cpsMult: [number, number];
 }>;
 /**
  * Creates the function hooks for base game
