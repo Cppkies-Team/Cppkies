@@ -3,6 +3,7 @@ import { injectCode } from "./helpers"
 import { Injection } from "./injects/generic"
 import { loadBuilding } from "./saves"
 import { resolveAlias } from "./spritesheets"
+import { ReturnableEventEmitter } from "./lib/eventemitter"
 
 export const buildingHooks: Record<string, BuildingHooks> = {}
 export const customBuildings: Building[] = []
@@ -11,32 +12,31 @@ export const customBuildings: Building[] = []
  * @param building The building to create hooks for
  */
 
-export interface BuildingHooks {
-	tooltip: ((this: Game.Object, ret: string) => string | null)[]
-}
+export type BuildingHooks = ReturnableEventEmitter<{
+	tooltip: [
+		{ building: Game.Object; str: string },
+		{ building: Game.Object; str: string }
+	]
+	cps: [number, number]
+}>
 
 export function createHooks(building: Building | Game.Object): void {
+	const emitter: BuildingHooks = new ReturnableEventEmitter()
 	const injections = [
 		new Injection("tooltip", () => {
 			building.tooltip = injectCode(
 				injectCode(building.tooltip, "return", "let ret = ", "replace"),
 				null,
 				`\n//Cppkies injection
-		for(const i in Cppkies.buildingHooks["${building.name}"].tooltip) {
-			const tempRet = Cppkies.buildingHooks["${building.name}"].tooltip[i].call(this, ret)
-			ret = tempRet || ret
-		}
-		return ret`,
+				return Cppkies.buildingHooks["${building.name}"].emit("tooltip", { building: this, str: ret}).str`,
 				"after"
 			)
 		}),
 	]
-	const dummy: Record<string, Function[]> = {}
 	injections.forEach(inject => {
-		dummy[inject.value] = inject.defValue
-		if (inject.func) inject.func()
+		inject?.func()
 	})
-	buildingHooks[building.name] = (dummy as unknown) as BuildingHooks
+	buildingHooks[building.name] = emitter
 }
 
 /**
@@ -130,14 +130,15 @@ export class Building extends Game.Object {
 		if (buildingSpecial) Game.goldenCookieBuildingBuffs[name] = buildingSpecial
 
 		if (this.iconLink) {
-			buildingHooks[this.name].tooltip.push((ret: string) =>
-				this.locked
-					? ret
-					: ret.replace(
+			buildingHooks[this.name].on("tooltip", ret => ({
+				str: this.locked
+					? ret.str
+					: ret.str.replace(
 							"background-position",
 							`background-image:url(${this.iconLink});background-position`
-					  )
-			)
+					  ),
+				building: ret.building,
+			}))
 		}
 
 		Game.BuildStore()

@@ -147,7 +147,7 @@ export function main(): Promise<Hooks> {
 					"return [col,Game.Tiers[tier].iconRow];",
 					`
 					// Cppkies Injection
-					return Cppkies.hooks.emit("getIcon", { icon: [col, Game.Tiers[tier].iconRow], tier: tier, type: type })`,
+					return Cppkies.hooks.emit("getIcon", { icon: [col, Game.Tiers[tier].iconRow], tier: tier, type: type }).icon`,
 					"replace"
 				)
 			}),

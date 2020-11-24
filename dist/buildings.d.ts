@@ -1,13 +1,21 @@
 /// <reference types="cookieclicker" />
+import { ReturnableEventEmitter } from "./lib/eventemitter";
 export declare const buildingHooks: Record<string, BuildingHooks>;
 export declare const customBuildings: Building[];
 /**
  * Creates the hooks for a building
  * @param building The building to create hooks for
  */
-export interface BuildingHooks {
-    tooltip: ((this: Game.Object, ret: string) => string | null)[];
-}
+export declare type BuildingHooks = ReturnableEventEmitter<{
+    tooltip: [{
+        building: Game.Object;
+        str: string;
+    }, {
+        building: Game.Object;
+        str: string;
+    }];
+    cps: [number, number];
+}>;
 export declare function createHooks(building: Building | Game.Object): void;
 /**
  * The building class for creating new buildings
