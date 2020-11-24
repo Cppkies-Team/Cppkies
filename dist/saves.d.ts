@@ -1,5 +1,6 @@
 import { Building } from "./buildings";
 import { Upgrade } from "./upgrade";
+import { Achievement } from "./achievement";
 export declare let save: SaveType;
 /**
  * The save type for Cppkies
@@ -16,6 +17,7 @@ export interface SaveType {
 export interface ModSave {
     buildings: Record<string, BuildingSave>;
     upgrades: Record<string, UpgradeSave>;
+    achievements: Record<string, AchievementSave>;
 }
 /**
  * The save type for a building
@@ -37,6 +39,12 @@ export interface UpgradeSave {
     bought: boolean;
 }
 /**
+ * The save type for an achievement
+ */
+export interface AchievementSave {
+    won: boolean;
+}
+/**
  * The default save file for buildings
  */
 export declare const DEFAULT_BUILDING_SAVE: BuildingSave;
@@ -44,6 +52,10 @@ export declare const DEFAULT_BUILDING_SAVE: BuildingSave;
  * The default save for an upgrade
  */
 export declare const DEFAULT_UPGRADE_SAVE: UpgradeSave;
+/**
+ * The default save for an achievement
+ */
+export declare const DEFAULT_ACHIEVEMENT_SAVE: AchievementSave;
 export declare const DEFAULT_MOD_SAVE: ModSave;
 /**
  * Creates a save for Cppkies
@@ -70,8 +82,17 @@ export declare function loadUpgrade(upgrade: Upgrade): UpgradeSave;
  */
 export declare function saveUpgrade(upgrade: Upgrade): void;
 /**
+ * Loads an achievement
+ * @param upgrade The achievement to load
+ */
+export declare function loadAchievement(upgrade: Achievement): AchievementSave;
+/**
+ * Saves an achievement
+ * @param upgrade The achievement to save
+ */
+export declare function saveAchievement(upgrade: Achievement): void;
+/**
  * Loads everything
- * (Doesn't get called on Game.Load since Cppkies save isn't saved in the normal one)
  */
 export declare function loadAll(): void;
 /**

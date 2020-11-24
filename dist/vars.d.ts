@@ -5,6 +5,7 @@ import Tier from "./tiers";
 import { injectCode } from "./helpers";
 import { patchIconsheet, relinkColumn, relinkRow } from "./spritesheets";
 import { Hooks } from "./injects/basegame";
+import { Achievement, CpsAchievement, BankAchievement } from "./achievement";
 /**
  * The main object which is exported by Cppkies
  */
@@ -69,6 +70,10 @@ declare const master: {
     HeavenlyUpgrade: typeof HeavenlyUpgrade;
     GrandmaSynergy: typeof GrandmaSynergy;
     SynergyUpgrade: typeof SynergyUpgrade;
+    Achievement: typeof Achievement;
+    CpsAchievement: typeof CpsAchievement;
+    BankAchievement: typeof BankAchievement;
+    customAchievements: Achievement[];
     injectCode: typeof injectCode;
     DEFAULT_ONBUY: () => void;
     DEFAULT_CPS: (me: Building) => number;

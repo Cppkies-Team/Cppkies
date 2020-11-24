@@ -18,6 +18,12 @@ import Tier, { customTiers } from "./tiers"
 import { injectCode } from "./helpers"
 import { patchIconsheet, relinkColumn, relinkRow } from "./spritesheets"
 import { Hooks } from "./injects/basegame"
+import {
+	Achievement,
+	CpsAchievement,
+	BankAchievement,
+	customAchievements,
+} from "./achievement"
 
 /**
  * The main object which is exported by Cppkies
@@ -41,6 +47,10 @@ const master = {
 	HeavenlyUpgrade,
 	GrandmaSynergy,
 	SynergyUpgrade,
+	Achievement,
+	CpsAchievement,
+	BankAchievement,
+	customAchievements,
 	injectCode,
 	DEFAULT_ONBUY: defaultOnBuy,
 	DEFAULT_CPS: defaultCps,

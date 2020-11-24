@@ -2,6 +2,7 @@ import master from "./vars"
 import { Building } from "./buildings"
 import { Upgrade } from "./upgrade"
 import { applyAllProps } from "./helpers"
+import { Achievement, customAchievements } from "./achievement"
 export let save: SaveType = null
 /**
  * The save type for Cppkies
@@ -18,6 +19,7 @@ export interface SaveType {
 export interface ModSave {
 	buildings: Record<string, BuildingSave>
 	upgrades: Record<string, UpgradeSave>
+	achievements: Record<string, AchievementSave>
 }
 /**
  * The save type for a building
@@ -39,6 +41,12 @@ export interface UpgradeSave {
 	bought: boolean
 }
 /**
+ * The save type for an achievement
+ */
+export interface AchievementSave {
+	won: boolean
+}
+/**
  * The default save file for buildings
  */
 export const DEFAULT_BUILDING_SAVE: BuildingSave = {
@@ -57,9 +65,16 @@ export const DEFAULT_UPGRADE_SAVE: UpgradeSave = {
 	bought: false,
 	unlocked: false,
 }
+/**
+ * The default save for an achievement
+ */
+export const DEFAULT_ACHIEVEMENT_SAVE: AchievementSave = {
+	won: false,
+}
 export const DEFAULT_MOD_SAVE: ModSave = {
 	buildings: {},
 	upgrades: {},
+	achievements: {},
 }
 /**
  * Creates a save for Cppkies
@@ -121,27 +136,45 @@ export function saveUpgrade(upgrade: Upgrade): void {
 		bought: !!upgrade.bought,
 	}
 }
+
+/**
+ * Loads an achievement
+ * @param upgrade The achievement to load
+ */
+export function loadAchievement(upgrade: Achievement): AchievementSave {
+	return save.foreign.achievements[upgrade.name] || DEFAULT_ACHIEVEMENT_SAVE
+}
+/**
+ * Saves an achievement
+ * @param upgrade The achievement to save
+ */
+export function saveAchievement(upgrade: Achievement): void {
+	save.foreign.achievements[upgrade.name] = {
+		won: !!upgrade.won,
+	}
+}
 /**
  * Loads everything
- * (Doesn't get called on Game.Load since Cppkies save isn't saved in the normal one)
  */
 export function loadAll(): void {
-	for (const i in master.customBuildings) {
-		const me = master.customBuildings[i]
-		applyAllProps(Game.Objects[me.name], loadBuilding(me))
+	for (const building of master.customBuildings) {
+		applyAllProps(building, loadBuilding(building))
 	}
-	for (const i in master.customUpgrades) {
-		const me = master.customUpgrades[i]
-		applyAllProps(Game.Upgrades[me.name], loadUpgrade(me))
+	for (const upgrade of master.customUpgrades) {
+		applyAllProps(upgrade, loadUpgrade(upgrade))
+	}
+	for (const achievement of master.customAchievements) {
+		applyAllProps(achievement, loadAchievement(achievement))
 	}
 }
 /**
  * Saves everything
  */
 export function saveAll(): void {
-	for (const i in master.customBuildings)
-		saveBuilding(master.customBuildings[i])
-	for (const i in master.customUpgrades) saveUpgrade(master.customUpgrades[i])
+	for (const building of master.customBuildings) saveBuilding(building)
+	for (const upgrade of master.customUpgrades) saveUpgrade(upgrade)
+	for (const achievement of master.customAchievements)
+		saveAchievement(achievement)
 }
 
 export function importSave(data: string): void {
