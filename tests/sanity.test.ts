@@ -36,10 +36,10 @@ describe("Sanity checks", () => {
 		)
 	})
 	it("Should be able to load Cppkies", async () => {
-		await await page.evaluate(() => {
+		await page.evaluate(() => {
 			Game.LoadMod("http://localhost:5501/dist/index.js")
 			if (!globalThis.CPPKIES_ONLOAD) globalThis.CPPKIES_ONLOAD = []
-			return new Promise(resolve => {
+			return new Promise<void>(resolve => {
 				;(globalThis.CPPKIES_ONLOAD as (() => void)[]).push(resolve)
 			})
 		})

@@ -14,8 +14,8 @@ export default async function(page: Page): Promise<void> {
 			}, 100)
 		})
 	})()
-	await await page.evaluate(() => {
-		return new Promise(resolve => {
+	await page.evaluate(() => {
+		return new Promise<void>(resolve => {
 			setTimeout(() => {
 				Game.LoadMod("http://localhost:5501/dist/index.js")
 				if (!globalThis.CPPKIES_ONLOAD) globalThis.CPPKIES_ONLOAD = []

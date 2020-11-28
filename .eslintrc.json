@@ -29,6 +29,7 @@
 		"linebreak-style": ["error", "unix"],
 		"quotes": [0, "double"], //Prettier automatically handles them
 		"semi": ["error", "never"],
-		"prettier/prettier": "error"
+		"prettier/prettier": "error",
+		"@typescript-eslint/ban-types": ["error", { "types": { "object": false } }]
 	}
 }

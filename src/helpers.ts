@@ -29,7 +29,7 @@ export function escapeRegExp(str: string): string {
  * @param context The optional context to use
  * @helper
  */
-export function injectCode<T extends Function>(
+export function injectCode<T extends (...args: unknown[]) => unknown>(
 	func: T,
 	source: CommonValue<string> | CommonValue<RegExp> | null,
 	target: CommonValue<string>,
@@ -93,8 +93,20 @@ export function applyAllProps(targObj: object, srcObj: object): void {
 
 /**
  * Converts a string to sentense case, AKA first letter upper, all next lower
- * @param strign
+ * @param string
  */
-export function toSentenseCase(strign: string): string {
-	return strign.charAt(0).toUpperCase() + strign.slice(1).toLowerCase()
+export function toSentenseCase(string: string): string {
+	return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
+}
+
+/**
+ * A strongly typed `hasOwnProperty`
+ * @helper
+ */
+export function hasOwnProperty<X extends object, Y extends PropertyKey>(
+	obj: X,
+	prop: Y
+): obj is X & Record<Y, unknown> {
+	// eslint-disable-next-line no-prototype-builtins
+	return obj.hasOwnProperty(prop)
 }

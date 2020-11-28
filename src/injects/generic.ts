@@ -1,4 +1,3 @@
 export class Injection {
-	public defValue: Function[] = []
-	constructor(public value: string, public func?: Function) {}
+	constructor(public value: string, public func?: () => void) {}
 }

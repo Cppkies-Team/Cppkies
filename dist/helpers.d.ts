@@ -23,7 +23,7 @@ export declare function escapeRegExp(str: string): string;
  * @param context The optional context to use
  * @helper
  */
-export declare function injectCode<T extends Function>(func: T, source: CommonValue<string> | CommonValue<RegExp> | null, target: CommonValue<string>, where: "before" | "replace" | "after", context?: object): T;
+export declare function injectCode<T extends (...args: unknown[]) => unknown>(func: T, source: CommonValue<string> | CommonValue<RegExp> | null, target: CommonValue<string>, where: "before" | "replace" | "after", context?: object): T;
 /**
  * Applies all props to an object via mutating
  * @param targObj The object which will be mutated
@@ -32,6 +32,11 @@ export declare function injectCode<T extends Function>(func: T, source: CommonVa
 export declare function applyAllProps(targObj: object, srcObj: object): void;
 /**
  * Converts a string to sentense case, AKA first letter upper, all next lower
- * @param strign
+ * @param string
  */
-export declare function toSentenseCase(strign: string): string;
+export declare function toSentenseCase(string: string): string;
+/**
+ * A strongly typed `hasOwnProperty`
+ * @helper
+ */
+export declare function hasOwnProperty<X extends object, Y extends PropertyKey>(obj: X, prop: Y): obj is X & Record<Y, unknown>;

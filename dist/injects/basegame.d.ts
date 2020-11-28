@@ -26,15 +26,18 @@ export declare type Hooks = ReturnableEventEmitter<{
      * @param hard whether or not this is a hard reset
      */
     customReset: [boolean, void];
-    getIcon: [{
-        type: string;
-        tier: string | number;
-        icon: Game.Icon;
-    }, {
-        type: string;
-        tier: string | number;
-        icon: Game.Icon;
-    }];
+    getIcon: [
+        {
+            type: string;
+            tier: string | number;
+            icon: Game.Icon;
+        },
+        {
+            type: string;
+            tier: string | number;
+            icon: Game.Icon;
+        }
+    ];
     /**
      * Called after BuildStore, used internally
      */

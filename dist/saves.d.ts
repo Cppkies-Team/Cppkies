@@ -2,15 +2,26 @@ import { Building } from "./buildings";
 import { Upgrade } from "./upgrade";
 import { Achievement } from "./achievement";
 export declare let save: SaveType;
+declare const SAVE_VER: 1;
 /**
  * The save type for Cppkies
  */
 export interface SaveType {
-    saveVer: number;
+    saveVer: typeof SAVE_VER;
     mods: Record<string, ModSave>;
     foreign: ModSave;
-    exists: boolean;
 }
+/**
+ * Legacy save types of Cppkies
+ */
+export declare type LegacySave = {
+    saveVer: 0;
+    mods: Record<string, never>;
+    foreign: {
+        buildings: Record<string, BuildingSave>;
+    };
+    exists: true;
+};
 /**
  * The save type for a mod
  */
@@ -92,6 +103,10 @@ export declare function loadAchievement(upgrade: Achievement): AchievementSave;
  */
 export declare function saveAchievement(upgrade: Achievement): void;
 /**
+ * Upgrades the save from a previous version, and assigns it to the save
+ */
+export declare function migrateSave(oldSave: LegacySave): void;
+/**
  * Loads everything
  */
 export declare function loadAll(): void;
@@ -99,5 +114,7 @@ export declare function loadAll(): void;
  * Saves everything
  */
 export declare function saveAll(): void;
+export declare function validateSave(newSave: unknown): newSave is LegacySave | SaveType;
 export declare function importSave(data: string): void;
 export declare function exportSave(): string;
+export {};

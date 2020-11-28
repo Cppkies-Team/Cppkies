@@ -7,13 +7,16 @@ export declare const customBuildings: Building[];
  * @param building The building to create hooks for
  */
 export declare type BuildingHooks = ReturnableEventEmitter<{
-    tooltip: [{
-        building: Game.Object;
-        str: string;
-    }, {
-        building: Game.Object;
-        str: string;
-    }];
+    tooltip: [
+        {
+            building: Game.Object;
+            str: string;
+        },
+        {
+            building: Game.Object;
+            str: string;
+        }
+    ];
     cps: [number, number];
 }>;
 export declare function createHooks(building: Building | Game.Object): void;
