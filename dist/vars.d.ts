@@ -5,13 +5,14 @@ import Tier from "./tiers";
 import { injectCode } from "./helpers";
 import { patchIconsheet, relinkColumn, relinkRow } from "./spritesheets";
 import { Hooks } from "./injects/basegame";
+import { hookAllBuildings } from "./buildings";
 import { Achievement, CpsAchievement, BankAchievement } from "./achievement";
 /**
  * The main object which is exported by Cppkies
  */
 declare const master: {
     hooks: Hooks;
-    on: <N extends "menu" | "optionsMenu" | "statsMenu" | "infoMenu" | "preSave" | "customReset" | "getIcon" | "buildStore" | "grandmaPic" | "rawCps" | "cps" | "cpsMult">(name: N, func: (src: {
+    on: <N extends "menu" | "optionsMenu" | "statsMenu" | "infoMenu" | "preSave" | "customReset" | "getIcon" | "buildStore" | "grandmaPic" | "rawCps" | "cps" | "cpsMult" | "cursorFingerMult" | "cpc" | "buildingCps">(name: N, func: (src: {
         menu: [void, void];
         optionsMenu: [void, void];
         statsMenu: [void, void];
@@ -32,6 +33,15 @@ declare const master: {
         rawCps: [number, number];
         cps: [number, number];
         cpsMult: [number, number];
+        cursorFingerMult: [number, number];
+        cpc: [number, number];
+        buildingCps: [{
+            building: string;
+            cps: number;
+        }, {
+            building: string;
+            cps: number;
+        }];
     }[N][0]) => {
         menu: [void, void];
         optionsMenu: [void, void];
@@ -53,11 +63,21 @@ declare const master: {
         rawCps: [number, number];
         cps: [number, number];
         cpsMult: [number, number];
+        cursorFingerMult: [number, number];
+        cpc: [number, number];
+        buildingCps: [{
+            building: string;
+            cps: number;
+        }, {
+            building: string;
+            cps: number;
+        }];
     }[N][1]) => void;
     iconLink: string;
     buildingLink: string;
     buildingHooks: Record<string, import("./buildings").BuildingHooks>;
     buildingHooksById: any[];
+    hookAllBuildings: typeof hookAllBuildings;
     customBuildings: Building[];
     customUpgrades: Upgrade[];
     customTiers: Tier[];

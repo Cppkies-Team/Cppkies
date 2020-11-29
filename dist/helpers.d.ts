@@ -23,7 +23,7 @@ export declare function escapeRegExp(str: string): string;
  * @param context The optional context to use
  * @helper
  */
-export declare function injectCode<T extends (...args: unknown[]) => unknown>(func: T, source: CommonValue<string> | CommonValue<RegExp> | null, target: CommonValue<string>, where: "before" | "replace" | "after", context?: object): T;
+export declare function injectCode<T extends ((...args: unknown[]) => unknown) | (new (...args: unknown[]) => unknown)>(func: T, source: CommonValue<string> | CommonValue<RegExp> | null, target: CommonValue<string>, where: "before" | "replace" | "after", context?: object): T;
 /**
  * Applies all props to an object via mutating
  * @param targObj The object which will be mutated

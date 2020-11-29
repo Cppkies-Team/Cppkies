@@ -4,6 +4,7 @@ import master from "./vars"
 import { exportSave, importSave } from "./saves"
 import { prod } from "../isprod.json"
 import postInject from "./injects/postInject"
+import { hookAllBuildings } from "./buildings"
 
 let CppkiesExport: typeof master
 
@@ -31,6 +32,7 @@ if (window.Cppkies) {
 			load: importSave,
 		})
 		Game.Win("Third-party")
+		hookAllBuildings()
 		//Run all onLoad events
 		master.onLoad.forEach(val => val())
 		//Force all new onLoad events to run

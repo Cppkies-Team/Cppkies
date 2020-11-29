@@ -49,6 +49,24 @@ export declare type Hooks = ReturnableEventEmitter<{
     rawCps: [number, number];
     cps: [number, number];
     cpsMult: [number, number];
+    /**
+     * The multiplier of cursor finger bonus
+     */
+    cursorFingerMult: [number, number];
+    /**
+     * Cookies per click
+     */
+    cpc: [number, number];
+    buildingCps: [
+        {
+            building: string;
+            cps: number;
+        },
+        {
+            building: string;
+            cps: number;
+        }
+    ];
 }>;
 /**
  * Creates the function hooks for base game

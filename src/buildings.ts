@@ -13,10 +13,7 @@ export const customBuildings: Building[] = []
  */
 
 export type BuildingHooks = ReturnableEventEmitter<{
-	tooltip: [
-		{ building: Game.Object; str: string },
-		{ building: Game.Object; str: string }
-	]
+	tooltip: [string, string]
 	cps: [number, number]
 }>
 
@@ -25,10 +22,10 @@ export function createHooks(building: Building | Game.Object): void {
 	const injections = [
 		new Injection("tooltip", () => {
 			building.tooltip = injectCode(
-				injectCode(building.tooltip, "return", "let ret = ", "replace"),
+				injectCode(building.tooltip, "return", "let tempRet = ", "replace"),
 				null,
 				`\n//Cppkies injection
-				return Cppkies.buildingHooks["${building.name}"].emit("tooltip", { building: this, str: ret}).str`,
+				return Cppkies.buildingHooks[this.name].emit("tooltip", tempRet)`,
 				"after"
 			)
 		}),
@@ -36,7 +33,22 @@ export function createHooks(building: Building | Game.Object): void {
 	injections.forEach(inject => {
 		inject?.func()
 	})
+	master.hooks.on("buildingCps", val => ({
+		building: val.building,
+		cps:
+			Game.Objects[val.building] === building
+				? emitter.emit("cps", val.cps)
+				: val.cps,
+	}))
 	buildingHooks[building.name] = emitter
+}
+
+/**
+ * Automatically finds buildings without hooks and creates them
+ */
+export function hookAllBuildings(): void {
+	for (const building of Game.ObjectsById)
+		if (!buildingHooks[building.name]) createHooks(building)
 }
 
 /**
@@ -94,8 +106,8 @@ export class Building extends Game.Object {
 			buyFunction
 		)
 		customBuildings.push(this)
-		// Create hooks
-		createHooks(this)
+		// Create hooks if they don't exist yet
+		if (!buildingHooks[name]) createHooks(this)
 		//Manually relink canvases and contexts because Orteil made it so new buildings break the old canvas and context links
 		for (const i in Game.ObjectsById) {
 			if (parseInt(i) <= 0) continue
@@ -130,15 +142,14 @@ export class Building extends Game.Object {
 		if (buildingSpecial) Game.goldenCookieBuildingBuffs[name] = buildingSpecial
 
 		if (this.iconLink) {
-			buildingHooks[this.name].on("tooltip", ret => ({
-				str: this.locked
-					? ret.str
-					: ret.str.replace(
+			buildingHooks[this.name].on("tooltip", ret =>
+				this.locked
+					? ret
+					: ret.replace(
 							"background-position",
 							`background-image:url(${this.iconLink});background-position`
-					  ),
-				building: ret.building,
-			}))
+					  )
+			)
 		}
 
 		Game.BuildStore()

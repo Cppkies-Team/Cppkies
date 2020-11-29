@@ -29,7 +29,11 @@ export function escapeRegExp(str: string): string {
  * @param context The optional context to use
  * @helper
  */
-export function injectCode<T extends (...args: unknown[]) => unknown>(
+export function injectCode<
+	T extends
+		| ((...args: unknown[]) => unknown)
+		| (new (...args: unknown[]) => unknown)
+>(
 	func: T,
 	source: CommonValue<string> | CommonValue<RegExp> | null,
 	target: CommonValue<string>,

@@ -18,6 +18,7 @@ import Tier, { customTiers } from "./tiers"
 import { injectCode } from "./helpers"
 import { patchIconsheet, relinkColumn, relinkRow } from "./spritesheets"
 import { Hooks } from "./injects/basegame"
+import { hookAllBuildings } from "./buildings"
 import {
 	Achievement,
 	CpsAchievement,
@@ -35,6 +36,7 @@ const master = {
 	buildingLink: "",
 	buildingHooks,
 	buildingHooksById: [],
+	hookAllBuildings,
 	customBuildings,
 	customUpgrades,
 	customTiers,
