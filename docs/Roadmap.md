@@ -2,8 +2,7 @@
 
 - [x] Buildings
 - [x] Upgrades
-  - [ ] Fortune Upgrades
-  - [ ] Seasonal Upgrades
+  - [x] Fortune Upgrades
   - [x] Heavenly Upgrades
 - [ ] Achievements
 - [ ] Buffs

@@ -15,6 +15,7 @@ export const customBuildings: Building[] = []
 export type BuildingHooks = ReturnableEventEmitter<{
 	tooltip: [string, string]
 	cps: [number, number]
+	buy: [void, void]
 }>
 
 export function createHooks(building: Building | Game.Object): void {
@@ -26,6 +27,17 @@ export function createHooks(building: Building | Game.Object): void {
 				null,
 				`\n//Cppkies injection
 				return Cppkies.buildingHooks[this.name].emit("tooltip", tempRet)`,
+				"after"
+			)
+		}),
+		new Injection("buy", () => {
+			building.buy = injectCode(
+				building.buy,
+				null,
+				`\n//Cppkies injection
+				if(success) {
+					Cppkies.buildingHooks[this.name].emit("buy")
+				}`,
 				"after"
 			)
 		}),

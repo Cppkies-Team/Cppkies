@@ -47,6 +47,7 @@ export declare type Hooks = ReturnableEventEmitter<{
      */
     grandmaPic: [string[], string[]];
     rawCps: [number, number];
+    rawCpsMult: [number, number];
     cps: [number, number];
     cpsMult: [number, number];
     /**
@@ -57,6 +58,9 @@ export declare type Hooks = ReturnableEventEmitter<{
      * Cookies per click
      */
     cpc: [number, number];
+    cpcAdd: [number, number];
+    logic: [void, void];
+    check: [void, void];
     buildingCps: [
         {
             building: string;

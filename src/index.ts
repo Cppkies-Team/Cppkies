@@ -25,7 +25,7 @@ if (window.Cppkies) {
 	main().then(answer => {
 		CppkiesExport.hooks = answer
 		CppkiesExport.on = answer.on.bind(answer)
-		Game.Notify("Cppkies loaded!", "", [32, prod ? 17 : 21])
+		Game.Notify("Cppkies loaded!", "", [32, prod ? 17 : 21], 1.5)
 		if (!Game.modSaveData["cppkies"]) Game.modSaveData["cppkies"] = "{}"
 		Game.registerMod("cppkies", {
 			save: exportSave,

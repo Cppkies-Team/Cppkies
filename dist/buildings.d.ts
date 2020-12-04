@@ -9,6 +9,7 @@ export declare const customBuildings: Building[];
 export declare type BuildingHooks = ReturnableEventEmitter<{
     tooltip: [string, string];
     cps: [number, number];
+    buy: [void, void];
 }>;
 export declare function createHooks(building: Building | Game.Object): void;
 /**

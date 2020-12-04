@@ -13,12 +13,14 @@ import {
 	GrandmaSynergy,
 	SynergyUpgrade,
 	customUpgrades,
+	KittenUpgrade,
 } from "./upgrade"
 import Tier, { customTiers } from "./tiers"
 import { injectCode } from "./helpers"
 import { patchIconsheet, relinkColumn, relinkRow } from "./spritesheets"
 import { Hooks } from "./injects/basegame"
 import { hookAllBuildings } from "./buildings"
+import { CursorUpgrade, MouseUpgrade } from "./upgrade"
 import {
 	Achievement,
 	CpsAchievement,
@@ -32,6 +34,10 @@ import {
 const master = {
 	hooks: null as Hooks,
 	on: null as Hooks["on"],
+	/**
+	 * The multiplier of milk which is not accessible in game by default
+	 */
+	hiddenMilkMult: 1,
 	iconLink: "",
 	buildingLink: "",
 	buildingHooks,
@@ -49,6 +55,9 @@ const master = {
 	HeavenlyUpgrade,
 	GrandmaSynergy,
 	SynergyUpgrade,
+	CursorUpgrade,
+	KittenUpgrade,
+	MouseUpgrade,
 	Achievement,
 	CpsAchievement,
 	BankAchievement,

@@ -1,7 +1,6 @@
 import { injectCode } from "../helpers"
 import { ReturnableEventEmitter } from "../lib/eventemitter"
 import { Injection } from "./generic"
-import { hookAllBuildings } from "../buildings"
 
 export type Hooks = ReturnableEventEmitter<{
 	//! Custom menus
@@ -61,6 +60,7 @@ export type Hooks = ReturnableEventEmitter<{
 	grandmaPic: [string[], string[]]
 	//! Gameplay
 	rawCps: [number, number]
+	rawCpsMult: [number, number]
 	cps: [number, number]
 	cpsMult: [number, number]
 	/**
@@ -71,6 +71,10 @@ export type Hooks = ReturnableEventEmitter<{
 	 * Cookies per click
 	 */
 	cpc: [number, number]
+	cpcAdd: [number, number]
+	//! Logic and stuff
+	logic: [void, void]
+	check: [void, void]
 	// !!!INTERNAL DO NOT USE!!! Use buildingHooks' "cps" instead
 	buildingCps: [
 		{ building: string; cps: number },
@@ -201,8 +205,10 @@ export function main(): Promise<Hooks> {
 			new Injection("cps", () => {
 				Game.CalculateGains = injectCode(
 					Game.CalculateGains,
-					"Game.cookiesPsRaw=rawCookiesPs;",
-					'// Cppkies injection\nrawCookiesPs = Cppkies.hooks.emit("rawCps", rawCookiesPs);\n',
+					"var rawCookiesPs=Game.cookiesPs*mult;",
+					`// Cppkies injection
+					Game.cookiesPs = Cppkies.hooks.emit("rawCps", Game.cookiesPs);
+					mult = Cppkies.hooks.emit("rawCpsMult", mult);\n`,
 					"before"
 				)
 				Game.CalculateGains = injectCode(
@@ -239,6 +245,13 @@ add = Cppkies.hooks.emit("cursorFingerMult", add)\n;`,
 out = Cppkies.hooks.emit("cpc", out)\n;`,
 					"before"
 				)
+				Game.mouseCps = injectCode(
+					Game.mouseCps,
+					`var out`,
+					`// Cppkies injection
+add = Cppkies.hooks.emit("cpcAdd", add)\n;`,
+					"before"
+				)
 			}),
 			// !!!INTERNAL DO NOT USE!!! Use buildingHooks' "cps" instead
 			new Injection("buildingCps", () => {
@@ -270,7 +283,7 @@ me.storedCps = Cppkies.hooks.emit("buildingCps", { building: i, cps: me.storedCp
 			`
  			// Cppkies injection
 			for(const i in this.tieredUpgrades) {
-				if (isNaN(parseInt(i))) break
+				if (isNaN(parseInt(i))) continue
 				if (this.amount >= Game.Tiers[this.tieredUpgrades[i].tier].unlock - 50) this.tieredUpgrades[i].unlock()
 			}
 `,
@@ -284,6 +297,21 @@ me.storedCps = Cppkies.hooks.emit("buildingCps", { building: i, cps: me.storedCp
 Cppkies.hookAllBuildings();\n`,
 			"after"
 		)
+		Game.CalculateGains = injectCode(
+			Game.CalculateGains,
+			"var catMult=1;",
+			`// Cppkies injection
+			Cppkies.hiddenMilkMult = milkMult;\n`,
+			"before"
+		)
+		Game.GetIcon = injectCode(
+			Game.GetIcon,
+			"col=18;",
+			'else if (type === "Mouse") col = 11;',
+			"after"
+		)
+		Game.registerHook("logic", () => emitter.emit("logic"))
+		Game.registerHook("check", () => emitter.emit("check"))
 		resolve(emitter)
 	})
 }

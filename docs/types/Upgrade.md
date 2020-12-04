@@ -53,4 +53,53 @@ new Cppkies.TieredUpgrade(
 )
 ```
 
-<!--TODO: CursorUpgrade, MouseUpgrade, KittenUpgrade-->
+### Cursor Upgrade
+
+Cursor upgrades are upgrades which multiply the bonus from Thousand fingers. They are automatically unlocked at a multiple of 50 of cursors.
+
+1. `name` - `string` The name of the upgrade
+2. `quote` - `string` The quote (flavour text) of it
+3. `tier` - `string | number` The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), `synergy2`(Synergy II), etc.
+4. `power` - `number` The multiplier of of thousand fingers, if omitted, 20 by default, which is the multiplier of later cursor upgrades
+
+#### Example
+
+```js
+new Cppkies.CursorUpgrade("A lot of fingers", "click * 100", 13, 500)
+```
+
+### Kitten Upgrade
+
+Kitten upgrades are upgrades which multiply CpS based on achievement amount. They are automatically unlocked when a new milk is unlocked.
+
+1. `name` - `string` Name of the upgrade
+2. `quote` - `string` The quote (flavour text) of it
+3. `tier` - `string | number` The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), `synergy2`(Synergy II), etc.
+4. `power` - `number` The multiplier of CpS per 25 achievement, if not set, automatically calculated
+5. `cost` - `number` The cost of the upgrade, if not set, automatically calculated
+6. `milkUnlockAmount` - `number` The milk progess (`achievements / 25`) required to unlock the upgrade, if not set, automatically calculated
+
+#### Example
+
+```js
+new Cppkies.KittenUpgrade(
+	"Kitten example upgrade help can someone help me with this name please",
+	"some flavour text please I have no idea help",
+	7 // Jetmint tier
+)
+```
+
+### Mouse Upgrade
+
+Mouse upgrades are upgrades which add more cookies per click to the cursor. They are automatically unlocked after enough hand-made cookies have been made.
+
+1. `name` - `string` The name of the upgrade
+2. `quote` - `string` The quote (flavour text) of it
+3. `tier` - `string | number` The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), `synergy2`(Synergy II), etc.
+4. `power` - `number` The multiplier of CpS per click, `0.01` by default, which is what all other cursor upgrades give
+
+#### Example
+
+```js
+new Cppkies.MouseUpgrade("Omegaepic mouse", "Epic!", 13, 10)
+```

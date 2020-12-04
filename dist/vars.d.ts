@@ -1,18 +1,19 @@
 /// <reference types="cookieclicker" />
 import { Building } from "./buildings";
-import { Upgrade, TieredUpgrade, HeavenlyUpgrade, GrandmaSynergy, SynergyUpgrade } from "./upgrade";
+import { Upgrade, TieredUpgrade, HeavenlyUpgrade, GrandmaSynergy, SynergyUpgrade, KittenUpgrade } from "./upgrade";
 import Tier from "./tiers";
 import { injectCode } from "./helpers";
 import { patchIconsheet, relinkColumn, relinkRow } from "./spritesheets";
 import { Hooks } from "./injects/basegame";
 import { hookAllBuildings } from "./buildings";
+import { CursorUpgrade, MouseUpgrade } from "./upgrade";
 import { Achievement, CpsAchievement, BankAchievement } from "./achievement";
 /**
  * The main object which is exported by Cppkies
  */
 declare const master: {
     hooks: Hooks;
-    on: <N extends "menu" | "optionsMenu" | "statsMenu" | "infoMenu" | "preSave" | "customReset" | "getIcon" | "buildStore" | "grandmaPic" | "rawCps" | "cps" | "cpsMult" | "cursorFingerMult" | "cpc" | "buildingCps">(name: N, func: (src: {
+    on: <N extends "menu" | "optionsMenu" | "statsMenu" | "infoMenu" | "preSave" | "customReset" | "getIcon" | "buildStore" | "grandmaPic" | "rawCps" | "rawCpsMult" | "cps" | "cpsMult" | "cursorFingerMult" | "cpc" | "cpcAdd" | "logic" | "check" | "buildingCps">(name: N, func: (src: {
         menu: [void, void];
         optionsMenu: [void, void];
         statsMenu: [void, void];
@@ -31,10 +32,14 @@ declare const master: {
         buildStore: [void, void];
         grandmaPic: [string[], string[]];
         rawCps: [number, number];
+        rawCpsMult: [number, number];
         cps: [number, number];
         cpsMult: [number, number];
         cursorFingerMult: [number, number];
         cpc: [number, number];
+        cpcAdd: [number, number];
+        logic: [void, void];
+        check: [void, void];
         buildingCps: [{
             building: string;
             cps: number;
@@ -61,10 +66,14 @@ declare const master: {
         buildStore: [void, void];
         grandmaPic: [string[], string[]];
         rawCps: [number, number];
+        rawCpsMult: [number, number];
         cps: [number, number];
         cpsMult: [number, number];
         cursorFingerMult: [number, number];
         cpc: [number, number];
+        cpcAdd: [number, number];
+        logic: [void, void];
+        check: [void, void];
         buildingCps: [{
             building: string;
             cps: number;
@@ -73,6 +82,10 @@ declare const master: {
             cps: number;
         }];
     }[N][1]) => void;
+    /**
+     * The multiplier of milk which is not accessible in game by default
+     */
+    hiddenMilkMult: number;
     iconLink: string;
     buildingLink: string;
     buildingHooks: Record<string, import("./buildings").BuildingHooks>;
@@ -90,6 +103,9 @@ declare const master: {
     HeavenlyUpgrade: typeof HeavenlyUpgrade;
     GrandmaSynergy: typeof GrandmaSynergy;
     SynergyUpgrade: typeof SynergyUpgrade;
+    CursorUpgrade: typeof CursorUpgrade;
+    KittenUpgrade: typeof KittenUpgrade;
+    MouseUpgrade: typeof MouseUpgrade;
     Achievement: typeof Achievement;
     CpsAchievement: typeof CpsAchievement;
     BankAchievement: typeof BankAchievement;
