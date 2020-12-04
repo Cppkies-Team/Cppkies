@@ -103,3 +103,29 @@ Mouse upgrades are upgrades which add more cookies per click to the cursor. They
 ```js
 new Cppkies.MouseUpgrade("Omegaepic mouse", "Epic!", 13, 10)
 ```
+
+### Upgrade Cookie
+
+Upgrade cookies are upgrades which multiply the amount of cookies gained per second, and automatically unlocked at a certail treshold.
+
+1. `name` - `string` Name of the cookie
+2. `quote` - `string` Quote (flavour text) of it
+3. `price` - `number` The price of the cookie
+4. `icon` - [`Icon`](types/Icon.md) The icon of it
+5. `power` - `number` The multiplier of CpS, in %, so `5` means +5% CpS, etc.
+6. `req` - `{ require?: string; season?: string; locked?: boolean }` Some optional conditions, etc. the season, the upgrade required, or if the upgrade can be unlocked naturally at all to unlock this
+   (Note: All cookies which aren't locked _require_ you to have 1/20 of it's cost to be unlocked)
+7. `order` - `number` Position of the cookie in the list, Most cookies have 10020 by default, cookies from boxes and special cookies have different orders.
+
+#### Example
+
+```js
+new Cppkies.UpgradeCookie(
+	"Cursor cookie",
+	"Tastes like nostalgia",
+	1e40,
+	[0, 0],
+	{ season: "fools" },
+	100000
+)
+```

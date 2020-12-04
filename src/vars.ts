@@ -20,7 +20,7 @@ import { injectCode } from "./helpers"
 import { patchIconsheet, relinkColumn, relinkRow } from "./spritesheets"
 import { Hooks } from "./injects/basegame"
 import { hookAllBuildings } from "./buildings"
-import { CursorUpgrade, MouseUpgrade } from "./upgrade"
+import { CursorUpgrade, MouseUpgrade, UpgradeCookie } from "./upgrade"
 import {
 	Achievement,
 	CpsAchievement,
@@ -58,6 +58,7 @@ const master = {
 	CursorUpgrade,
 	KittenUpgrade,
 	MouseUpgrade,
+	UpgradeCookie,
 	Achievement,
 	CpsAchievement,
 	BankAchievement,
