@@ -20,7 +20,7 @@ import { injectCode } from "./helpers"
 import { patchIconsheet, relinkColumn, relinkRow } from "./spritesheets"
 import { Hooks } from "./injects/basegame"
 import { hookAllBuildings } from "./buildings"
-import { CursorUpgrade, MouseUpgrade, UpgradeCookie } from "./upgrade"
+import { CursorUpgrade, MouseUpgrade, CookieUpgrade } from "./upgrade"
 import {
 	Achievement,
 	CpsAchievement,
@@ -32,8 +32,8 @@ import {
  * The main object which is exported by Cppkies
  */
 const master = {
-	hooks: null as Hooks,
-	on: null as Hooks["on"],
+	hooks: (null as unknown) as Hooks,
+	on: (null as unknown) as Hooks["on"],
 	/**
 	 * The multiplier of milk which is not accessible in game by default
 	 */
@@ -58,7 +58,7 @@ const master = {
 	CursorUpgrade,
 	KittenUpgrade,
 	MouseUpgrade,
-	UpgradeCookie,
+	CookieUpgrade,
 	Achievement,
 	CpsAchievement,
 	BankAchievement,

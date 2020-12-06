@@ -95,7 +95,9 @@ function relink(
 				references[matrix[y][x]] = [parseInt(x), parseInt(y)]
 			}
 		//Draw new column
-		const buffer = document.createElement("canvas").getContext("2d")
+		const buffer = document
+			.createElement("canvas")
+			.getContext("2d") as CanvasRenderingContext2D
 		const img = new Image()
 		img.addEventListener("load", (): void => {
 			buffer.canvas.width = size[0]
@@ -300,7 +302,9 @@ export async function patchIconsheet(
 	followAlias = true
 ): Promise<void> {
 	// First, create a canvas with the original image
-	const buffer = document.createElement("canvas").getContext("2d")
+	const buffer = document
+		.createElement("canvas")
+		.getContext("2d") as CanvasRenderingContext2D
 	const ogImg = await generateImageFromLink(
 		followAlias ? resolveAlias(link) : link
 	)

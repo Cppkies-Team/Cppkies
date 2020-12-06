@@ -6,7 +6,7 @@ import { injectCode } from "./helpers";
 import { patchIconsheet, relinkColumn, relinkRow } from "./spritesheets";
 import { Hooks } from "./injects/basegame";
 import { hookAllBuildings } from "./buildings";
-import { CursorUpgrade, MouseUpgrade, UpgradeCookie } from "./upgrade";
+import { CursorUpgrade, MouseUpgrade, CookieUpgrade } from "./upgrade";
 import { Achievement, CpsAchievement, BankAchievement } from "./achievement";
 /**
  * The main object which is exported by Cppkies
@@ -89,7 +89,7 @@ declare const master: {
     iconLink: string;
     buildingLink: string;
     buildingHooks: Record<string, import("./buildings").BuildingHooks>;
-    buildingHooksById: any[];
+    buildingHooksById: never[];
     hookAllBuildings: typeof hookAllBuildings;
     customBuildings: Building[];
     customUpgrades: Upgrade[];
@@ -106,7 +106,7 @@ declare const master: {
     CursorUpgrade: typeof CursorUpgrade;
     KittenUpgrade: typeof KittenUpgrade;
     MouseUpgrade: typeof MouseUpgrade;
-    UpgradeCookie: typeof UpgradeCookie;
+    CookieUpgrade: typeof CookieUpgrade;
     Achievement: typeof Achievement;
     CpsAchievement: typeof CpsAchievement;
     BankAchievement: typeof BankAchievement;

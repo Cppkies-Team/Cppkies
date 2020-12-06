@@ -1,7 +1,6 @@
 import { Building } from "./buildings";
 import { Upgrade } from "./upgrade";
 import { Achievement } from "./achievement";
-export declare let save: SaveType;
 declare const SAVE_VER: 1;
 /**
  * The save type for Cppkies
@@ -68,6 +67,7 @@ export declare const DEFAULT_UPGRADE_SAVE: UpgradeSave;
  */
 export declare const DEFAULT_ACHIEVEMENT_SAVE: AchievementSave;
 export declare const DEFAULT_MOD_SAVE: ModSave;
+export declare let save: SaveType;
 /**
  * Creates a save for Cppkies
  */

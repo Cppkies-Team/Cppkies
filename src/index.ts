@@ -21,6 +21,8 @@ if (window.Cppkies) {
 	CppkiesExport = window.Cppkies
 } else {
 	CppkiesExport = master
+	//Force manual addition since in-module injects b r e a k
+	window.Cppkies = CppkiesExport
 	//Inject maingame and create hooks
 	main().then(answer => {
 		CppkiesExport.hooks = answer
@@ -54,8 +56,6 @@ if (window.Cppkies) {
 			},
 		})
 		postInject()
-		//Force manual addition since in-module injects b r e a k
-		window.Cppkies = CppkiesExport
 	})
 }
 export default CppkiesExport

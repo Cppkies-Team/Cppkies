@@ -114,7 +114,7 @@ export declare class KittenUpgrade<Tier extends string | number> extends Upgrade
      * @param cost The cost of the upgrade, if not set, automatically calculated
      * @param milkUnlockAmount The milk progess (achievements / 25) required to unlock the upgrade, if not set, automatically calculated
      */
-    constructor(name: string, quote: string, tier: Tier, power?: number, cost?: number, milkUnlockAmount?: number);
+    constructor(name: string, quote: string, tier: Tier, power?: number | null, cost?: number, milkUnlockAmount?: number | null);
 }
 export declare class MouseUpgrade<Tier extends string | number> extends Upgrade implements Game.GenericTieredUpgrade<Tier> {
     tier: Tier;
@@ -128,7 +128,7 @@ export declare class MouseUpgrade<Tier extends string | number> extends Upgrade 
      */
     constructor(name: string, quote: string, tier: Tier, power?: number);
 }
-export declare class UpgradeCookie extends Upgrade implements Game.CookieUpgrade {
+export declare class CookieUpgrade extends Upgrade implements Game.CookieUpgrade {
     power: CommonValue<number>;
     pool: "cookie";
     /**

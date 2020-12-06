@@ -35,8 +35,8 @@ export function injectCode<
 		| (new (...args: unknown[]) => unknown)
 >(
 	func: T,
-	source: CommonValue<string> | CommonValue<RegExp> | null,
-	target: CommonValue<string>,
+	source: string | RegExp | null,
+	target: string,
 	where: "before" | "replace" | "after",
 	context: object = {}
 ): T {
@@ -47,17 +47,18 @@ export function injectCode<
 	}
 	let newFuncStr = func.toString()
 	const sliceMode = source === null
-	let regex: RegExp
-	if (!sliceMode) {
-		source = getValue(source)
+	// Do this to mute typescript silly wrong errors
+	let regex = new RegExp("")
+	if (source !== null) {
 		if (typeof source === "string")
 			regex = new RegExp(escapeRegExp(source), "g")
 		else regex = source
+		if (!regex.test(newFuncStr)) console.warn("Nothing to inject.")
 	}
-	target = getValue(target)
+
 	const findStart = /(\)[^{]*{)/
 	const findEnd = /(}?)$/
-	if (!sliceMode && !regex.test(newFuncStr)) console.warn("Nothing to inject.")
+
 	switch (where) {
 		case "before":
 			if (sliceMode) newFuncStr = newFuncStr.replace(findStart, `$1${target}`)

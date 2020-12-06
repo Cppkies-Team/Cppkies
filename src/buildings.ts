@@ -43,7 +43,7 @@ export function createHooks(building: Building | Game.Object): void {
 		}),
 	]
 	injections.forEach(inject => {
-		inject?.func()
+		inject.func?.()
 	})
 	master.hooks.on("buildingCps", val => ({
 		building: val.building,
@@ -126,7 +126,8 @@ export class Building extends Game.Object {
 			const me = Game.ObjectsById[i]
 			me.canvas = l(`rowCanvas${i}`) as HTMLCanvasElement
 			if (!me.canvas) continue
-			me.ctx = me.canvas.getContext("2d")
+			// Why does getContext return null possibly???
+			me.ctx = me.canvas.getContext("2d") as CanvasRenderingContext2D
 			//Relink their events too
 			me.canvas.addEventListener("mouseover", () => {
 				me.mouseOn = true
@@ -177,7 +178,8 @@ export class Building extends Game.Object {
 		}
 		Game.BuildStore()
 		this.canvas = l(`rowCanvas${this.id}`) as HTMLCanvasElement
-		this.ctx = this.canvas.getContext("2d")
+		// Why does getContext return null possibly???
+		this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D
 		//this.context = this.ctx
 		this.pics = []
 		const muteDiv = document.createElement("div")

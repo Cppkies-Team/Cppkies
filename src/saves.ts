@@ -3,7 +3,7 @@ import { Building } from "./buildings"
 import { Upgrade } from "./upgrade"
 import { applyAllProps, hasOwnProperty } from "./helpers"
 import { Achievement } from "./achievement"
-export let save: SaveType = null
+
 const SAVE_VER = 1 as const
 /**
  * The save type for Cppkies
@@ -89,6 +89,13 @@ export const DEFAULT_MOD_SAVE: ModSave = {
 	upgrades: {},
 	achievements: {},
 }
+
+export let save: SaveType = {
+	mods: {},
+	foreign: DEFAULT_MOD_SAVE,
+	saveVer: SAVE_VER,
+}
+
 /**
  * Creates a save for Cppkies
  */
@@ -212,16 +219,16 @@ export function saveAll(): void {
 export function validateSave(
 	newSave: unknown
 ): newSave is LegacySave | SaveType {
-	if (newSave === null) return false
 	// Assert type
 	if (typeof newSave !== "object") return false
+	if (newSave === null) return false
 	// Assert save version
 	if (
 		!hasOwnProperty(newSave, "saveVer") ||
-		typeof newSave.saveVer !== "number" ||
-		newSave.saveVer > SAVE_VER
+		typeof newSave.saveVer !== "number"
 	)
 		return false
+	if (newSave.saveVer > SAVE_VER) return false
 	// 0.1 had an "exists" property, it has been removed since
 	if (newSave.saveVer === 0 && !hasOwnProperty(newSave, "exists")) return false
 	// Assert mods
@@ -232,6 +239,7 @@ export function validateSave(
 	): modSave is LegacySave["foreign"] | ModSave {
 		// Assert type
 		if (typeof modSave !== "object") return false
+		if (modSave === null) return false
 		// Assert buildings
 		if (!hasOwnProperty(modSave, "buildings")) return false
 		if (typeof modSave.buildings !== "object") return false
@@ -242,7 +250,8 @@ export function validateSave(
 				if (typeof DEFAULT_BUILDING_SAVE[prop] !== typeof building[prop])
 					return false
 		}
-		if (newSave_.saveVer >= 1) {
+		// Grr typescript
+		if ((newSave as { saveVer: number }).saveVer >= 1) {
 			// Assert upgrades and achievements
 			if (!hasOwnProperty(modSave, "upgrades")) return false
 			if (typeof modSave.upgrades !== "object") return false

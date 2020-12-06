@@ -181,6 +181,7 @@ export class GrandmaSynergy extends Upgrade
 		if (grandmaPicture)
 			master.hooks.on("grandmaPic", src => {
 				if (this.bought) return [...src, grandmaPicture]
+				else return src
 			})
 	}
 }
@@ -378,14 +379,15 @@ export class KittenUpgrade<Tier extends string | number> extends Upgrade
 				if (Game.milkProgress >= milkUnlockAmount) Game.Unlock(this.name)
 			})
 		this.order = 20000 + this.id / 1000
-		master.on("rawCpsMult", mult => {
-			const addMult = this.bought
-				? 1 + Game.milkProgress * power * master.hiddenMilkMult
-				: 1
-			Game.cookiesMultByType["kittens"] *= addMult
+		if (power !== null)
+			master.on("rawCpsMult", mult => {
+				const addMult = this.bought
+					? 1 + Game.milkProgress * power * master.hiddenMilkMult
+					: 1
+				Game.cookiesMultByType["kittens"] *= addMult
 
-			return mult * addMult
-		})
+				return mult * addMult
+			})
 		Game.UpgradesByPool["kitten"].push(this)
 		if (tier === "fortune")
 			Game.Tiers[tier.toString()].upgrades.push(
@@ -428,7 +430,7 @@ export class MouseUpgrade<Tier extends string | number> extends Upgrade
 	}
 }
 
-export class UpgradeCookie extends Upgrade implements Game.CookieUpgrade {
+export class CookieUpgrade extends Upgrade implements Game.CookieUpgrade {
 	pool = "cookie" as const
 	/**
 	 * Create an upgrade which multiplier cookie production
@@ -463,9 +465,9 @@ export class UpgradeCookie extends Upgrade implements Game.CookieUpgrade {
 		this.unlockAt = {
 			name,
 			cookies: (typeof price === "function" ? price() : price) / 20,
-			require: req.require,
-			season: req.season,
-			locked: req.locked,
+			require: req?.require,
+			season: req?.season,
+			locked: req?.locked,
 		} as Game.UnlockRequirement
 		Game.UnlockAt.push(this.unlockAt)
 		Game.UpgradesByPool.cookie.push(this)
