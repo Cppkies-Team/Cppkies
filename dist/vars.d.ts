@@ -7,6 +7,7 @@ import { patchIconsheet, relinkColumn, relinkRow } from "./spritesheets";
 import { Hooks } from "./injects/basegame";
 import { hookAllBuildings } from "./buildings";
 import { CursorUpgrade, MouseUpgrade, CookieUpgrade } from "./upgrade";
+import { TieredAchievement } from "./achievement";
 import { Achievement, CpsAchievement, BankAchievement } from "./achievement";
 /**
  * The main object which is exported by Cppkies
@@ -110,6 +111,7 @@ declare const master: {
     Achievement: typeof Achievement;
     CpsAchievement: typeof CpsAchievement;
     BankAchievement: typeof BankAchievement;
+    TieredAchievement: typeof TieredAchievement;
     customAchievements: Achievement[];
     injectCode: typeof injectCode;
     DEFAULT_ONBUY: () => void;

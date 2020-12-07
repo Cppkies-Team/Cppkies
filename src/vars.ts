@@ -21,6 +21,7 @@ import { patchIconsheet, relinkColumn, relinkRow } from "./spritesheets"
 import { Hooks } from "./injects/basegame"
 import { hookAllBuildings } from "./buildings"
 import { CursorUpgrade, MouseUpgrade, CookieUpgrade } from "./upgrade"
+import { TieredAchievement } from "./achievement"
 import {
 	Achievement,
 	CpsAchievement,
@@ -62,6 +63,7 @@ const master = {
 	Achievement,
 	CpsAchievement,
 	BankAchievement,
+	TieredAchievement,
 	customAchievements,
 	injectCode,
 	DEFAULT_ONBUY: defaultOnBuy,

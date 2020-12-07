@@ -31,3 +31,16 @@ export declare class CpsAchievement extends Achievement implements Game.CpsAchie
      */
     constructor(name: string, icon: Game.Icon, q?: string | null, treshold?: number);
 }
+export declare class TieredAchievement<Tier extends string | number> extends Achievement implements Game.TieredAchievementClass<Tier> {
+    buildingTie: Game.Object;
+    pool: "normal";
+    tier: Tier;
+    /**
+     *
+     * @param name
+     * @param quote
+     * @param tier The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), etc.
+     * @param building
+     */
+    constructor(name: string, quote: string | null, building: Game.Object | string, tier: Tier | "cursor2" | "cursor50");
+}

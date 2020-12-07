@@ -232,8 +232,6 @@ export function validateSave(
 	// 0.1 had an "exists" property, it has been removed since
 	if (newSave.saveVer === 0 && !hasOwnProperty(newSave, "exists")) return false
 	// Assert mods
-	// A typescript bug makes closure types which derive from returns in if's transits wacky
-	const newSave_ = newSave
 	function validateModSave(
 		modSave: unknown
 	): modSave is LegacySave["foreign"] | ModSave {
