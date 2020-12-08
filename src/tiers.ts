@@ -75,7 +75,7 @@ export default class Tier implements Game.Tier {
 			Analyze sample icon
 		*/
 		this.iconRow = sampleIcon[1]
-		this.iconLink = resolveAlias(sampleIcon[2] || master.iconLink + "")
+		this.iconLink = resolveAlias(sampleIcon[2] ?? master.iconLink)
 		Game.Tiers[this.keyName] = this
 		customTiers.push(this)
 	}

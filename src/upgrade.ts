@@ -1,7 +1,7 @@
 import master from "./vars"
 import { loadUpgrade } from "./saves"
 import { CommonValue, toSentenseCase } from "./helpers"
-import { resolveAlias } from "./spritesheets"
+import { resolveIcon } from "./spritesheets"
 
 export const customUpgrades: Upgrade[] = []
 
@@ -25,19 +25,18 @@ export class Upgrade extends Game.Upgrade {
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		buyFunc: () => void = (): void => {}
 	) {
-		if (!icon[2]) icon[2] = master.iconLink + ""
-		icon[2] = resolveAlias(icon[2])
 		super(
 			name,
 			typeof desc === "function" ? "" : desc,
 			typeof price === "function" ? 0 : price,
-			typeof icon === "function" ? [0, 0] : icon,
+			typeof icon === "function" ? [0, 0] : resolveIcon(icon),
 			buyFunc
 		)
 
 		if (typeof desc === "function") this.descFunc = desc
 		if (typeof price === "function") this.priceFunc = price
-		if (typeof icon === "function") this.iconFunction = icon
+		if (typeof icon === "function")
+			this.iconFunction = () => resolveIcon(icon())
 		customUpgrades.push(this)
 		const loadProps = loadUpgrade(this)
 		for (const i in loadProps) this[i] = loadProps[i]

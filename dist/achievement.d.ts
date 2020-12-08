@@ -36,11 +36,11 @@ export declare class TieredAchievement<Tier extends string | number> extends Ach
     pool: "normal";
     tier: Tier;
     /**
-     *
-     * @param name
-     * @param quote
-     * @param tier The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), etc.
-     * @param building
+     * Creates an achievement which is won by having an amount of buildings
+     * @param name The name of it
+     * @param quote The optional quote of it
+     * @param tier The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), etc. (Can be "cursor2" or "cursor50" for special cursor amounts)
+     * @param building The buildings linked to this achievement
      */
     constructor(name: string, quote: string | null, building: Game.Object | string, tier: Tier | "cursor2" | "cursor50");
 }

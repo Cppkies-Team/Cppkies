@@ -147,8 +147,8 @@ export class Building extends Game.Object {
 				me.minigame.load(save)
 			}
 		}
-		this.buildingLink = bigIcon[2] || master.buildingLink + ""
-		this.iconLink = resolveAlias(icon[2] || master.iconLink + "")
+		this.buildingLink = bigIcon[2] ?? master.buildingLink
+		this.iconLink = resolveAlias(icon[2] ?? master.iconLink)
 		// This is the name, description, and icon used during Business Season
 		if (foolObject) Game.foolObjects[name] = foolObject
 		// The name of this building's golden cookie buff and debuff

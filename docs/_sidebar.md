@@ -23,6 +23,7 @@
   - [Icon](types/Icon.md)
   - [Upgrade](types/Upgrade.md)
   - [Heavenly upgrade](types/HeavenlyUpgrade.md)
+  - [Achievement](types/Achievement.md)
 
 - [Examples](Examples.md)
 - [Roadmap](Roadmap.md)

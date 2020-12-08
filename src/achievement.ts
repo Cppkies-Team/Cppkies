@@ -1,4 +1,4 @@
-import { resolveAlias } from "./spritesheets"
+import { resolveIcon } from "./spritesheets"
 import master from "./vars"
 import { loadAchievement } from "./saves"
 import { applyAllProps } from "./helpers"
@@ -13,9 +13,7 @@ export class Achievement extends Game.Achievement {
 	 * @param icon  The icon for it
 	 */
 	constructor(name: string, desc: string, icon: Game.Icon) {
-		if (!icon[2]) icon[2] = master.iconLink + ""
-		icon[2] = resolveAlias(icon[2])
-		super(name, desc, icon)
+		super(name, desc, resolveIcon(icon))
 		applyAllProps(this, loadAchievement(this))
 		customAchievements.push(this)
 	}
@@ -85,11 +83,11 @@ export class TieredAchievement<Tier extends string | number> extends Achievement
 	pool: "normal"
 	tier: Tier
 	/**
-	 *
-	 * @param name
-	 * @param quote
-	 * @param tier The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), etc.
-	 * @param building
+	 * Creates an achievement which is won by having an amount of buildings
+	 * @param name The name of it
+	 * @param quote The optional quote of it
+	 * @param tier The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), etc. (Can be "cursor2" or "cursor50" for special cursor amounts)
+	 * @param building The buildings linked to this achievement
 	 */
 	constructor(
 		name: string,
@@ -131,11 +129,12 @@ export class TieredAchievement<Tier extends string | number> extends Achievement
 			`Have <b>${req}</b> ${
 				Math.abs(req) === 1 ? buildingObject.single : buildingObject.plural
 			}.${quote ? `<q>${quote}</q>` : ""}`,
-			[0, 7]
+			icon ?? Game.GetIcon(buildingObject.name, tier)
 		)
-		Game.SetTier(buildingObject.name, tier)
-		if (icon) this.icon = icon
-		else this.icon = Game.GetIcon(buildingObject.name, tier)
+		Game.SetTier(
+			buildingObject.name,
+			tier === "cursor2" || tier === "cursor50" ? 1 : tier
+		)
 
 		buildingObject.tieredAchievs[tier as number] = this as TieredAchievement<
 			number

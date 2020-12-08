@@ -55,3 +55,4 @@ export declare function relinkRow(link: string, matrix: string[] | string[][], o
  * @param followAlias If true, the original image URI will be de-aliased (`relinkColumn`, `relinkRow` and `patchIconsheet` create an alias!)
  */
 export declare function patchIconsheet(link: string, replacements: [UniversalIcon, Game.Icon][], followAlias?: boolean): Promise<void>;
+export declare function resolveIcon(icon: Game.Icon): Game.Icon;

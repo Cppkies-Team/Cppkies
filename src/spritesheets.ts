@@ -343,3 +343,10 @@ export async function patchIconsheet(
 	}
 	alias(link, await toBlobURI(buffer))
 }
+
+export function resolveIcon(icon: Game.Icon): Game.Icon {
+	icon = [...icon]
+	if (icon[2] === undefined || icon[2] === null) icon[2] = master.iconLink
+	icon[2] = resolveAlias(icon[2])
+	return icon
+}
