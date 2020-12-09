@@ -1,5 +1,3 @@
-# Cppkies
-
 ![Cppkies](./static/CppkiesLogo.png?raw=true)
 
 ## Table of Contents

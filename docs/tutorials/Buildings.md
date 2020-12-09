@@ -2,21 +2,20 @@
 
 Buildings are the main way you make cookies in Cookie Clicker, and this is an tutorial to make one.
 
-First, you must create art for the building, the icons must be 48x48 (24x24 scaled to 2\*) and [must be in a specific order, if not, you must use `relinkColumn`](/CommonProblems#IconOrder).
-
 If you are coming from the setup tutorial this is what your mod should look like so far:
 
 ```ts
 import Cppkies from "cppkies"
-const prefix = "https://example.com/CppkieBaker/static" // The base for all your icons
-Cppkies.onLoad.push(() => {})
+Cppkies.onLoad.push(() => {
+
+})
 ```
 
 The first step you'll need to follow is to tell Cppkies where your art for your building is.
 
 ```ts
 import Cppkies from "cppkies"
-const prefix = "https://example.com/CppkieBaker/static"
+const prefix = "https://example.com/CppkieBaker/static" // A link to your building's art. 
 Cppkies.onLoad.push(() => {
 	Cppkies.buildingLink = `${prefix}/buildingBigIcon.png`
 	Cppkies.iconLink = `${prefix}/buildingIcons.png`
@@ -112,7 +111,7 @@ Cppkies.onLoad.push(() => {
 			name: "Normal Baker",
 			desc: "The top of your cookie hierarchy",
 			icon: [1, 0],
-		}, // Your buildings data on business day
+		}, // Your building's data on business day
 		["Motivation!", "Distractions"] // Your building's building buff and building debuff
 	)
 })
@@ -138,14 +137,53 @@ Cppkies.onLoad.push(() => {
 			yV: 64, // The amount your building can move left and right on the building screen in pixels
 			xV: 16, // The amount your building can move up and down on the building screen in pixels
 		},
-		Cppkies.DEFAULT_CPS, // Your buildings cps
+		Cppkies.DEFAULT_CPS, // Your building's cps
 		Cppkies.DEFAULT_ONBUY, // The function to call when your building gets bought but don't worry about this
 		{
 			name: "Normal Baker",
 			desc: "The top of your cookie hierarchy",
-			icon: [1, 0],
-		}, // Your buildings data on business day
+			icon: [2, 0],
+		}, // Your building's data on business day
 		["Motivation!", "Distractions"] // Your building's building buff and building debuff
+	)
+})
+```
+
+Now you have the code (or just copied the code above), It's time to draw your art. When creating art for your building, the icons must be 64x64 and [must be in a specific order, if not, you must use `relinkColumn`](/CommonProblems#IconOrder). Here's a simple template to follow: 
+![Building Template](./static/BuildingTemplate.png?raw=true) <!--todo: draw this template--> 
+
+In words this template is as follows, your building when unlocked, your building when locked, your building when unlocked when it's business day and finally your building when it's locked when it's business day. 
+
+## Extras
+
+Adding tiered upgrades/achievements to your building is rather simple just follow the guide below, Tier numbers can be found on the Cookie Clicker Wiki [here](https://cookieclicker.fandom.com/wiki/Upgrades#Tiers)
+```ts
+import Cppkies from "cppkies"
+const prefix = "https://example.com/CppkieBaker/static"
+Cppkies.onLoad.push(() => {
+	Cppkies.buildingLink = `${prefix}/buildingBigIcon.png`
+	Cppkies.iconLink = `${prefix}/buildingIcons.png`
+	new Cppkies.Building(
+		/* Your Buildings data */
+	)
+	new Cppkies.TieredUpgrade(
+		"Keyboard Toppings", // The name of the upgrade.
+		"Cherry Switches can be used as a replacement for cherries, right? I guess it doesn't really matter, <b>everyone</b> loves clacky keys.", // Your upgrade's quote.
+		"Cppkie Baker", // The building your upgrade is boosting. 
+		"1" // Your upgrade's tier in this case, the 1st normal tier, Plain
+	)
+	/* ... */
+	new Cppkies.TieredUpgrade(
+		"Multi Finger Addition Surgery",
+		"Increases your cps by about 128 clicks. MFAS for short, we do lung extensions as well if you're interested.",
+		"Cppkie Baker",
+		"13" // The 13th normal tier, Iridyum
+	)
+	new Cppkies.TieredAchievement(
+		"Cahpuhkies",
+		"An inferior version your Cppkies (Look there isn't really a pronunciation.)",
+		"13", // The 13th normal tier, Iridyum
+		"Cppkie Baker"
 	)
 })
 ```
