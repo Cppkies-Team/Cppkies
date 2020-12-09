@@ -17,9 +17,11 @@ yarn add cppkies
 Then you can use a bundler, like Webpack or Rollup, to bundle them.
 
 ```ts
-import * as Cppkies from "cppkies"rm
+import Cppkies from "cppkies"
 new Cppkies.Upgrade("Hello, World!", "My first upgrade!", 7, [10, 5])
 ```
+
+(If you want a simple template to easily start working, you should check out [TheGLander/CppkiesModExample](https://github.com/TheGLander/CppkiesModExample))
 
 ## Importing through `Game.LoadMod` - JS
 
@@ -40,8 +42,3 @@ CPPKIES_ONLOAD.push(() => {
 	new Cppkies.Upgrade("Hello, World!", "My first upgrade!", 7, [10, 5])
 })
 ```
-
-### Setting up your Workspace - TS
-
-If you want to use webpack or rollup, use must use [npm](https://npmjs.org) which is bundled with node, download for can be found for it [here](https://nodejs.org/en/download). After creating a `package.json`(`npm init`), you must setup rollup or webpack,
-documentation for which can be found here ([rollup](https://rollupjs.org/guide/en/#quick-start), [webpack](https://webpack.js.org/concepts/)).
