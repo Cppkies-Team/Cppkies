@@ -10,7 +10,7 @@ Cppkies will automatically save whether the upgrade was unlocked/bought or not, 
 
 ## Example
 
-```js
+```ts
 new Cppkies.Upgrade(
 	"Useless upgrade",
 	"Does <b>nothing</b><q>Nice one!</q>",
@@ -44,7 +44,7 @@ Tiered upgrades are upgrades which multiply the production of a building by 2, t
 
 #### Example
 
-```js
+```ts
 new Cppkies.TieredUpgrade(
 	"Longer rolling pins",
 	"Some quote here I don't know",
@@ -64,7 +64,7 @@ Cursor upgrades are upgrades which multiply the bonus from Thousand fingers. The
 
 #### Example
 
-```js
+```ts
 new Cppkies.CursorUpgrade("A lot of fingers", "click * 100", 13, 500)
 ```
 
@@ -81,7 +81,7 @@ Kitten upgrades are upgrades which multiply CpS based on achievement amount. The
 
 #### Example
 
-```js
+```ts
 new Cppkies.KittenUpgrade(
 	"Kitten example upgrade help can someone help me with this name please",
 	"some flavour text please I have no idea help",
@@ -100,7 +100,7 @@ Mouse upgrades are upgrades which add more cookies per click to the cursor. They
 
 #### Example
 
-```js
+```ts
 new Cppkies.MouseUpgrade("Omegaepic mouse", "Epic!", 13, 10)
 ```
 
@@ -119,7 +119,7 @@ Upgrade cookies are upgrades which multiply the amount of cookies gained per sec
 
 #### Example
 
-```js
+```ts
 new Cppkies.UpgradeCookie(
 	"Cursor cookie",
 	"Tastes like nostalgia",

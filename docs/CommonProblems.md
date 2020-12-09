@@ -34,7 +34,7 @@ Example:
 <details>
   <summary>(The code is a bit large, so it's hidden by default)</summary>
 
-```js
+```ts
 Cppkies.icons.relinkRow(
 	"https://pipe.miroware.io/5fb27f0be6bde66c95ca6ca3/complete2.png",
 	[
@@ -98,7 +98,7 @@ Example:
 <details>
   <summary>(The code is a bit large, so it's hidden by default)</summary>
 
-```js
+```ts
 Cppkies.icons.relinkColumn(
 	"https://raw.githubusercontent.com/Cppkies-Team/examples/master/static/buildingIcons.png",
 	[
@@ -136,7 +136,7 @@ Example:
 <details>
   <summary>(The code is a bit large, so it's hidden by default)</summary>
 
-```js
+```ts
 Cppkies.icons.relinkRow(
 	// This creates the aura tier icons, the iconsheet doesn't have the in-game cursor building icon
 	"https://pipe.miroware.io/5fb27f0be6bde66c95ca6ca3/complete2.png",

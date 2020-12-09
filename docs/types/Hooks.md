@@ -13,7 +13,7 @@ Parameters:
 
 For example:
 
-```js
+```ts
 Cppkies.on("cpsMult", mult => mult * 2)
 Cppkies.buildingHooks.Factory.on("cps", cps => cps * 2)
 ```
@@ -52,6 +52,6 @@ The hooks can be accessed via `Cppkies.buildingHooks[buildingName].on`
 
 For example
 
-```js
+```ts
 Cppkies.buildingHooks.Factory.on("cps", cps => cps * 2)
 ```

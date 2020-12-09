@@ -14,7 +14,7 @@ On their own, heavenly upgrades do nothing; hey only record whether they are unl
 6. `parents` - `(number | string)[]` The heavenly upgrade's parents, can be mixed ID's with names
 7. `buyFunc` - `() => void` The function which gets called on being bought
 
-```js
+```ts
 new Cppkies.HeavenlyUpgrade(
 	"Heavenly uselessness",
 	"Does absolutely <b>nothing</b>.",

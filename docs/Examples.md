@@ -1,4 +1,4 @@
-# Examples
+# Examples <!-- {docsify-ignore-all} -->
 
 ## [Think Tank Building](https://github.com/Cppkies-Team/examples/tree/master/ThinkTank)
 

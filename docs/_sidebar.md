@@ -14,7 +14,7 @@
         - [Advanced - Creating a Spell](tutorials/Grimoire.md)
     -->
 
-  - [Common mistakes](./CommonProblems.md)
+  - [Common Problems](./CommonProblems.md)
 
 - Documentation
 

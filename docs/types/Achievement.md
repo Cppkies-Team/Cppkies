@@ -10,7 +10,7 @@ Cppkies will automatically save whether the achievement was won or not, so you d
 
 ## Example
 
-```js
+```ts
 new Cppkies.Achievement(
 	"Unachievable achievement",
 	"It's <b>impossible</b> to get this achievement.<q>Nice one!</q>",
@@ -41,7 +41,7 @@ Bank and CpS achievements are achievement which are rewarded for reaching a cert
 
 #### Example
 
-```js
+```ts
 new Cppkies.BankAchievement("Bank name", [1, 7], "Eh?")
 new Cppkies.CpSAchievement("CpS name", [1, 7], "Hmm")
 ```
@@ -59,7 +59,7 @@ Tiered achievements are achievements which are rewarded for reaching a certain a
 
 #### Example
 
-```js
+```ts
 new Cppkies.TieredAchievement("Ok zoomer", null, "Grandma", 13)
 ```
 

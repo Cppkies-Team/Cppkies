@@ -27,13 +27,13 @@ Importing Cppkies through `Game.LoadMod` is not recommended since you can't spli
 
 To import it, you need to start your mod with
 
-```js
+```ts
 Game.LoadMod("https://unpkg.com/cppkies")
 ```
 
 For example:
 
-```js
+```ts
 Game.LoadMod("https://unpkg.com/cppkies")
 if (!window.CPPKIES_ONLOAD) CPPKIES_ONLOAD = []
 CPPKIES_ONLOAD.push(() => {
