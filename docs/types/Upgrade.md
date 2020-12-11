@@ -104,7 +104,7 @@ Mouse upgrades are upgrades which add more cookies per click to the cursor. They
 new Cppkies.MouseUpgrade("Omegaepic mouse", "Epic!", 13, 10)
 ```
 
-### Upgrade Cookie
+### Cookie Upgrade
 
 Upgrade cookies are upgrades which multiply the amount of cookies gained per second, and automatically unlocked at a certail treshold.
 
@@ -120,7 +120,7 @@ Upgrade cookies are upgrades which multiply the amount of cookies gained per sec
 #### Example
 
 ```ts
-new Cppkies.UpgradeCookie(
+new Cppkies.CookieUpgrade(
 	"Cursor cookie",
 	"Tastes like nostalgia",
 	1e40,

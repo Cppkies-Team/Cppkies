@@ -6,19 +6,17 @@ If you are coming from the setup tutorial this is what your mod should look like
 
 ```ts
 import Cppkies from "cppkies"
-Cppkies.onLoad.push(() => {
-
-})
+Cppkies.onLoad.push(() => {})
 ```
 
 The first step you'll need to follow is to tell Cppkies where your art for your building is.
 
 ```ts
 import Cppkies from "cppkies"
-const prefix = "https://example.com/CppkieBaker/static" // A link to your building's art. 
+const prefix = "https://example.com/CppkieBaker/static" // A link to your building's art.
 Cppkies.onLoad.push(() => {
-	Cppkies.buildingLink = `${prefix}/buildingBigIcon.png`
-	Cppkies.iconLink = `${prefix}/buildingIcons.png`
+	Cppkies.buildingLink = `${prefix}/buildingBigIcon.png` // Building big icons
+	Cppkies.iconLink = `${prefix}/buildingIcons.png` // Building normal icons
 })
 ```
 
@@ -149,27 +147,27 @@ Cppkies.onLoad.push(() => {
 })
 ```
 
-Now you have the code (or just copied the code above), It's time to draw your art. When creating art for your building, the icons must be 64x64 and [must be in a specific order, if not, you must use `relinkColumn`](/CommonProblems#IconOrder). Here's a simple template to follow: 
-![Building Template](./static/BuildingTemplate.png?raw=true) <!--todo: draw this template--> 
+Now you have the code (or just copied the code above), It's time to draw your art. When creating art for your building, the normal icons must be 48x48(24x24 upscaled to \*2) and [must be in a specific order, if not, you must use `relinkColumn`](/CommonProblems#IconOrder), big icons must be 64x64. Here's are simple templates to follow:
+![Building Big Icon Template](./static/BuildingTemplate.png?raw=true) <!--todo: draw this template-->
 
-In words this template is as follows, your building when unlocked, your building when locked, your building when unlocked when it's business day and finally your building when it's locked when it's business day. 
+In words this template is as follows, your building when unlocked, your building when locked, your building when unlocked when it's business day and finally your building when it's locked when it's business day.
 
 ## Extras
 
 Adding tiered upgrades/achievements to your building is rather simple just follow the guide below, Tier numbers can be found on the Cookie Clicker Wiki [here](https://cookieclicker.fandom.com/wiki/Upgrades#Tiers)
+
 ```ts
 import Cppkies from "cppkies"
 const prefix = "https://example.com/CppkieBaker/static"
 Cppkies.onLoad.push(() => {
 	Cppkies.buildingLink = `${prefix}/buildingBigIcon.png`
 	Cppkies.iconLink = `${prefix}/buildingIcons.png`
-	new Cppkies.Building(
-		/* Your Buildings data */
-	)
+	new Cppkies.Building()
+	/* Your Buildings data */
 	new Cppkies.TieredUpgrade(
 		"Keyboard Toppings", // The name of the upgrade.
 		"Cherry Switches can be used as a replacement for cherries, right? I guess it doesn't really matter, <b>everyone</b> loves clacky keys.", // Your upgrade's quote.
-		"Cppkie Baker", // The building your upgrade is boosting. 
+		"Cppkie Baker", // The building your upgrade is boosting.
 		"1" // Your upgrade's tier in this case, the 1st normal tier, Plain
 	)
 	/* ... */
@@ -187,3 +185,5 @@ Cppkies.onLoad.push(() => {
 	)
 })
 ```
+
+ <!-- Todo: Production, Lvl10 cheevos, auras -->
