@@ -100,6 +100,7 @@ Cppkies.onLoad.push(() => {
 	Cppkies.iconLink = `${prefix}/tierIcons.png`
 	/* Previous Code */
 
+	// We store the key name of the tier in a variable for easy upgrade & achievement creation
 	const moddedTier = new Cppkies.Tier(
 		"Modded", // The name of your tier.
 		[0, 0], // The position of any icon within your tier.
@@ -108,14 +109,14 @@ Cppkies.onLoad.push(() => {
 
 	// Do note that you usually want `Cppkies.CursorUpgrade` for cursor upgrades!
 	new Cppkies.CursorUpgrade(
-		"Decillion fingers",
-		"Some flavour text here idk",
-		moddedTier // Normal tiers have numbered tier names, so it's easier to use it like this
+		"Quadringentesimo-millillion fingers",
+		'"are you okay"*10^4203',
+		moddedTier // Normal tiers have numbered tier names, so it's easier to use it like this, vs guessing the tier number manually
 	)
 
 	new Cppkies.TieredUpgrade(
-		"Somebody please come up with this",
-		"This is seriously temporary pls I am calling out for help",
+		"Ancient sleep ritual",
+		"Some ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈'s would really help your overworked grandmas. Thankfully, this ritual removes the need for sleep!",
 		"Grandma",
 		moddedTier
 	)
@@ -132,14 +133,14 @@ Cppkies.onLoad.push(() => {
 	// Non-building upgrades
 
 	new Cppkies.KittenUpgrade(
-		"Kitten upgrade thing help can someone help me with this name please",
-		"some flavour text please I have no idea help",
+		"Sleepy Kittens",
+		"Ready to ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈, sir",
 		moddedTier
 	)
 
 	new Cppkies.MouseUpgrade(
-		"Cppkium mouse",
-		"editors! please come up with something I beg you",
+		"Cppkie-Flavored Mouse",
+		"The flavor text is awful. Note to self: change it before making this example public.",
 		moddedTier
 	)
 })

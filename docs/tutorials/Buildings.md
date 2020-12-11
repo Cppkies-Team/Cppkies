@@ -183,6 +183,14 @@ Cppkies.onLoad.push(() => {
 		"13", // The 13th normal tier, Iridyum
 		"Cppkie Baker"
 	)
+
+	// Non-tier upgrades
+	new Cppkies.GrandmaSynergy(
+		"Sleepy Grandmas",
+		"A nice ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ to ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ you cookies",
+		"Cppkie Baker",
+		`${prefix}/cppkieGrandma.png`
+	)
 })
 ```
 
