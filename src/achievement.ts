@@ -136,9 +136,7 @@ export class TieredAchievement<Tier extends string | number> extends Achievement
 			tier === "cursor2" || tier === "cursor50" ? 1 : tier
 		)
 
-		buildingObject.tieredAchievs[tier as number] = this as TieredAchievement<
-			number
-		>
+		buildingObject.tieredAchievs[tier] = this
 		this.buildingTie = buildingObject
 		if (typeof tier === "number") {
 			this.order = 1000 + buildingObject.id * 100 + this.id / 1000

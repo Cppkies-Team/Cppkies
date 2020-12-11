@@ -199,7 +199,7 @@ export function main(): Promise<Hooks> {
 					list = Cppkies.hooks.emit("grandmaPic", list)
 					`,
 					"before"
-				) as (building: Game.Object, i: number) => string
+				)
 			}),
 			//// -- Gameplay -- ////
 			new Injection("cps", () => {

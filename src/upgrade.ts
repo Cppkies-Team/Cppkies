@@ -136,10 +136,7 @@ export class TieredUpgrade<Tier extends string | number = string | number>
 			this.order -= Math.max(0, Math.min(building.id - 4, 3)) * 75
 			if (building.id >= 8) this.order -= 75
 		}
-		if (tier === "fortune")
-			Game.Tiers[tier.toString()].upgrades.push(
-				(this as unknown) as Game.TieredUpgradeClass<string>
-			)
+		if (tier === "fortune") Game.Tiers[tier.toString()].upgrades.push(this)
 	}
 }
 
@@ -228,9 +225,7 @@ export class SynergyUpgrade<Tier extends string> extends Upgrade
 		building1.synergies.push(this)
 		building2.synergies.push(this)
 
-		Game.Tiers[tier.toString()].upgrades.push(
-			(this as unknown) as Game.TieredUpgradeClass<string>
-		)
+		Game.Tiers[tier.toString()].upgrades.push(this)
 	}
 }
 
@@ -278,10 +273,7 @@ export class CursorUpgrade<Tier extends string | number> extends Upgrade
 				if (building.amount >= (tierPow === 4 ? 25 : (tierPow - 4) * 50))
 					Game.Unlock(this.name)
 			})
-		if (tier === "fortune")
-			Game.Tiers[tier.toString()].upgrades.push(
-				(this as unknown) as Game.TieredUpgradeClass<string>
-			)
+		if (tier === "fortune") Game.Tiers[tier.toString()].upgrades.push(this)
 	}
 }
 
@@ -388,10 +380,7 @@ export class KittenUpgrade<Tier extends string | number> extends Upgrade
 				return mult * addMult
 			})
 		Game.UpgradesByPool["kitten"].push(this)
-		if (tier === "fortune")
-			Game.Tiers[tier.toString()].upgrades.push(
-				(this as unknown) as Game.TieredUpgradeClass<string>
-			)
+		if (tier === "fortune") Game.Tiers[tier.toString()].upgrades.push(this)
 	}
 }
 
@@ -422,10 +411,7 @@ export class MouseUpgrade<Tier extends string | number> extends Upgrade
 				if (Game.handmadeCookies >= 10 ** (1 + tierPow * 2))
 					Game.Unlock(this.name)
 			})
-		if (tier === "fortune")
-			Game.Tiers[tier.toString()].upgrades.push(
-				(this as unknown) as Game.TieredUpgradeClass<string>
-			)
+		if (tier === "fortune") Game.Tiers[tier.toString()].upgrades.push(this)
 	}
 }
 
@@ -466,8 +452,7 @@ export class CookieUpgrade extends Upgrade implements Game.CookieUpgrade {
 			cookies: (typeof price === "function" ? price() : price) / 20,
 			require: req?.require,
 			season: req?.season,
-			locked: req?.locked,
-		} as Game.UnlockRequirement
+		}
 		Game.UnlockAt.push(this.unlockAt)
 		Game.UpgradesByPool.cookie.push(this)
 		Game.cookieUpgrades.push(this)
