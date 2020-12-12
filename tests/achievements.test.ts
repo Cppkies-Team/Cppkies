@@ -50,6 +50,20 @@ it("Should load achievement data on reload", async () => {
 	).toBeTruthy()
 })
 
+it("Should be able to create special tiered", async () => {
+	expect(
+		await page.evaluate(() => {
+			const achievement = new Cppkies.TieredAchievement(
+				"Test achievement",
+				null,
+				"Cursor",
+				"cursor2"
+			)
+			return [achievement.icon, achievement.desc]
+		})
+	).toStrictEqual([[0, 6, ""], "Have <b>2</b> cursors."])
+})
+
 afterAll(async () => {
 	await page.browser().close()
 })

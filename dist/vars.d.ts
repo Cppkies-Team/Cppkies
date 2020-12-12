@@ -89,6 +89,7 @@ declare const master: {
     hiddenMilkMult: number;
     iconLink: string;
     buildingLink: string;
+    cookieOrder: number;
     buildingHooks: Record<string, import("./buildings").BuildingHooks>;
     buildingHooksById: never[];
     hookAllBuildings: typeof hookAllBuildings;

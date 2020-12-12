@@ -138,12 +138,11 @@ export class TieredAchievement<Tier extends string | number> extends Achievement
 
 		buildingObject.tieredAchievs[tier] = this
 		this.buildingTie = buildingObject
-		if (typeof tier === "number") {
-			this.order = 1000 + buildingObject.id * 100 + this.id / 1000
-			// Manually patch order since Orteil doesn't like consistency
-			this.order -= Math.max(0, Math.min(buildingObject.id - 4, 3)) * 75
-			if (buildingObject.id >= 8) this.order -= 75
-			if (buildingObject.id === 0) this.order += 50
-		}
+
+		this.order = 1000 + buildingObject.id * 100 + this.id / 1000
+		// Manually patch order since Orteil doesn't like consistency
+		this.order -= Math.max(0, Math.min(buildingObject.id - 4, 3)) * 75
+		if (buildingObject.id >= 8) this.order -= 75
+		if (buildingObject.id === 0) this.order += 50
 	}
 }

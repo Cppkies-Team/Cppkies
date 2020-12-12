@@ -116,7 +116,7 @@ export class TieredUpgrade<Tier extends string | number = string | number>
 			`${toSentenseCase(
 				building.plural
 			)} are <b>twice</b> as efficient.<q>${quote}</q>`,
-			building.basePrice * Game.Tiers[tier.toString()].price,
+			building.basePrice * Game.Tiers[tier].price,
 			Game.GetIcon(building.name, tier)
 		)
 
@@ -136,7 +136,7 @@ export class TieredUpgrade<Tier extends string | number = string | number>
 			this.order -= Math.max(0, Math.min(building.id - 4, 3)) * 75
 			if (building.id >= 8) this.order -= 75
 		}
-		if (tier === "fortune") Game.Tiers[tier.toString()].upgrades.push(this)
+		if (tier === "fortune") Game.Tiers[tier].upgrades.push(this)
 	}
 }
 
@@ -225,7 +225,7 @@ export class SynergyUpgrade<Tier extends string> extends Upgrade
 		building1.synergies.push(this)
 		building2.synergies.push(this)
 
-		Game.Tiers[tier.toString()].upgrades.push(this)
+		Game.Tiers[tier].upgrades.push(this)
 	}
 }
 
@@ -251,8 +251,8 @@ export class CursorUpgrade<Tier extends string | number> extends Upgrade
 		super(
 			name,
 			`Multiplies the gain from Thousand fingers by <b>${power}</b>.<q>${quote}</q>`,
-			Game.Tiers[tier.toString()].special || isNaN(tierPow)
-				? building.basePrice * Game.Tiers[tier.toString()].price
+			Game.Tiers[tier].special || isNaN(tierPow)
+				? building.basePrice * Game.Tiers[tier].price
 				: // Calculate the cursor price
 				  10 **
 						// Early logs kinda don't really follow anything
@@ -268,12 +268,12 @@ export class CursorUpgrade<Tier extends string | number> extends Upgrade
 		this.pool = ""
 		this.order = 100 + this.id / 1000
 		master.on("cursorFingerMult", mult => (this.bought ? mult * power : mult))
-		if (!Game.Tiers[tier.toString()].special && !isNaN(tierPow))
+		if (!Game.Tiers[tier].special && !isNaN(tierPow))
 			master.buildingHooks.Cursor.on("buy", () => {
 				if (building.amount >= (tierPow === 4 ? 25 : (tierPow - 4) * 50))
 					Game.Unlock(this.name)
 			})
-		if (tier === "fortune") Game.Tiers[tier.toString()].upgrades.push(this)
+		if (tier === "fortune") Game.Tiers[tier].upgrades.push(this)
 	}
 }
 
@@ -330,14 +330,13 @@ export class KittenUpgrade<Tier extends string | number> extends Upgrade
 		name: string,
 		quote: string,
 		public tier: Tier,
-		power = Game.Tiers[tier.toString()].special ||
-		isNaN(parseInt(tier.toString()))
+		power = Game.Tiers[tier].special || isNaN(parseInt(tier.toString()))
 			? null
 			: kittenPowerPattern[
 					(parseInt(tier.toString()) - 1) % (kittenPowerPattern.length - 1)
 			  ],
 		cost?: number,
-		milkUnlockAmount = Game.Tiers[tier.toString()].special ||
+		milkUnlockAmount = Game.Tiers[tier].special ||
 		isNaN(parseInt(tier.toString()))
 			? null
 			: tier === 1
@@ -348,7 +347,7 @@ export class KittenUpgrade<Tier extends string | number> extends Upgrade
 		super(
 			name,
 			`You gain <b>more CpS</b> the more milk you have.<q>${quote}</q>`,
-			Game.Tiers[tier.toString()].special || isNaN(parseInt(tier.toString()))
+			Game.Tiers[tier].special || isNaN(parseInt(tier.toString()))
 				? cost ?? 0
 				: computeKittenCost(tier as number), //Just trust me.
 			Game.GetIcon("Kitten", tier)
@@ -358,8 +357,7 @@ export class KittenUpgrade<Tier extends string | number> extends Upgrade
 				"Please make sure to specify the power if the kitten tier is special"
 			)
 		if (
-			(Game.Tiers[tier.toString()].special ||
-				isNaN(parseInt(tier.toString()))) &&
+			(Game.Tiers[tier].special || isNaN(parseInt(tier.toString()))) &&
 			cost === undefined
 		)
 			console.warn(
@@ -380,7 +378,7 @@ export class KittenUpgrade<Tier extends string | number> extends Upgrade
 				return mult * addMult
 			})
 		Game.UpgradesByPool["kitten"].push(this)
-		if (tier === "fortune") Game.Tiers[tier.toString()].upgrades.push(this)
+		if (tier === "fortune") Game.Tiers[tier].upgrades.push(this)
 	}
 }
 
@@ -406,12 +404,12 @@ export class MouseUpgrade<Tier extends string | number> extends Upgrade
 		master.on("cpcAdd", add =>
 			this.bought ? add + (Game.cookiesPs * power) / 100 : add
 		)
-		if (!Game.Tiers[tier.toString()].special && !isNaN(tierPow))
+		if (!Game.Tiers[tier].special && !isNaN(tierPow))
 			master.on("check", () => {
 				if (Game.handmadeCookies >= 10 ** (1 + tierPow * 2))
 					Game.Unlock(this.name)
 			})
-		if (tier === "fortune") Game.Tiers[tier.toString()].upgrades.push(this)
+		if (tier === "fortune") Game.Tiers[tier].upgrades.push(this)
 	}
 }
 
@@ -446,7 +444,7 @@ export class CookieUpgrade extends Upgrade implements Game.CookieUpgrade {
 			price,
 			icon
 		)
-		this.order = (order ?? 10020) + this.id / 1000
+		this.order = (order ?? master.cookieOrder ?? 10020) + this.id / 1000
 		this.unlockAt = {
 			name,
 			cookies: (typeof price === "function" ? price() : price) / 20,

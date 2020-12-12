@@ -41,6 +41,7 @@ const master = {
 	hiddenMilkMult: 1,
 	iconLink: "",
 	buildingLink: "",
+	cookieOrder: 10020,
 	buildingHooks,
 	buildingHooksById: [],
 	hookAllBuildings,
