@@ -102,7 +102,7 @@ export class TieredUpgrade<Tier extends string | number = string | number>
 	 * @param name The name of the tiered upgrade
 	 * @param quote The description of the upgrade
 	 * @param building The building it boosts
-	 * @param tier The upgrade's tier
+	 * @param tier The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), `synergy2`(Synergy II), etc.
 	 */
 	constructor(
 		name: string,
@@ -163,7 +163,7 @@ export class GrandmaSynergy extends Upgrade
 		else grandmaNumber = `${grandmaNumber} grandmas`
 		super(
 			name,
-			`Grandmas are <b>twice</b> as efficient.${toSentenseCase(
+			`Grandmas are <b>twice</b> as efficient. ${toSentenseCase(
 				building.plural
 			)} gain <b>+1% CpS</b> per ${grandmaNumber}.<q>${quote}</q>`,
 			building.basePrice * Game.Tiers[2].price,
@@ -172,7 +172,7 @@ export class GrandmaSynergy extends Upgrade
 		)
 		building.grandma = this
 		this.buildingTie = building
-		this.order = 250 + (building.id / 12) * 5
+		this.order = 250 + this.id / 1000
 		Game.GrandmaSynergies.push(this.name)
 		if (grandmaPicture)
 			master.hooks.on("grandmaPic", src => {
@@ -194,7 +194,7 @@ export class SynergyUpgrade<Tier extends string> extends Upgrade
 	 * @param quote The flavor text for it
 	 * @param building1Name The first building
 	 * @param building2Name The second building
-	 * @param tier The synergy tier **Warning: The tier must have a req field**
+	 * @param tier The upgrade's tier, is the id of the tier, ex. `synergy1`(Synergy I), `synergy2`(Synergy II), etc. **Warning: The tier must have a req field**
 	 */
 	constructor(
 		name: string,

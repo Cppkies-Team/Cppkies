@@ -129,3 +129,45 @@ new Cppkies.CookieUpgrade(
 	100000
 )
 ```
+
+### Synergy Upgrade
+
+Synergy upgrades are upgrades which boosts two buildings at once, proportionate to the amount of the other building. Synergy upgrades are automatically unlocked at the tier's unlock number.
+
+1. `name` - `string` The name for the upgrade
+2. `quote` - `string` The flavor text for it
+3. `building1` - `string |`[`Game.Object`](types/Building.md) The first building
+4. `building2` - `string |`[`Game.Object`](types/Building.md) The second building
+5. `tier` - `string | number` The upgrade's tier, is the id of the tier, ex. `synergy1`(Synergy I), `synergy2`(Synergy II), etc. **Warning: The tier must have a req field**
+
+#### Example
+
+```ts
+new Cppkies.CookieUpgrade(
+	"Grandma sisters",
+	"A nice grandma to help other grandmas",
+	"Grandma",
+	"Grandma",
+	"synergy2"
+)
+```
+
+### Grandma Synergy Upgrade
+
+Grandma synergy upgrades are upgrades which boost both grandmas and another building. They are automatically unlocked at 15 of the building. (Note: doesn't really work with Cursors and Grandmas as second building)
+
+1. `name` - `string` The name for the upgrade(Usually something like "\_ Grandmas")
+2. `quote` - `string` The flavor text of the upgrade
+3. `building` - `string |`[`Game.Object`](types/Building.md) The building to be tied with
+4. `grandmaPicture` - `string` Optional, the picture of the grandma to use in grandma art when bought
+
+#### Example
+
+```ts
+new Cppkies.GrandmaSynergy(
+	"Grandma grandma",
+	"A nice grandma to grandma more grandmas",
+	"Time machine",
+	"img/grandma.png"
+)
+```

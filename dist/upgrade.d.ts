@@ -44,7 +44,7 @@ export declare class TieredUpgrade<Tier extends string | number = string | numbe
      * @param name The name of the tiered upgrade
      * @param quote The description of the upgrade
      * @param building The building it boosts
-     * @param tier The upgrade's tier
+     * @param tier The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), `synergy2`(Synergy II), etc.
      */
     constructor(name: string, quote: string, building: Game.Object | string, tier: Tier);
 }
@@ -71,7 +71,7 @@ export declare class SynergyUpgrade<Tier extends string> extends Upgrade impleme
      * @param quote The flavor text for it
      * @param building1Name The first building
      * @param building2Name The second building
-     * @param tier The synergy tier **Warning: The tier must have a req field**
+     * @param tier The upgrade's tier, is the id of the tier, ex. `synergy1`(Synergy I), `synergy2`(Synergy II), etc. **Warning: The tier must have a req field**
      */
     constructor(name: string, quote: string, building1: Game.Object | string, building2: Game.Object | string, tier: Tier);
 }
