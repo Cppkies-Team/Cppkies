@@ -14,9 +14,9 @@ The first step you'll need to follow is to tell Cppkies where your art for your 
 
 ```ts
 import Cppkies from "cppkies"
-const prefix = "https://example.com/ModdedTier/static" // A link to your building's art.
+const prefix = "https://example.com/ModdedTier/static" // A link to your tier's art.
 Cppkies.onLoad.push(() => {
-	Cppkies.iconLink = `${prefix}/tierIcons.png` // Building normal icons
+	Cppkies.iconLink = `${prefix}/tierIcons.png` // Tier icons
 })
 ```
 
