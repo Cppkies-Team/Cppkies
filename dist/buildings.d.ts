@@ -10,6 +10,7 @@ export declare type BuildingHooks = ReturnableEventEmitter<{
     tooltip: [string, string];
     cps: [number, number];
     buy: [void, void];
+    levelUp: [void, void];
 }>;
 export declare function createHooks(building: Building | Game.Object): void;
 /**

@@ -3,24 +3,24 @@ import { Building } from "./buildings";
 import { Upgrade, TieredUpgrade, HeavenlyUpgrade, GrandmaSynergy, SynergyUpgrade, KittenUpgrade } from "./upgrade";
 import Tier from "./tiers";
 import { injectCode } from "./helpers";
-import { patchIconsheet, relinkColumn, relinkRow } from "./spritesheets";
+import { patchIconsheet, relinkColumn, relinkRow, alias } from "./spritesheets";
 import { Hooks } from "./injects/basegame";
 import { hookAllBuildings } from "./buildings";
 import { CursorUpgrade, MouseUpgrade, CookieUpgrade } from "./upgrade";
-import { TieredAchievement } from "./achievement";
+import { TieredAchievement, ProductionAchievement } from "./achievement";
 import { Achievement, CpsAchievement, BankAchievement } from "./achievement";
 /**
  * The main object which is exported by Cppkies
  */
 declare const master: {
     hooks: Hooks;
-    on: <N extends "menu" | "optionsMenu" | "statsMenu" | "infoMenu" | "preSave" | "customReset" | "getIcon" | "buildStore" | "grandmaPic" | "rawCps" | "rawCpsMult" | "cps" | "cpsMult" | "cursorFingerMult" | "cpc" | "cpcAdd" | "logic" | "check" | "buildingCps">(name: N, func: (src: {
+    on: <N extends "menu" | "optionsMenu" | "statsMenu" | "infoMenu" | "preSave" | "reset" | "getIcon" | "buildStore" | "grandmaPic" | "rawCps" | "rawCpsMult" | "cps" | "cpsMult" | "cursorFingerMult" | "cpc" | "cpcAdd" | "logic" | "check" | "buildingCps">(name: N, func: (src: {
         menu: [void, void];
         optionsMenu: [void, void];
         statsMenu: [void, void];
         infoMenu: [void, void];
         preSave: [void, void];
-        customReset: [boolean, void];
+        reset: [boolean, void];
         getIcon: [{
             type: string;
             tier: string | number;
@@ -54,7 +54,7 @@ declare const master: {
         statsMenu: [void, void];
         infoMenu: [void, void];
         preSave: [void, void];
-        customReset: [boolean, void];
+        reset: [boolean, void];
         getIcon: [{
             type: string;
             tier: string | number;
@@ -113,6 +113,7 @@ declare const master: {
     CpsAchievement: typeof CpsAchievement;
     BankAchievement: typeof BankAchievement;
     TieredAchievement: typeof TieredAchievement;
+    ProductionAchievement: typeof ProductionAchievement;
     customAchievements: Achievement[];
     injectCode: typeof injectCode;
     DEFAULT_ONBUY: () => void;
@@ -121,6 +122,10 @@ declare const master: {
         relinkColumn: typeof relinkColumn;
         relinkRow: typeof relinkRow;
         patchIconsheet: typeof patchIconsheet;
+        extraColumnIcons: Record<string, import("./spritesheets").UniversalIcon>;
+        extraRowIcons: Record<string, import("./spritesheets").UniversalIcon>;
+        alias: typeof alias;
+        aliases: Record<string, string>;
     };
 };
 export default master;

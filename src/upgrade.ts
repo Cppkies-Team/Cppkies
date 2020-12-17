@@ -40,6 +40,7 @@ export class Upgrade extends Game.Upgrade {
 		customUpgrades.push(this)
 		const loadProps = loadUpgrade(this)
 		for (const i in loadProps) this[i] = loadProps[i]
+		Game.upgradesToRebuild = 1
 	}
 }
 
@@ -137,6 +138,7 @@ export class TieredUpgrade<Tier extends string | number = string | number>
 			if (building.id >= 8) this.order -= 75
 		}
 		if (tier === "fortune") Game.Tiers[tier].upgrades.push(this)
+		building.buyFunction.apply(building)
 	}
 }
 
@@ -167,7 +169,7 @@ export class GrandmaSynergy extends Upgrade
 				building.plural
 			)} gain <b>+1% CpS</b> per ${grandmaNumber}.<q>${quote}</q>`,
 			building.basePrice * Game.Tiers[2].price,
-			[10, 9],
+			[10, 9, ""],
 			Game.Objects.Grandma.redraw
 		)
 		building.grandma = this
@@ -179,6 +181,8 @@ export class GrandmaSynergy extends Upgrade
 				if (this.bought) return [...src, grandmaPicture]
 				else return src
 			})
+		Game.Objects.Grandma.redraw()
+		building.buyFunction.apply(building)
 	}
 }
 
@@ -192,8 +196,8 @@ export class SynergyUpgrade<Tier extends string> extends Upgrade
 	 * Creates a synergy upgrade
 	 * @param name The name for the upgrade
 	 * @param quote The flavor text for it
-	 * @param building1Name The first building
-	 * @param building2Name The second building
+	 * @param building1 The first building, note that the icon will be inherited from this
+	 * @param building2 The second building
 	 * @param tier The upgrade's tier, is the id of the tier, ex. `synergy1`(Synergy I), `synergy2`(Synergy II), etc. **Warning: The tier must have a req field**
 	 */
 	constructor(
@@ -205,7 +209,13 @@ export class SynergyUpgrade<Tier extends string> extends Upgrade
 	) {
 		if (typeof building1 === "string") building1 = Game.Objects[building1]
 		if (typeof building2 === "string") building2 = Game.Objects[building2]
-
+		const icon = Game.GetIcon(building1.name, tier)
+		//Swap
+		if (building1.basePrice > building2.basePrice) {
+			const temp = building1
+			building1 = building2
+			building2 = temp
+		}
 		super(
 			name,
 			`${toSentenseCase(
@@ -216,7 +226,7 @@ export class SynergyUpgrade<Tier extends string> extends Upgrade
 			${building1.name.toLowerCase()}.<q>${quote}</q>`,
 			(building1.basePrice * 10 + building2.basePrice * 1) *
 				Game.Tiers[tier].price,
-			Game.GetIcon(building1.name, tier)
+			icon
 		)
 		this.tier = tier
 		this.buildingTie1 = building1
@@ -226,6 +236,8 @@ export class SynergyUpgrade<Tier extends string> extends Upgrade
 		building2.synergies.push(this)
 
 		Game.Tiers[tier].upgrades.push(this)
+		Game.RebuildUpgrades()
+		building1.buyFunction.apply(building1)
 	}
 }
 
@@ -274,6 +286,7 @@ export class CursorUpgrade<Tier extends string | number> extends Upgrade
 					Game.Unlock(this.name)
 			})
 		if (tier === "fortune") Game.Tiers[tier].upgrades.push(this)
+		Game.Objects.Cursor.buyFunction.apply(Game.Objects.Cursor)
 	}
 }
 

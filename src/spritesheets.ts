@@ -135,7 +135,7 @@ const columnRelinkAmount: Record<string, number> = {}
 /**
  * Additional icons which aren't defined with tiers
  */
-const extraColumnIcons: Record<string, UniversalIcon> = {
+export const extraColumnIcons: Record<string, UniversalIcon> = {
 	"3d": [0, 21],
 	milestone1: [0, 22],
 	milestone2: [0, 23],
@@ -217,7 +217,7 @@ const rowRelinkAmount: Record<string, number> = {}
 /**
  * Additional icons which aren't defined with buildings
  */
-const extraRowIcons: Record<string, UniversalIcon> = {
+export const extraRowIcons: Record<string, UniversalIcon> = {
 	research: [9, 0],
 	cookie: [10, 0],
 	mouse: [11, 0],

@@ -40,11 +40,6 @@ export function injectCode<
 	where: "before" | "replace" | "after",
 	context: object = {}
 ): T {
-	// Sanity check
-	for (const i in context) {
-		if (!/[a-zA-Z_$][0-9a-zA-Z_$]*/.test(i))
-			throw new Error("Invalid context variable name!")
-	}
 	let newFuncStr = func.toString()
 	const sliceMode = source === null
 	// Do this to mute typescript silly wrong errors
@@ -75,14 +70,10 @@ export function injectCode<
 		default:
 			throw new Error('where Parameter must be "before", "replace" or "after"')
 	}
-	let contextStr = ""
-	for (const i in context) {
-		contextStr += `var ${i} = globalThis.tempCtx.${i}\n`
-	}
-	globalThis.tempCtx = context
-	const newFunc = new Function(
-		`${contextStr}globalThis.tempCtx = null\nreturn (${newFuncStr})`
-	)()
+	const newFunc = Function(
+		...Object.keys(context),
+		`return (${newFuncStr})`
+	)(...Object.values(context))
 	newFunc.prototype = func.prototype
 	return newFunc
 }

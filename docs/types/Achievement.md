@@ -28,7 +28,7 @@ new Cppkies.Achievement(
 
 There are different sub-types of achievements which have automatically generated parameters such as `order`, `desc`, win conditions, etc.
 
-### Bank, CpS Achievements
+### Bank, CpS Achievement
 
 Bank and CpS achievements are achievement which are rewarded for reaching a certain amount of cookies this ascension or per second. They are similar code-wise so they are bundled together.
 
@@ -46,7 +46,7 @@ new Cppkies.BankAchievement("Bank name", [1, 7], "Eh?")
 new Cppkies.CpSAchievement("CpS name", [1, 7], "Hmm")
 ```
 
-### Tiered Achievements
+### Tiered Achievement
 
 Tiered achievements are achievements which are rewarded for reaching a certain amount of buildings.
 
@@ -63,4 +63,28 @@ Tiered achievements are achievements which are rewarded for reaching a certain a
 new Cppkies.TieredAchievement("Ok zoomer", null, "Grandma", 13)
 ```
 
-<!-- TODO: LevelAchievement, ProductionAchievement, ClickAchievement, etc-->
+### Production Achievement
+
+Creates a production achievement, which are automatically obtained when enough cookies is made from one building.
+
+#### Constructor properties
+
+1. `name` - `string` Name of the achievement
+2. `building` - `string |`[`Game.Object`](types/Building.md) The building of the achivement
+3. `tier` - `number` The tier of productivity, not the normal tier, fully works with only `1`, `2`, `3`, otherwise icon will be messed up.
+4. `quote` - `string` The (optional) quote of it
+5. `mult` - `number` The additional multiplier, should be used if the achievement is too easy to obtain
+
+#### Example
+
+```ts
+new Cppkies.ProductionAchievement(
+	"I really need something here",
+	"Time machine",
+	3,
+	null,
+	100
+)
+```
+
+<!-- TODO: LevelAchievement, ClickAchievement, etc-->

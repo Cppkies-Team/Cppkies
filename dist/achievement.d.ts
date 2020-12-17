@@ -44,3 +44,14 @@ export declare class TieredAchievement<Tier extends string | number> extends Ach
      */
     constructor(name: string, quote: string | null, building: Game.Object | string, tier: Tier | "cursor2" | "cursor50");
 }
+export declare class ProductionAchievement extends Achievement {
+    /**
+     * Creates a production achievement (Make \_ from only \_ achievements)
+     * @param name Name of the achievement
+     * @param building The building of the achivement
+     * @param tier The tier of productivity, not the normal tier, fully works with only `1`, `2`, `3`, otherwise icon will be messed up.
+     * @param quote The (optional) quote of it
+     * @param mult The additional multiplier, should be used if the achievement is too easy to obtain
+     */
+    constructor(name: string, building: string | Game.Object, tier: number, quote?: string | null, mult?: number | null);
+}

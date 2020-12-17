@@ -28,6 +28,14 @@ if (window.Cppkies) {
 		CppkiesExport.hooks = answer
 		CppkiesExport.on = answer.on.bind(answer)
 		Game.Notify("Cppkies loaded!", "", [32, prod ? 17 : 21], 1.5)
+
+		const cppkiesNote = document.createElement("div")
+		cppkiesNote.textContent = "Cppkies!"
+		;(document.querySelector("#topBar") as HTMLElement).insertBefore(
+			cppkiesNote,
+			(document.querySelector("#topBar") as HTMLElement).children[1]
+		)
+
 		if (!Game.modSaveData["cppkies"]) Game.modSaveData["cppkies"] = "{}"
 		Game.registerMod("cppkies", {
 			save: exportSave,

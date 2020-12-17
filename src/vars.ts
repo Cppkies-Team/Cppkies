@@ -17,11 +17,20 @@ import {
 } from "./upgrade"
 import Tier, { customTiers } from "./tiers"
 import { injectCode } from "./helpers"
-import { patchIconsheet, relinkColumn, relinkRow } from "./spritesheets"
+import {
+	patchIconsheet,
+	relinkColumn,
+	relinkRow,
+	extraColumnIcons,
+	extraRowIcons,
+	alias,
+	aliases,
+} from "./spritesheets"
 import { Hooks } from "./injects/basegame"
 import { hookAllBuildings } from "./buildings"
 import { CursorUpgrade, MouseUpgrade, CookieUpgrade } from "./upgrade"
-import { TieredAchievement } from "./achievement"
+import { TieredAchievement, ProductionAchievement } from "./achievement"
+
 import {
 	Achievement,
 	CpsAchievement,
@@ -65,6 +74,7 @@ const master = {
 	CpsAchievement,
 	BankAchievement,
 	TieredAchievement,
+	ProductionAchievement,
 	customAchievements,
 	injectCode,
 	DEFAULT_ONBUY: defaultOnBuy,
@@ -73,6 +83,10 @@ const master = {
 		relinkColumn,
 		relinkRow,
 		patchIconsheet,
+		extraColumnIcons,
+		extraRowIcons,
+		alias,
+		aliases,
 	},
 }
 

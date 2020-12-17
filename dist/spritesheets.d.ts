@@ -24,6 +24,10 @@ export declare function resolveAlias(name: string): string;
  */
 export declare type UniversalIcon = [number, number];
 /**
+ * Additional icons which aren't defined with tiers
+ */
+export declare const extraColumnIcons: Record<string, UniversalIcon>;
+/**
  * Relocates the icons for a column and automatically aliases it
  * @param link The link to the original, unordered iconsheet
  * @param matrix The matrix of the names of the icon tiers
@@ -35,6 +39,10 @@ export declare type UniversalIcon = [number, number];
  * @param followAlias If true, the original image URI will be de-aliased (`relinkColumn`, `relinkRow` and `patchIconsheet` create an alias!)
  */
 export declare function relinkColumn(link: string, matrix: string[] | string[][], offset?: number, followAlias?: boolean): Promise<void>;
+/**
+ * Additional icons which aren't defined with buildings
+ */
+export declare const extraRowIcons: Record<string, UniversalIcon>;
 /**
  * Relocates the icons for a row and automatically aliases it
  * @param link The link to the original, unordered iconsheet

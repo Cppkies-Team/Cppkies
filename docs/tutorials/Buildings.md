@@ -185,13 +185,38 @@ Cppkies.onLoad.push(() => {
 	)
 
 	// Non-tier upgrades
+
+	// Grandma synergies
 	new Cppkies.GrandmaSynergy(
 		"Sleepy Grandmas",
 		"A nice ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ to ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ʐ̈ you cookies",
 		"Cppkie Baker",
 		`${prefix}/cppkieGrandma.png`
 	)
+
+	// Production achievements (Make _ cookies from only _)
+
+	new Cppkies.ProductionAchievement(
+		"Pls",
+		"Cppkie baker",
+		1 // The tier of the production achievement, unrelated to game tiers, works without modifications for 1 2 and 3
+	)
+
+	new Cppkies.ProductionAchievement(
+		"Update",
+		"Cppkie baker",
+		2,
+		"This" // The flavor text of it
+	)
+
+	new Cppkies.ProductionAchievement(
+		"Quickly",
+		"Cppkie baker",
+		3,
+		null, // No flavor text here
+		3 // Additional multiplier for the requirement (Will up the normal req for this by 10^3)
+	)
 })
 ```
 
- <!-- Todo: Production, Lvl10 cheevos, auras -->
+ <!-- Todo: Lvl10 cheevos, auras -->

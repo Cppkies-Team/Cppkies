@@ -37,6 +37,8 @@ Heavenly upgrades are drastically different and are located on [a different page
 
 Tiered upgrades are upgrades which multiply the production of a building by 2, they are automatically unlocked at a multiple of 50 of the building. (Except for cursors)
 
+#### Constructor properties
+
 1. `name` - `string` The name of the tiered upgrade
 2. `description` - `string` The quote (flavor text) of the upgrade
 3. `building` - `string |`[`Game.Object`](types/Building.md) The building it boosts
@@ -57,6 +59,8 @@ new Cppkies.TieredUpgrade(
 
 Cursor upgrades are upgrades which multiply the bonus from Thousand fingers. They are automatically unlocked at a multiple of 50 of cursors.
 
+#### Constructor properties
+
 1. `name` - `string` The name of the upgrade
 2. `quote` - `string` The quote (flavour text) of it
 3. `tier` - `string | number` The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), `synergy2`(Synergy II), etc.
@@ -71,6 +75,8 @@ new Cppkies.CursorUpgrade("A lot of fingers", "click * 100", 13, 500)
 ### Kitten Upgrade
 
 Kitten upgrades are upgrades which multiply CpS based on achievement amount. They are automatically unlocked when a new milk is unlocked.
+
+#### Constructor properties
 
 1. `name` - `string` Name of the upgrade
 2. `quote` - `string` The quote (flavour text) of it
@@ -93,6 +99,8 @@ new Cppkies.KittenUpgrade(
 
 Mouse upgrades are upgrades which add more cookies per click to the cursor. They are automatically unlocked after enough hand-made cookies have been made.
 
+#### Constructor properties
+
 1. `name` - `string` The name of the upgrade
 2. `quote` - `string` The quote (flavour text) of it
 3. `tier` - `string | number` The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), `synergy2`(Synergy II), etc.
@@ -107,6 +115,8 @@ new Cppkies.MouseUpgrade("Omegaepic mouse", "Epic!", 13, 10)
 ### Cookie Upgrade
 
 Upgrade cookies are upgrades which multiply the amount of cookies gained per second, and automatically unlocked at a certail treshold.
+
+#### Constructor properties
 
 1. `name` - `string` Name of the cookie
 2. `quote` - `string` Quote (flavour text) of it
@@ -134,6 +144,8 @@ new Cppkies.CookieUpgrade(
 
 Synergy upgrades are upgrades which boosts two buildings at once, proportionate to the amount of the other building. Synergy upgrades are automatically unlocked at the tier's unlock number.
 
+#### Constructor properties
+
 1. `name` - `string` The name for the upgrade
 2. `quote` - `string` The flavor text for it
 3. `building1` - `string |`[`Game.Object`](types/Building.md) The first building
@@ -155,6 +167,8 @@ new Cppkies.CookieUpgrade(
 ### Grandma Synergy Upgrade
 
 Grandma synergy upgrades are upgrades which boost both grandmas and another building. They are automatically unlocked at 15 of the building. (Note: doesn't really work with Cursors and Grandmas as second building)
+
+#### Constructor properties
 
 1. `name` - `string` The name for the upgrade(Usually something like "\_ Grandmas")
 2. `quote` - `string` The flavor text of the upgrade

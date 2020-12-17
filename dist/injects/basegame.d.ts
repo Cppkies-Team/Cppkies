@@ -25,7 +25,7 @@ export declare type Hooks = ReturnableEventEmitter<{
      * Allows you to execute a function on data load, useful for custom data resetting
      * @param hard whether or not this is a hard reset
      */
-    customReset: [boolean, void];
+    reset: [boolean, void];
     getIcon: [
         {
             type: string;

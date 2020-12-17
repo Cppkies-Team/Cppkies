@@ -16,6 +16,7 @@ export type BuildingHooks = ReturnableEventEmitter<{
 	tooltip: [string, string]
 	cps: [number, number]
 	buy: [void, void]
+	levelUp: [void, void]
 }>
 
 export function createHooks(building: Building | Game.Object): void {
@@ -39,6 +40,16 @@ export function createHooks(building: Building | Game.Object): void {
 					Cppkies.buildingHooks[this.name].emit("buy")
 				}`,
 				"after"
+			)
+		}),
+		new Injection("levelUp", () => {
+			building.levelUp = injectCode(
+				building.levelUp,
+				"me.level+=1;",
+				`\n// Cppkies injection
+Cppkies.buildingHooks[me.name].emit("levelUp")`,
+				"after",
+				{ me: building }
 			)
 		}),
 	]

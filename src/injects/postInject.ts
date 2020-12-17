@@ -16,9 +16,11 @@ export default function postInject(): void {
 		return { icon, tier, type }
 	})
 	master.hooks.on("getIcon", ({ icon, type, tier }) => {
-		if (!hasOwnProperty(Game.Tiers[tier.toString()], "iconLink")) {
+		if (
+			(icon[2] === undefined || icon[2] === null) &&
+			!hasOwnProperty(Game.Tiers[tier.toString()], "iconLink")
+		)
 			icon[2] = ""
-		}
 		return { icon, tier, type }
 	})
 }
