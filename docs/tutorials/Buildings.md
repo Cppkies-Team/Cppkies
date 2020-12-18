@@ -197,26 +197,32 @@ Cppkies.onLoad.push(() => {
 	// Production achievements (Make _ cookies from only _)
 
 	new Cppkies.ProductionAchievement(
-		"Pls",
-		"Cppkie baker",
+		"How did he write 518 of these things.",
+		"Cppkie Baker",
 		1 // The tier of the production achievement, unrelated to game tiers, works without modifications for 1 2 and 3
 	)
 
 	new Cppkies.ProductionAchievement(
-		"Update",
-		"Cppkie baker",
+		"Like seriously it's kinda crazy, I'm really running out of ideas and references.",
+		"Cppkie Baker",
 		2,
 		"This" // The flavor text of it
 	)
 
 	new Cppkies.ProductionAchievement(
-		"Quickly",
-		"Cppkie baker",
+		"Good job, Orteil.",
+		"Cppkie Baker",
 		3,
 		null, // No flavor text here
 		3 // Additional multiplier for the requirement (Will up the normal req for this by 10^3)
 	)
+	
+	new Cppkies.Level10Achievement(
+		"Open Source", 
+		"Cppkie Baker", 
+		"https://github.com/Cppkies-Team/Cppkies"
+	)
 })
 ```
 
- <!-- Todo: Lvl10 cheevos, auras -->
+ <!-- Todo: auras -->
