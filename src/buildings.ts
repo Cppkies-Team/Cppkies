@@ -105,8 +105,11 @@ export class Building extends Game.Object {
 		foolObject: Game.FoolBuilding,
 		buildingSpecial: [string, string]
 	) {
+		if (Game.Objects[name])
+			throw new Error(
+				`Can't create building, "${name}" is already used as a building name`
+			)
 		//Warn about enforced orders
-		//TODO Create article
 		if (icon[1] !== 0) {
 			console.warn(
 				"All icon sheets must follow an order, see https://cppkies.js.org/#/CommonProblems#IconOrder?id=relink-column"

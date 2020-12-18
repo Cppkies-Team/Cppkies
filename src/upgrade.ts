@@ -159,6 +159,13 @@ export class GrandmaSynergy extends Upgrade
 		building: Game.Object | string,
 		grandmaPicture?: string
 	) {
+		if (grandmaPicture) {
+			if (!grandmaPicture.endsWith(".png"))
+				throw new Error(
+					`Can't use the grandma picture URL "${grandmaPicture}", URL must end with .png`
+				)
+			grandmaPicture = grandmaPicture.substring(0, grandmaPicture.length - 4)
+		}
 		if (typeof building === "string") building = Game.Objects[building]
 		let grandmaNumber: string | number = building.id - 1
 		if (grandmaNumber === 1) grandmaNumber = "grandma"
@@ -175,12 +182,14 @@ export class GrandmaSynergy extends Upgrade
 		building.grandma = this
 		this.buildingTie = building
 		this.order = 250 + this.id / 1000
+		if (building.id >= 12) this.order += 5
 		Game.GrandmaSynergies.push(this.name)
-		if (grandmaPicture)
+		if (grandmaPicture) {
 			master.hooks.on("grandmaPic", src => {
-				if (this.bought) return [...src, grandmaPicture]
+				if (this.bought) return [...src, grandmaPicture] as string[]
 				else return src
 			})
+		}
 		Game.Objects.Grandma.redraw()
 		building.buyFunction.apply(building)
 	}
