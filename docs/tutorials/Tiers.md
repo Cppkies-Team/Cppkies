@@ -143,5 +143,11 @@ Cppkies.onLoad.push(() => {
 		"The flavor text is awful. Note to self: change it before making this example public.",
 		moddedTier
 	)
+	
+	new Cppkies.MouseAchievement(
+		"TODO: MouseAchievement", 
+		10, 
+		"Bob, you better finish this or you're losing you job."
+	)
 })
 ```
