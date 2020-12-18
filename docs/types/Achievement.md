@@ -65,7 +65,7 @@ new Cppkies.TieredAchievement("Ok zoomer", null, "Grandma", 13)
 
 ### Production Achievement
 
-Creates a production achievement, which are automatically obtained when enough cookies is made from one building.
+Creates a production achievement, which is automatically obtained when enough cookies is made from one building.
 
 #### Constructor properties
 
@@ -87,4 +87,34 @@ new Cppkies.ProductionAchievement(
 )
 ```
 
-<!-- TODO: LevelAchievement, ClickAchievement, etc-->
+### Level 10 Achievement
+
+Creates a level 10 achievement, which is automatically unlocked when the building has reached level 10.
+
+#### Constructor properties
+
+1. `name` - `string` Name of the achievement
+2. `building` - `string |`[`Game.Object`](types/Building.md) The building to track the level of
+3. `quote` - `string` The (optional) quote of it
+
+#### Example
+
+```ts
+new Cppkies.Level10Achievement("I really have no idea", "Bank", "HELP")
+```
+
+### Mouse Achievement
+
+Creates an achievement which is unlocked when a specific amount of cookies is made by hand.
+
+#### Constructor properties
+
+1. `name` - `string` Name of the achievement
+2. `tier` - `string | number` The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), `synergy2`(Synergy II)
+3. `quote` - `string` The (optional) quote of it
+
+#### Example
+
+```ts
+new Cppkies.MouseAchievement("Please fill", 10, "this in")
+```

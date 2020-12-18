@@ -55,3 +55,23 @@ export declare class ProductionAchievement extends Achievement {
      */
     constructor(name: string, building: string | Game.Object, tier: number, quote?: string | null, mult?: number | null);
 }
+export declare class Level10Achievement extends Achievement {
+    /**
+     * Creates an achievement which is given for getting level 10 of the building
+     * @param name Name of the achievement
+     * @param building The building to track the level of
+     * @param quote The (optional) quote of it
+     */
+    constructor(name: string, building: string | Game.Object, quote?: string | null);
+}
+export declare class MouseAchievement<Tier extends string | number> extends Achievement {
+    pool: "normal";
+    tier: Tier;
+    /**
+     * Creates an achievement which is unlocked when a specific amount of cookies is made
+     * @param name Name of the achievement
+     * @param quote Quote (flavour text) of it
+     * @param tier The achievement's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), `synergy2`(Synergy II), etc.
+     */
+    constructor(name: string, tier: Tier, quote: string);
+}

@@ -7,7 +7,8 @@ import { patchIconsheet, relinkColumn, relinkRow, alias } from "./spritesheets";
 import { Hooks } from "./injects/basegame";
 import { hookAllBuildings } from "./buildings";
 import { CursorUpgrade, MouseUpgrade, CookieUpgrade } from "./upgrade";
-import { TieredAchievement, ProductionAchievement } from "./achievement";
+import { MouseAchievement } from "./achievement";
+import { TieredAchievement, ProductionAchievement, Level10Achievement } from "./achievement";
 import { Achievement, CpsAchievement, BankAchievement } from "./achievement";
 /**
  * The main object which is exported by Cppkies
@@ -29,7 +30,9 @@ declare const master: {
             type: string;
             tier: string | number;
             icon: Game.Icon;
-        }];
+        }]; /**
+         * The multiplier of milk which is not accessible in game by default
+         */
         buildStore: [void, void];
         grandmaPic: [string[], string[]];
         rawCps: [number, number];
@@ -63,7 +66,9 @@ declare const master: {
             type: string;
             tier: string | number;
             icon: Game.Icon;
-        }];
+        }]; /**
+         * The multiplier of milk which is not accessible in game by default
+         */
         buildStore: [void, void];
         grandmaPic: [string[], string[]];
         rawCps: [number, number];
@@ -114,6 +119,8 @@ declare const master: {
     BankAchievement: typeof BankAchievement;
     TieredAchievement: typeof TieredAchievement;
     ProductionAchievement: typeof ProductionAchievement;
+    Level10Achievement: typeof Level10Achievement;
+    MouseAchievement: typeof MouseAchievement;
     customAchievements: Achievement[];
     injectCode: typeof injectCode;
     DEFAULT_ONBUY: () => void;

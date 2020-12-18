@@ -29,7 +29,12 @@ import {
 import { Hooks } from "./injects/basegame"
 import { hookAllBuildings } from "./buildings"
 import { CursorUpgrade, MouseUpgrade, CookieUpgrade } from "./upgrade"
-import { TieredAchievement, ProductionAchievement } from "./achievement"
+import { MouseAchievement } from "./achievement"
+import {
+	TieredAchievement,
+	ProductionAchievement,
+	Level10Achievement,
+} from "./achievement"
 
 import {
 	Achievement,
@@ -75,6 +80,8 @@ const master = {
 	BankAchievement,
 	TieredAchievement,
 	ProductionAchievement,
+	Level10Achievement,
+	MouseAchievement,
 	customAchievements,
 	injectCode,
 	DEFAULT_ONBUY: defaultOnBuy,
