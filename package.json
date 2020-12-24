@@ -1,6 +1,6 @@
 {
 	"name": "cppkies",
-	"version": "0.2.0-alpha.2",
+	"version": "0.2.0-alpha.3",
 	"description": "Cppkies is a modding framework for the game Cookie Clicker. It intends to make modding the game very simple.",
 	"main": "./dist/index.js",
 	"scripts": {
