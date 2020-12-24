@@ -8,6 +8,8 @@ import { Hooks } from "./injects/basegame";
 import { hookAllBuildings } from "./buildings";
 import { CursorUpgrade, MouseUpgrade, CookieUpgrade } from "./upgrade";
 import { MouseAchievement } from "./achievement";
+import { DragonAura, DragonLevel, DragonAuraLevel } from "./dragon";
+import { Milk } from "./milk";
 import { TieredAchievement, ProductionAchievement, Level10Achievement } from "./achievement";
 import { Achievement, CpsAchievement, BankAchievement } from "./achievement";
 /**
@@ -15,13 +17,15 @@ import { Achievement, CpsAchievement, BankAchievement } from "./achievement";
  */
 declare const master: {
     hooks: Hooks;
-    on: <N extends "menu" | "optionsMenu" | "statsMenu" | "infoMenu" | "preSave" | "reset" | "getIcon" | "buildStore" | "grandmaPic" | "rawCps" | "rawCpsMult" | "cps" | "cpsMult" | "cursorFingerMult" | "cpc" | "cpcAdd" | "logic" | "check" | "buildingCps">(name: N, func: (src: {
+    on: <N extends "menu" | "optionsMenu" | "statsMenu" | "infoMenu" | "preSave" | "postSave" | "reset" | "reincarnate" | "getIcon" | "buildStore" | "grandmaPic" | "rawCps" | "rawCpsMult" | "cps" | "cpsMult" | "cursorFingerMult" | "cpc" | "cpcAdd" | "logic" | "draw" | "check" | "ticker" | "buildingCps" | "specialPic">(name: N, func: (src: {
         menu: [void, void];
         optionsMenu: [void, void];
         statsMenu: [void, void];
         infoMenu: [void, void];
         preSave: [void, void];
+        postSave: [void, void];
         reset: [boolean, void];
+        reincarnate: [void, void];
         getIcon: [{
             type: string;
             tier: string | number;
@@ -30,9 +34,7 @@ declare const master: {
             type: string;
             tier: string | number;
             icon: Game.Icon;
-        }]; /**
-         * The multiplier of milk which is not accessible in game by default
-         */
+        }];
         buildStore: [void, void];
         grandmaPic: [string[], string[]];
         rawCps: [number, number];
@@ -43,7 +45,9 @@ declare const master: {
         cpc: [number, number];
         cpcAdd: [number, number];
         logic: [void, void];
+        draw: [void, void];
         check: [void, void];
+        ticker: [string[], string[]];
         buildingCps: [{
             building: string;
             cps: number;
@@ -51,13 +55,24 @@ declare const master: {
             building: string;
             cps: number;
         }];
+        specialPic: [{
+            tab: string;
+            pic: string;
+            frame: number;
+        }, {
+            tab: string;
+            pic: string;
+            frame: number;
+        }];
     }[N][0]) => {
         menu: [void, void];
         optionsMenu: [void, void];
         statsMenu: [void, void];
         infoMenu: [void, void];
         preSave: [void, void];
+        postSave: [void, void];
         reset: [boolean, void];
+        reincarnate: [void, void];
         getIcon: [{
             type: string;
             tier: string | number;
@@ -66,9 +81,7 @@ declare const master: {
             type: string;
             tier: string | number;
             icon: Game.Icon;
-        }]; /**
-         * The multiplier of milk which is not accessible in game by default
-         */
+        }];
         buildStore: [void, void];
         grandmaPic: [string[], string[]];
         rawCps: [number, number];
@@ -79,13 +92,24 @@ declare const master: {
         cpc: [number, number];
         cpcAdd: [number, number];
         logic: [void, void];
+        draw: [void, void];
         check: [void, void];
+        ticker: [string[], string[]];
         buildingCps: [{
             building: string;
             cps: number;
         }, {
             building: string;
             cps: number;
+        }];
+        specialPic: [{
+            tab: string;
+            pic: string;
+            frame: number;
+        }, {
+            tab: string;
+            pic: string;
+            frame: number;
         }];
     }[N][1]) => void;
     /**
@@ -122,6 +146,10 @@ declare const master: {
     Level10Achievement: typeof Level10Achievement;
     MouseAchievement: typeof MouseAchievement;
     customAchievements: Achievement[];
+    DragonAura: typeof DragonAura;
+    DragonLevel: typeof DragonLevel;
+    DragonAuraLevel: typeof DragonAuraLevel;
+    Milk: typeof Milk;
     injectCode: typeof injectCode;
     DEFAULT_ONBUY: () => void;
     DEFAULT_CPS: (me: Building) => number;

@@ -17,6 +17,8 @@ export class Achievement extends Game.Achievement {
 		super(name, desc, resolveIcon(icon))
 		applyAllProps(this, loadAchievement(this))
 		customAchievements.push(this)
+		if (this.won && Game.CountsAsAchievementOwned(this.pool))
+			Game.AchievementsOwned++
 	}
 }
 
@@ -233,7 +235,7 @@ export class MouseAchievement<
 		const tierPow = parseInt(tier.toString())
 		super(
 			name,
-			`Make <b>${10 ** (1 + tierPow * 2)}</b> cookies from clicking.${
+			`Make <b>${toFixed(10 ** (1 + tierPow * 2))}</b> cookies from clicking.${
 				quote ? `<q>${quote}</q>` : ""
 			}`,
 			Game.GetIcon("Mouse", tier) // Injected in `basegame.ts`

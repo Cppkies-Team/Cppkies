@@ -28,12 +28,14 @@ export type Hooks = ReturnableEventEmitter<{
 	 */
 	preSave: [void, void]
 
+	postSave: [void, void]
 	/**
 	 * Allows you to execute a function on data load, useful for custom data resetting
 	 * @param hard whether or not this is a hard reset
 	 */
 	reset: [boolean, void]
 
+	reincarnate: [void, void]
 	//! Tiers
 
 	getIcon: [
@@ -72,13 +74,20 @@ export type Hooks = ReturnableEventEmitter<{
 	 */
 	cpc: [number, number]
 	cpcAdd: [number, number]
-	//! Logic and stuff
+	//! Vanilla hooks
 	logic: [void, void]
+	draw: [void, void]
 	check: [void, void]
+	ticker: [string[], string[]]
 	// !!!INTERNAL DO NOT USE!!! Use buildingHooks' "cps" instead
 	buildingCps: [
 		{ building: string; cps: number },
 		{ building: string; cps: number }
+	]
+	//! Special objects hooks
+	specialPic: [
+		{ tab: string; pic: string; frame: number },
+		{ tab: string; pic: string; frame: number }
 	]
 }>
 /**
@@ -140,16 +149,31 @@ export function main(): Promise<Hooks> {
 					"before"
 				)
 			}),
+			new Injection("postSave", () => {
+				Game.WriteSave = injectCode(
+					Game.WriteSave,
+					"if (type==2 || type==3)",
+					`
+					// Cppkies injection
+					Cppkies.hooks.emit("postSave")
+					`,
+					"before"
+				)
+			}),
 			new Injection("reset", () => {
+				// Called before everything else, so ascend with _ achievements are possible
 				Game.Reset = injectCode(
 					Game.Reset,
 					null,
 					`
 					// Cppkies injection
-					Cppkies.hooks.emit("reset", hard)
+					Cppkies.hooks.constEmit("reset", hard)
 					`,
 					"before"
 				)
+			}),
+			new Injection("reincarnate", () => {
+				Game.registerHook("reincarnate", () => emitter.emit("reincarnate"))
 			}),
 			//// -- Tiers -- ////
 			/**
@@ -167,6 +191,12 @@ export function main(): Promise<Hooks> {
 					// Cppkies Injection
 					return Cppkies.hooks.emit("getIcon", { icon: [col, Game.Tiers[tier].iconRow], tier: tier, type: type }).icon`,
 					"replace"
+				)
+				Game.GetIcon = injectCode(
+					Game.GetIcon,
+					"col=18;",
+					'else if (type === "Mouse") col = 11;',
+					"after"
 				)
 			}),
 			//// -- Sugar Lump -- ////
@@ -214,19 +244,19 @@ export function main(): Promise<Hooks> {
 				Game.CalculateGains = injectCode(
 					Game.CalculateGains,
 					"Game.cookiesPs=Game.runModHookOnValue('cps',Game.cookiesPs);",
-					`
-// Cppkies injection
+					`// Cppkies injection
 mult = Cppkies.hooks.emit("cpsMult", mult);
-Game.cookiesPs = Cppkies.hooks.emit("cps", Game.cookiesPs);\n`,
+`,
 					"before"
 				)
+				Game.registerHook("cps", cps => emitter.emit("cps", cps))
 			}),
 			new Injection("cursorFingerMult", () => {
 				Game.Objects.Cursor.cps = injectCode(
 					Game.Objects.Cursor.cps,
 					`var mult=1;`,
 					`// Cppkies injection
-add = Cppkies.hooks.emit("cursorFingerMult", add)\n;`,
+add = Cppkies.hooks.emit("cursorFingerMult", add);\n`,
 					"before"
 				)
 			}),
@@ -235,21 +265,15 @@ add = Cppkies.hooks.emit("cursorFingerMult", add)\n;`,
 					Game.mouseCps,
 					`var num=0;`,
 					`// Cppkies injection
-add = Cppkies.hooks.emit("cursorFingerMult", add)\n;`,
+add = Cppkies.hooks.emit("cursorFingerMult", add);\n`,
 					"before"
 				)
-				Game.mouseCps = injectCode(
-					Game.mouseCps,
-					`out=Game.runModHookOnValue('cookiesPerClick',out);`,
-					`// Cppkies injection
-out = Cppkies.hooks.emit("cpc", out)\n;`,
-					"before"
-				)
+				Game.registerHook("cookiesPerClick", cpc => emitter.emit("cpc", cpc))
 				Game.mouseCps = injectCode(
 					Game.mouseCps,
 					`var out`,
 					`// Cppkies injection
-add = Cppkies.hooks.emit("cpcAdd", add)\n;`,
+add = Cppkies.hooks.emit("cpcAdd", add);\n`,
 					"before"
 				)
 			}),
@@ -261,6 +285,46 @@ add = Cppkies.hooks.emit("cpcAdd", add)\n;`,
 					`// Cppkies injection (internal, do not use)
 me.storedCps = Cppkies.hooks.emit("buildingCps", { building: i, cps: me.storedCps }).cps;\n`,
 					"before"
+				)
+			}),
+			//// -- Vanilla -- ////
+			new Injection("logic", () => {
+				Game.registerHook("logic", () => emitter.emit("logic"))
+			}),
+			new Injection("draw", () => {
+				Game.registerHook("draw", () => emitter.emit("draw"))
+			}),
+			new Injection("check", () => {
+				Game.registerHook("check", () => emitter.emit("check"))
+			}),
+			new Injection("ticker", () => {
+				Game.getNewTicker = injectCode(
+					Game.getNewTicker,
+					"Game.TickerAge=Game.fps*10;",
+					`// Cppkies injection
+list = Cppkies.hooks.emit("ticker", list);\n`,
+					"before"
+				)
+			}),
+			//// -- Specials -- ////
+			new Injection("specialPic", () => {
+				Game.DrawSpecial = injectCode(
+					Game.DrawSpecial,
+					"if (hovered || selected)",
+					`// Cppkies injection
+const override = Cppkies.hooks.emit("specialPic", {tab: Game.specialTabs[i], frame: frame, pic: pic})
+pic = override.pic
+frame = override.frame;\n`,
+					"before"
+				)
+				Game.ToggleSpecialMenu = injectCode(
+					Game.ToggleSpecialMenu,
+					"else {pic='dragon.png?v='+Game.version;frame=4;}",
+					`// Cppkies injection
+const override = Cppkies.hooks.emit("specialPic", {tab: Game.specialTab, frame: frame, pic: pic})
+pic = override.pic
+frame = override.frame;\n`,
+					"after"
 				)
 			}),
 		]
@@ -275,6 +339,30 @@ me.storedCps = Cppkies.hooks.emit("buildingCps", { building: i, cps: me.storedCp
 			// Cppkies injection
 			img.src = (assets[i].indexOf('http') !== -1 ? "" : this.domain)
 `,
+			"replace"
+		)
+		Game.UpdateMenu = injectCode(
+			Game.UpdateMenu,
+			"url(img/'+milk.pic+'.png)",
+			"url(' + (milk.pic.indexOf('http') >= 0 ? milk.pic : 'img/'+milk.pic) + '.png)",
+			"replace"
+		)
+		Game.UpdateMenu = injectCode(
+			Game.UpdateMenu,
+			"img/icons.png?v='+Game.version+'",
+			"' + (Game.Milks[i].iconLink ? Game.Milks[i].iconLink : 'img/icons.png?v='+Game.version) + '",
+			"replace"
+		)
+		Game.ToggleSpecialMenu = injectCode(
+			Game.ToggleSpecialMenu,
+			">=5",
+			'>=Game.dragonLevels.findIndex(val => val.name === "Krumblor, cookie hatchling")',
+			"replace"
+		)
+		Game.ToggleSpecialMenu = injectCode(
+			Game.ToggleSpecialMenu,
+			">=25",
+			'>=Game.dragonLevels.findIndex(val => val.action === "Train secondary aura<br><small>Lets you use two dragon auras simultaneously</small>") + 1',
 			"replace"
 		)
 		Game.Objects.Cursor.buyFunction = injectCode(
@@ -304,14 +392,6 @@ Cppkies.hookAllBuildings();\n`,
 			Cppkies.hiddenMilkMult = milkMult;\n`,
 			"before"
 		)
-		Game.GetIcon = injectCode(
-			Game.GetIcon,
-			"col=18;",
-			'else if (type === "Mouse") col = 11;',
-			"after"
-		)
-		Game.registerHook("logic", () => emitter.emit("logic"))
-		Game.registerHook("check", () => emitter.emit("check"))
 		resolve(emitter)
 	})
 }

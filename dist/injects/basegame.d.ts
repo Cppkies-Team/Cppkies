@@ -21,11 +21,13 @@ export declare type Hooks = ReturnableEventEmitter<{
      * Allows you to execute a function on before saving, useful for cleaning up data which will be invalid if no mod is present
      */
     preSave: [void, void];
+    postSave: [void, void];
     /**
      * Allows you to execute a function on data load, useful for custom data resetting
      * @param hard whether or not this is a hard reset
      */
     reset: [boolean, void];
+    reincarnate: [void, void];
     getIcon: [
         {
             type: string;
@@ -60,7 +62,9 @@ export declare type Hooks = ReturnableEventEmitter<{
     cpc: [number, number];
     cpcAdd: [number, number];
     logic: [void, void];
+    draw: [void, void];
     check: [void, void];
+    ticker: [string[], string[]];
     buildingCps: [
         {
             building: string;
@@ -69,6 +73,18 @@ export declare type Hooks = ReturnableEventEmitter<{
         {
             building: string;
             cps: number;
+        }
+    ];
+    specialPic: [
+        {
+            tab: string;
+            pic: string;
+            frame: number;
+        },
+        {
+            tab: string;
+            pic: string;
+            frame: number;
         }
     ];
 }>;

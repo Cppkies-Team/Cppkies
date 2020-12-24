@@ -30,6 +30,8 @@ import { Hooks } from "./injects/basegame"
 import { hookAllBuildings } from "./buildings"
 import { CursorUpgrade, MouseUpgrade, CookieUpgrade } from "./upgrade"
 import { MouseAchievement } from "./achievement"
+import { DragonAura, DragonLevel, DragonAuraLevel } from "./dragon"
+import { Milk } from "./milk"
 import {
 	TieredAchievement,
 	ProductionAchievement,
@@ -83,6 +85,10 @@ const master = {
 	Level10Achievement,
 	MouseAchievement,
 	customAchievements,
+	DragonAura,
+	DragonLevel,
+	DragonAuraLevel,
+	Milk,
 	injectCode,
 	DEFAULT_ONBUY: defaultOnBuy,
 	DEFAULT_CPS: defaultCps,

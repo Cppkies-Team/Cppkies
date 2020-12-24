@@ -1,7 +1,8 @@
 import { Building } from "./buildings";
 import { Upgrade } from "./upgrade";
 import { Achievement } from "./achievement";
-declare const SAVE_VER: 1;
+export declare const VANILLA_DRAGON_LEVEL_AMOUNT: number;
+export declare const SAVE_VER: 1;
 /**
  * The save type for Cppkies
  */
@@ -9,6 +10,7 @@ export interface SaveType {
     saveVer: typeof SAVE_VER;
     mods: Record<string, ModSave>;
     foreign: ModSave;
+    dragon: DragonSave;
 }
 /**
  * Legacy save types of Cppkies
@@ -55,18 +57,12 @@ export interface AchievementSave {
     won: boolean;
 }
 /**
- * The default save file for buildings
+ * The save type for Krumblor
  */
-export declare const DEFAULT_BUILDING_SAVE: BuildingSave;
-/**
- * The default save for an upgrade
- */
-export declare const DEFAULT_UPGRADE_SAVE: UpgradeSave;
-/**
- * The default save for an achievement
- */
-export declare const DEFAULT_ACHIEVEMENT_SAVE: AchievementSave;
-export declare const DEFAULT_MOD_SAVE: ModSave;
+interface DragonSave {
+    level: number | "sync";
+    auras: [number | "sync", number | "sync"];
+}
 export declare let save: SaveType;
 /**
  * Creates a save for Cppkies
@@ -102,10 +98,7 @@ export declare function loadAchievement(upgrade: Achievement): AchievementSave;
  * @param upgrade The achievement to save
  */
 export declare function saveAchievement(upgrade: Achievement): void;
-/**
- * Upgrades the save from a previous version, and assigns it to the save
- */
-export declare function migrateSave(oldSave: LegacySave): void;
+export declare function loadDragon(): void;
 /**
  * Loads everything
  */
@@ -114,7 +107,7 @@ export declare function loadAll(): void;
  * Saves everything
  */
 export declare function saveAll(): void;
-export declare function validateSave(newSave: unknown): newSave is LegacySave | SaveType;
+export declare function applySave(newSave: unknown): SaveType;
 export declare function importSave(data: string): void;
 export declare function exportSave(): string;
 export {};

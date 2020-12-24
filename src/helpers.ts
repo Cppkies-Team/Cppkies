@@ -106,3 +106,34 @@ export function hasOwnProperty<X extends object, Y extends PropertyKey>(
 	// eslint-disable-next-line no-prototype-builtins
 	return obj.hasOwnProperty(prop)
 }
+/**
+ * Creates a roman numeral from a number
+ * @param num The number to convert
+ * @helper
+ */
+export function toRomanNumeral(num: number): string {
+	const lookup = [
+		[1000, "M"],
+		[900, "CM"],
+		[500, "D"],
+		[400, "CD"],
+		[100, "C"],
+		[90, "XC"],
+		[50, "L"],
+		[40, "XL"],
+		[10, "X"],
+		[9, "IX"],
+		[5, "V"],
+		[4, "IV"],
+		[1, "I"],
+	] as const
+	let roman = ""
+
+	for (const charType of lookup) {
+		while (num >= charType[0]) {
+			roman += charType[1]
+			num -= charType[0]
+		}
+	}
+	return roman
+}

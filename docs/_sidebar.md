@@ -23,6 +23,7 @@
   - [Upgrade](types/Upgrade.md)
   - [Heavenly upgrade](types/HeavenlyUpgrade.md)
   - [Achievement](types/Achievement.md)
+  - [Dragon](types/Dragon.md)
 
 - [Examples](Examples.md)
 - [Roadmap](Roadmap.md)

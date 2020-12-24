@@ -40,3 +40,9 @@ export declare function toSentenseCase(string: string): string;
  * @helper
  */
 export declare function hasOwnProperty<X extends object, Y extends PropertyKey>(obj: X, prop: Y): obj is X & Record<Y, unknown>;
+/**
+ * Creates a roman numeral from a number
+ * @param num The number to convert
+ * @helper
+ */
+export declare function toRomanNumeral(num: number): string;

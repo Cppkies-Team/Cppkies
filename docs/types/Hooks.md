@@ -29,7 +29,9 @@ Cppkies.buildingHooks.Factory.on("cps", cps => cps * 2)
   - `infoMenu` - called when the info menu is opened (`void`)
 - Data hooks
   - `preSave` - called right before the game is saved (`void`)
-    <!-- `reset` - called when a save is wiped, first parameter is if the reset is hard (`boolean`\*) -->
+  - `postSave` - called right after the game is saved (`void`)
+  - `reset` - called when a save is wiped, first parameter is if the reset is hard (`boolean`\*)
+  - `reincarnate` - called on reincarnation (`void`)
 - Building hooks
   - `grandmaPic` - called when rendering grandmas, must return a link for an image (`string[]`)
   - `buildStore` - called after `Game.BuildStore` (`void`)
@@ -39,6 +41,11 @@ Cppkies.buildingHooks.Factory.on("cps", cps => cps * 2)
   - `rawCps` - called before `cps`, some calculations use raw CpS instead of normal CpS, for example, stocks (`number`)
   - `cpsMult` - called when calculating CpS, is the multiplier of CpS, some calculations use the multiplier (`number`)
   - `cursorFingerMult` - called when calculating cursor CpS and CpC, is the multiplier of finger upgrades (`number`)
+- Vanilla hooks
+  - `logic` - Called each logic frame (`void`)
+  - `draw` - Called each draw frame (`void`)
+  - `check` - Called every 5 seconds (`void`)
+  - `ticker` - The news to display in the news ticker (`string[]`)
 
 \* The function doesn't have to return anything
 The hooks can be accessed via `Cppkies.on` or `Cppkies.hooks.on`

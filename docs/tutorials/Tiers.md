@@ -129,7 +129,7 @@ Cppkies.onLoad.push(() => {
 		"Cppkie Baker",
 		moddedTier
 	)
-
+	// Note that, for cursor tiered achievements, the number is gonna be absurdly high, make sure to fill in some lower tier, not your own!
 	// Non-building upgrades
 
 	new Cppkies.KittenUpgrade(
@@ -143,10 +143,10 @@ Cppkies.onLoad.push(() => {
 		"The flavor text is awful. Note to self: change it before making this example public.",
 		moddedTier
 	)
-	
+
 	new Cppkies.MouseAchievement(
-		"TODO: MouseAchievement", 
-		10, 
+		"TODO: MouseAchievement",
+		moddedTier,
 		"Bob, you better finish this or you're losing you job."
 	)
 })

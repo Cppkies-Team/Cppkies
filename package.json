@@ -24,7 +24,7 @@
 		"url": "git+https://github.com/Cppkies-Team/Cppkies.git"
 	},
 	"author": "Cppkies team",
-	"license": "ISC",
+	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/Cppkies-Team/Cppkies/issues"
 	},

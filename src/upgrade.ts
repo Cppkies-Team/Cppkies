@@ -41,6 +41,8 @@ export class Upgrade extends Game.Upgrade {
 		const loadProps = loadUpgrade(this)
 		for (const i in loadProps) this[i] = loadProps[i]
 		Game.upgradesToRebuild = 1
+		if (this.bought && Game.CountsAsUpgradeOwned(this.pool))
+			Game.UpgradesOwned++
 	}
 }
 
@@ -418,7 +420,7 @@ export class MouseUpgrade<Tier extends string | number> extends Upgrade
 		super(
 			name,
 			`Clicking gains <b>+${power}% of your CpS</b>.<q>${quote}</q>`,
-			1,
+			10 ** (3 + parseInt(tier.toString()) * 2),
 			Game.GetIcon("Mouse", tier) // Injected in `basegame.ts`
 		)
 		const tierPow = parseInt(tier.toString())

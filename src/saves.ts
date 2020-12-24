@@ -4,7 +4,9 @@ import { Upgrade } from "./upgrade"
 import { applyAllProps, hasOwnProperty } from "./helpers"
 import { Achievement } from "./achievement"
 
-const SAVE_VER = 1 as const
+export const VANILLA_DRAGON_LEVEL_AMOUNT = Game.dragonLevels.length + 0
+
+export const SAVE_VER = 1 as const
 /**
  * The save type for Cppkies
  */
@@ -12,6 +14,7 @@ export interface SaveType {
 	saveVer: typeof SAVE_VER
 	mods: Record<string, ModSave>
 	foreign: ModSave
+	dragon: DragonSave
 }
 /**
  * Legacy save types of Cppkies
@@ -60,51 +63,65 @@ export interface AchievementSave {
 	won: boolean
 }
 /**
- * The default save file for buildings
+ * The save type for Krumblor
  */
-export const DEFAULT_BUILDING_SAVE: BuildingSave = {
-	amount: 0,
-	bought: 0,
-	free: 0,
-	totalCookies: 0,
-	level: 0,
-	muted: 0,
-	minigameSave: "",
-}
-/**
- * The default save for an upgrade
- */
-export const DEFAULT_UPGRADE_SAVE: UpgradeSave = {
-	bought: false,
-	unlocked: false,
-}
-/**
- * The default save for an achievement
- */
-export const DEFAULT_ACHIEVEMENT_SAVE: AchievementSave = {
-	won: false,
-}
-export const DEFAULT_MOD_SAVE: ModSave = {
-	buildings: {},
-	upgrades: {},
-	achievements: {},
+interface DragonSave {
+	level: number | "sync"
+	auras: [number | "sync", number | "sync"]
 }
 
-export let save: SaveType = {
-	mods: {},
-	foreign: DEFAULT_MOD_SAVE,
-	saveVer: SAVE_VER,
+function createDefaultSaveFragment(name: "building"): BuildingSave
+function createDefaultSaveFragment(name: "upgrade"): UpgradeSave
+function createDefaultSaveFragment(name: "achievement"): AchievementSave
+function createDefaultSaveFragment(name: "dragon"): DragonSave
+function createDefaultSaveFragment(name: "mod"): ModSave
+function createDefaultSaveFragment(name: string): unknown {
+	switch (name) {
+		case "mod":
+			return { achievements: {}, buildings: {}, upgrades: {} }
+		case "dragon":
+			return {
+				level: "sync",
+				auras: ["sync", "sync"],
+			}
+		case "achievement":
+			return { won: false }
+		case "upgrade":
+			return {
+				bought: false,
+				unlocked: false,
+			}
+		case "building":
+			return {
+				amount: 0,
+				bought: 0,
+				free: 0,
+				totalCookies: 0,
+				level: 0,
+				muted: 0,
+				minigameSave: "",
+			}
+		default:
+			throw new Error("Invalid fragment name!")
+	}
 }
+
+function createDefaultSave(): SaveType {
+	return {
+		mods: {},
+		foreign: createDefaultSaveFragment("mod"),
+		saveVer: SAVE_VER,
+		dragon: createDefaultSaveFragment("dragon"),
+	}
+}
+
+export let save: SaveType = createDefaultSave()
 
 /**
  * Creates a save for Cppkies
  */
 export function initSave(): void {
-	master.save = save = {
-		mods: {},
-		foreign: DEFAULT_MOD_SAVE,
-		saveVer: SAVE_VER,
-	}
+	master.save = save = createDefaultSave()
 }
 /**
  * Loads the building save data
@@ -112,7 +129,10 @@ export function initSave(): void {
  */
 export function loadBuilding(building: Building): BuildingSave {
 	//Use names because ID conflicts
-	return save.foreign.buildings[building.name] || DEFAULT_BUILDING_SAVE
+	return (
+		save.foreign.buildings[building.name] ||
+		createDefaultSaveFragment("building")
+	)
 }
 /**
  * Saves a building
@@ -143,7 +163,9 @@ export function saveBuilding({
  * @param upgrade The upgrade to load
  */
 export function loadUpgrade(upgrade: Upgrade): UpgradeSave {
-	return save.foreign.upgrades[upgrade.name] || DEFAULT_UPGRADE_SAVE
+	return (
+		save.foreign.upgrades[upgrade.name] || createDefaultSaveFragment("upgrade")
+	)
 }
 /**
  * Saves an upgrade
@@ -161,7 +183,10 @@ export function saveUpgrade(upgrade: Upgrade): void {
  * @param upgrade The achievement to load
  */
 export function loadAchievement(upgrade: Achievement): AchievementSave {
-	return save.foreign.achievements[upgrade.name] || DEFAULT_ACHIEVEMENT_SAVE
+	return (
+		save.foreign.achievements[upgrade.name] ||
+		createDefaultSaveFragment("achievement")
+	)
 }
 /**
  * Saves an achievement
@@ -172,39 +197,44 @@ export function saveAchievement(upgrade: Achievement): void {
 		won: !!upgrade.won,
 	}
 }
-/**
- * Upgrades the save from a previous version, and assigns it to the save
- */
-export function migrateSave(oldSave: LegacySave): void {
-	initSave()
-	// Fancy upgrade system with fallthroughs
-	/* eslint-disable no-fallthrough */
-	switch (oldSave.saveVer) {
-		case 0:
-			// Migrate from 0.1, migrate building
-			save.foreign.buildings = oldSave.foreign.buildings
-			break
-		default:
-			throw new Error(
-				`Invalid save version ${save.saveVer} (current version is ${SAVE_VER})`
-			)
-	}
-	/* eslint-enable no-fallthrough */
+export function loadDragon(): void {
+	if (
+		save.dragon.level !== "sync" &&
+		save.dragon.level <= Game.dragonLevels.length - 1
+	)
+		Game.dragonLevel = save.dragon.level
+	if (
+		save.dragon.auras[0] !== "sync" &&
+		save.dragon.auras[0] <= Object.keys(Game.dragonAuras).length - 1
+	)
+		Game.dragonAura = save.dragon.auras[0]
+	if (
+		save.dragon.auras[1] !== "sync" &&
+		save.dragon.auras[1] <= Object.keys(Game.dragonAuras).length - 1
+	)
+		Game.dragonAura2 = save.dragon.auras[1]
 }
 
 /**
  * Loads everything
  */
 export function loadAll(): void {
-	for (const building of master.customBuildings) {
+	for (const building of master.customBuildings)
 		applyAllProps(building, loadBuilding(building))
-	}
+
 	for (const upgrade of master.customUpgrades) {
 		applyAllProps(upgrade, loadUpgrade(upgrade))
+		if (upgrade.bought && Game.CountsAsUpgradeOwned(upgrade.pool))
+			Game.UpgradesOwned++
 	}
+
 	for (const achievement of master.customAchievements) {
 		applyAllProps(achievement, loadAchievement(achievement))
+		if (achievement.won && Game.CountsAsAchievementOwned(achievement.pool))
+			Game.AchievementsOwned++
 	}
+
+	loadDragon()
 }
 /**
  * Saves everything
@@ -214,73 +244,117 @@ export function saveAll(): void {
 	for (const upgrade of master.customUpgrades) saveUpgrade(upgrade)
 	for (const achievement of master.customAchievements)
 		saveAchievement(achievement)
+	// Saving the dragon is in `injects/postInject.ts` due to no mod support
 }
 
-export function validateSave(
-	newSave: unknown
-): newSave is LegacySave | SaveType {
+export function applySave(newSave: unknown): SaveType {
+	const virtualSave = createDefaultSave()
 	// Assert type
-	if (typeof newSave !== "object") return false
-	if (newSave === null) return false
+	if (typeof newSave !== "object" || newSave === null) return virtualSave
 	// Assert save version
 	if (
 		!hasOwnProperty(newSave, "saveVer") ||
-		typeof newSave.saveVer !== "number"
+		typeof newSave.saveVer !== "number" ||
+		newSave.saveVer > SAVE_VER
 	)
-		return false
-	if (newSave.saveVer > SAVE_VER) return false
-	// 0.1 had an "exists" property, it has been removed since
-	if (newSave.saveVer === 0 && !hasOwnProperty(newSave, "exists")) return false
+		return virtualSave
+
 	// Assert mods
-	function validateModSave(
-		modSave: unknown
-	): modSave is LegacySave["foreign"] | ModSave {
+	function applyModSave(modSave: unknown): ModSave {
+		const virtualModSave = createDefaultSaveFragment("mod")
 		// Assert type
-		if (typeof modSave !== "object") return false
-		if (modSave === null) return false
+		if (typeof modSave !== "object" || modSave === null) return virtualModSave
 		// Assert buildings
-		if (!hasOwnProperty(modSave, "buildings")) return false
-		if (typeof modSave.buildings !== "object") return false
-		for (const i in modSave.buildings) {
-			const building = modSave.buildings[i]
-			if (typeof building !== "object") return false
-			for (const prop in DEFAULT_BUILDING_SAVE)
-				if (typeof DEFAULT_BUILDING_SAVE[prop] !== typeof building[prop])
-					return false
-		}
-		// Grr typescript
-		if ((newSave as { saveVer: number }).saveVer >= 1) {
-			// Assert upgrades and achievements
-			if (!hasOwnProperty(modSave, "upgrades")) return false
-			if (typeof modSave.upgrades !== "object") return false
-			for (const i in modSave.upgrades) {
-				const upgrade = modSave.upgrades[i]
-				if (typeof upgrade !== "object") return false
-				for (const prop in DEFAULT_UPGRADE_SAVE)
-					if (typeof DEFAULT_UPGRADE_SAVE[prop] !== typeof upgrade[prop])
-						return false
-			}
-			if (!hasOwnProperty(modSave, "achievements")) return false
-			if (typeof modSave.achievements !== "object") return false
-			for (const i in modSave.achievements) {
-				const achievement = modSave.achievements[i]
-				if (typeof achievement !== "object") return false
-				for (const prop in DEFAULT_ACHIEVEMENT_SAVE)
+		if (
+			hasOwnProperty(modSave, "buildings") &&
+			typeof modSave.buildings === "object" &&
+			modSave.buildings !== null
+		)
+			for (const buildingName in modSave.buildings) {
+				const building = modSave.buildings[buildingName]
+				if (typeof building !== "object" || building === null) continue
+				virtualModSave.buildings[buildingName] = createDefaultSaveFragment(
+					"building"
+				)
+				for (const prop in building)
 					if (
-						typeof DEFAULT_ACHIEVEMENT_SAVE[prop] !== typeof achievement[prop]
+						typeof virtualModSave.buildings[buildingName][prop] ===
+						typeof building[prop]
 					)
-						return false
+						virtualModSave.buildings[buildingName][prop] = building[prop]
+			}
+
+		// Assert upgrades and achievements
+		if (
+			hasOwnProperty(modSave, "upgrades") &&
+			typeof modSave.upgrades === "object" &&
+			modSave.upgrades !== null
+		)
+			for (const upgradeName in modSave.upgrades) {
+				const upgrade = modSave.upgrades[upgradeName]
+				if (typeof upgrade !== "object" || upgrade === null) continue
+				virtualModSave.upgrades[upgradeName] = createDefaultSaveFragment(
+					"upgrade"
+				)
+				for (const prop in virtualModSave.upgrades[upgradeName])
+					if (
+						typeof virtualModSave.upgrades[upgradeName][prop] ===
+						typeof upgrade[prop]
+					)
+						virtualModSave.upgrades[upgradeName][prop] = upgrade[prop]
+			}
+
+		if (
+			hasOwnProperty(modSave, "achievements") &&
+			typeof modSave.achievements === "object" &&
+			modSave.achievements !== null
+		)
+			for (const achievementName in modSave.achievements) {
+				const achievement = modSave.achievements[achievementName]
+				if (typeof achievement !== "object" || achievement === null) continue
+				virtualModSave.achievements[
+					achievementName
+				] = createDefaultSaveFragment("achievement")
+				for (const prop in virtualModSave.achievements[achievementName])
+					if (
+						typeof virtualModSave.achievements[achievementName][prop] ===
+						typeof achievement[prop]
+					)
+						virtualModSave.achievements[achievementName][prop] =
+							achievement[prop]
+			}
+
+		return virtualModSave
+	}
+
+	// `foreign` check
+	if (!hasOwnProperty(newSave, "foreign"))
+		virtualSave.foreign = createDefaultSaveFragment("mod")
+	else virtualSave.foreign = applyModSave(newSave.foreign)
+	// Dragon
+	if (
+		hasOwnProperty(newSave, "dragon") &&
+		typeof newSave.dragon === "object" &&
+		newSave.dragon !== null
+	) {
+		if (
+			hasOwnProperty(newSave.dragon, "level") &&
+			(typeof newSave.dragon.level === "number" ||
+				newSave.dragon.level === "sync")
+		)
+			virtualSave.dragon.level = newSave.dragon.level
+		if (
+			hasOwnProperty(newSave.dragon, "auras") &&
+			newSave.dragon.auras instanceof Array
+		) {
+			for (const i in newSave.dragon.auras) {
+				const aura = newSave.dragon.auras[i]
+				if (typeof aura === "number" || aura === "sync")
+					virtualSave.dragon.auras[i] = aura
 			}
 		}
-		return true
 	}
-	// (Add actual mod checking later)
-	if (!hasOwnProperty(newSave, "mods")) return false
-	if (JSON.stringify(newSave.mods) !== "{}") return false
-	// `foreign` check
-	if (!hasOwnProperty(newSave, "foreign")) return false
-	if (!validateModSave(newSave.foreign)) return false
-	return true
+	return virtualSave
 }
 
 export function importSave(data: string): void {
@@ -291,20 +365,8 @@ export function importSave(data: string): void {
 		if (data !== "")
 			console.warn("CPPKIES: Found invalid save, creating new one...")
 		initSave()
-		newSave = save
 	}
-	if (!validateSave(newSave)) {
-		console.warn("CPPKIES: Found invalid save, creating new one...")
-		initSave()
-	} else {
-		if (newSave.saveVer !== SAVE_VER) {
-			console.warn("CPPKIES: Found old save, migrating to a new one...")
-			migrateSave(newSave)
-		} else {
-			master.save = save = newSave
-		}
-	}
-
+	save = master.save = applySave(newSave)
 	loadAll()
 }
 

@@ -216,13 +216,21 @@ Cppkies.onLoad.push(() => {
 		null, // No flavor text here
 		3 // Additional multiplier for the requirement (Will up the normal req for this by 10^3)
 	)
-	
+
 	new Cppkies.Level10Achievement(
-		"Open Source", 
-		"Cppkie Baker", 
-		"https://github.com/Cppkies-Team/Cppkies"
+		"Open Source",
+		"Cppkie Baker",
+		'<a href="https://github.com/Cppkies-Team/Cppkies">https://github.com/Cppkies-Team/Cppkies</a>'
+	)
+
+	// Dragon stuff
+
+	new Cppkies.DragonAura("Please do this", "Does stuff", "Cppkie Baker")
+
+	new Cppkies.DragonAuraLevel(
+		"Please do this",
+		"Does stuff (short desc)",
+		"Cppkie Baker"
 	)
 })
 ```
-
- <!-- Todo: auras -->
