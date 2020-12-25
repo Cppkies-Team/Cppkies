@@ -17,10 +17,6 @@
 
 Cppkies is a modding framework for the game [Cookie Clicker](https://orteil.dashnet.org/cookieclicker/). It intends to make modding the game very simple.
 
-## Documentation
-
-The documentation is located [here](https://cppkies.js.org/#).
-
 ## Examples
 
 ### [Think Tank Building](https://github.com/Cppkies-Team/examples/tree/master/ThinkTank)
