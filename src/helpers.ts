@@ -114,7 +114,7 @@ export function injectCodes<
 		`return (${newStr})`
 	)(...Object.values(context))
 	newFunc.prototype = func.prototype
-	return func
+	return newFunc
 }
 /**
  * Applies all props to an object via mutating

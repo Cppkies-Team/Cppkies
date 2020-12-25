@@ -13,7 +13,7 @@ export default class Tier implements Game.Tier {
 	*/
 	special: boolean
 	req?: string
-	upgrades: Game.TieredUpgradeClass<this["name"]>[] = []
+	upgrades: Game.GenericTieredUpgrade[]
 
 	unlock: number
 	price: number

@@ -1,14 +1,19 @@
 # Changelog
 
-30/12/25 - V0.2.2
+20/12/25 - V0.2.3
+
+- Fix `injectCodes` typo
+- Fix `Tier` typo
+
+20/12/25 - V0.2.2
 
 - Export `InjectParams` to make using `injectCodes` easy
 
-30/12/25 - V0.2.1
+20/12/25 - V0.2.1
 
 - Make `injectCodes` more useful
 
-30/12/25 - V0.2.0 Snowflake Cppkie
+20/12/25 - V0.2.0 Snowflake Cppkie
 
 - Added upgrades
 - Added achievements
