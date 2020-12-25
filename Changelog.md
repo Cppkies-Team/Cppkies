@@ -1,5 +1,9 @@
 # Changelog
 
+30/12/25 - V0.2.1
+
+- Make `injectCodes` more useful
+
 30/12/25 - V0.2.0 Snowflake Cppkie
 
 - Added upgrades

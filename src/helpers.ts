@@ -29,6 +29,45 @@ type InjectParams = [
 	"before" | "replace" | "after"
 ]
 /**
+ * A helper helper function, which does a single inject to code
+ * @param source The code to perform the inject on
+ * @param config The configuration of the inject
+ * @helper
+ * @helperhelper
+ */
+function doSingleInject(source: string, config: InjectParams): string {
+	const sliceMode = config[0] === null
+	// Do this to mute typescript silly wrong errors
+	let regex = new RegExp("")
+	if (config[0] !== null) {
+		if (typeof config[0] === "string")
+			regex = new RegExp(escapeRegExp(config[0]), "g")
+		else regex = config[0]
+		if (!regex.test(source)) console.warn("Nothing to inject.")
+	}
+
+	const findStart = /(\)[^{]*{)/
+	const findEnd = /(}?)$/
+
+	switch (config[2]) {
+		case "before":
+			if (sliceMode) source = source.replace(findStart, `$1${config[1]}`)
+			else source = source.replace(regex, `${config[1]}${config[0]}`)
+			break
+		case "replace":
+			if (sliceMode) source = config[1]
+			else source = source.replace(regex, config[1])
+			break
+		case "after":
+			if (sliceMode) source = source.replace(findEnd, `${config[1]}$1`)
+			else source = source.replace(regex, `${config[0]}${config[1]}`)
+			break
+		default:
+			throw new Error('where Parameter must be "before", "replace" or "after"')
+	}
+	return source
+}
+/**
  * A helper function which replaces(or appends) code in a function, returning the new function, and it's eval free!
  * @param func The source function
  * @param source What to replace, can be null for slicing
@@ -48,39 +87,9 @@ export function injectCode<
 	where: "before" | "replace" | "after",
 	context: object = {}
 ): T {
-	let newFuncStr = func.toString()
-	const sliceMode = source === null
-	// Do this to mute typescript silly wrong errors
-	let regex = new RegExp("")
-	if (source !== null) {
-		if (typeof source === "string")
-			regex = new RegExp(escapeRegExp(source), "g")
-		else regex = source
-		if (!regex.test(newFuncStr)) console.warn("Nothing to inject.")
-	}
-
-	const findStart = /(\)[^{]*{)/
-	const findEnd = /(}?)$/
-
-	switch (where) {
-		case "before":
-			if (sliceMode) newFuncStr = newFuncStr.replace(findStart, `$1${target}`)
-			else newFuncStr = newFuncStr.replace(regex, `${target}${source}`)
-			break
-		case "replace":
-			if (sliceMode) newFuncStr = target as string
-			else newFuncStr = newFuncStr.replace(regex, target as string)
-			break
-		case "after":
-			if (sliceMode) newFuncStr = newFuncStr.replace(findEnd, `${target}$1`)
-			else newFuncStr = newFuncStr.replace(regex, `${source}${target}`)
-			break
-		default:
-			throw new Error('where Parameter must be "before", "replace" or "after"')
-	}
 	const newFunc = Function(
 		...Object.keys(context),
-		`return (${newFuncStr})`
+		`return (${doSingleInject(func.toString(), [source, target, where])})`
 	)(...Object.values(context))
 	newFunc.prototype = func.prototype
 	return newFunc
@@ -97,9 +106,14 @@ export function injectCodes<
 	T extends
 		| ((...args: unknown[]) => unknown)
 		| (new (...args: unknown[]) => unknown)
->(func: T, injections: InjectParams[], context?: object): T {
-	for (const injection of injections)
-		func = injectCode(func, injection[0], injection[1], injection[2], context)
+>(func: T, injections: InjectParams[], context: object = {}): T {
+	let newStr = func.toString()
+	for (const injection of injections) newStr = doSingleInject(newStr, injection)
+	const newFunc = Function(
+		...Object.keys(context),
+		`return (${newStr})`
+	)(...Object.values(context))
+	newFunc.prototype = func.prototype
 	return func
 }
 /**

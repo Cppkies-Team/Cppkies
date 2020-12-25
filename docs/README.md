@@ -1,3 +1,5 @@
+# Cppkies
+
 ![Cppkies](./static/CppkiesLogo.png?raw=true)
 
 ## Table of Contents
@@ -8,6 +10,7 @@
 	- [Documentation](#documentation)
 	- [Examples](#examples)
 		- [Think Tank Building](#think-tank-building)
+		- [Saffronyx Tier](#saffronyx-tier)
 	- [Credits](#credits)
 
 ## What is Cppkies
@@ -22,7 +25,12 @@ The documentation is located [here](https://cppkies.js.org/#).
 
 ### [Think Tank Building](https://github.com/Cppkies-Team/examples/tree/master/ThinkTank)
 
-This addon provides an example on how to create a new building new upgrades and new achievements<!--Also could use this as a minigame creation example-->. Sprites by "Bt Y#0895".
+This mod provides an example on how to create a new building new upgrades and new achievements<!--Also could use this as a minigame creation example-->. Sprites by "Bt Y#0895".
+
+### [Saffronyx Tier](https://github.com/Cppkies-Team/examples/tree/master/SaffronyxTier)
+
+This mod provides an example on how to create a new tier with upgrades, achievements. Sprites by "Kyleptune#6345"
+
 <!--
 ### [LumpExample](https://github.com/Cppkies-Team/examples/tree/master/LumpExample)
 
@@ -32,7 +40,7 @@ This addon provides an example of creating a new lump type.
 
 This addon provides an example of creating a new buff type, and adding a buff type to golden cookies.
 
-### [MinigameExample](https://github.com/Cppkies-Team/examples/tree/master/MinigameExample) 
+### [MinigameExample](https://github.com/Cppkies-Team/examples/tree/master/MinigameExample)
 
 This addon provides an example of creating a new plant, and a new soil type, a new spell, and a new pantheon spirit.
 -->
@@ -40,12 +48,13 @@ This addon provides an example of creating a new plant, and a new soil type, a n
 ## Credits
 
 - [TheGLander](https://github.com/TheGLander) (ʐ̈ MANNNNNNN#2006) :
-  - Programmer
+  - Programmer & Creator
 - [Bob](https://github.com/MasterOfBob777/) (MasterOfBob777#8346) :
-  - Wiki Editor
+  - Wiki Editor & Creator
 - [TheSkullyKO](https://github.com/TheSkullyKO) (Mistow OwO#0245) :
   - Helped with Ideas
 - [Klattmose](https://github.com/klattmose/) :
   - Gave us the idea to begin the project
-- [James](https://github.com/staticvariablejames/) (staticvariablejames#2499)
+- [James](https://github.com/staticvariablejames/) (staticvariablejames#2499),
+  [thegamemaster1234](https://github.com/gamrguy) (thegamemaster1234#4278)
   - Helpful suggestions and feedback, mostly on the DashNet discord server
