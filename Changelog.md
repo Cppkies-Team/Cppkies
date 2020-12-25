@@ -1,5 +1,16 @@
 # Changelog
 
+30/12/25 - V0.2.0 Snowflake Cppkie
+
+- Added upgrades
+- Added achievements
+- Added tiers
+- Added dragon auras & levels
+- Added (W.I.P.) milk
+- Written more docs
+- Redid hooks
+- Happy holidays!
+
 19/3/20 - V0.1.7
 
 - Rename `description` to `desc` in `FoolObject`

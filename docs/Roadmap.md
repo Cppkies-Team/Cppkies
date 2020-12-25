@@ -4,7 +4,8 @@
 - [x] Upgrades
   - [x] Fortune Upgrades
   - [x] Heavenly Upgrades
-- [ ] Achievements
+- [x] Achievements
+- [x] Dragon levels & auras
 - [ ] Buffs
 - [ ] Garden Hooks
 - [ ] Grimoire Hooks <!-- Maybe? -->
