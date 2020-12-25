@@ -17,7 +17,7 @@ export declare function escapeRegExp(str: string): string;
 /**
  * The parameters of an injection, in order: `source`, `target`, `where`
  */
-declare type InjectParams = [
+export declare type InjectParams = [
     string | RegExp | null,
     string,
     "before" | "replace" | "after"
@@ -62,4 +62,3 @@ export declare function hasOwnProperty<X extends object, Y extends PropertyKey>(
  * @helper
  */
 export declare function toRomanNumeral(num: number): string;
-export {};

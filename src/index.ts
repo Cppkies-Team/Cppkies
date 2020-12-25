@@ -5,6 +5,7 @@ import { exportSave, importSave } from "./saves"
 import { prod } from "../isprod.json"
 import postInject from "./injects/postInject"
 import { hookAllBuildings } from "./buildings"
+import { InjectParams } from "./helpers"
 
 let CppkiesExport: typeof master
 
@@ -67,3 +68,4 @@ if (window.Cppkies) {
 	})
 }
 export default CppkiesExport
+export { InjectParams } from "./helpers"

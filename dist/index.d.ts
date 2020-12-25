@@ -7,3 +7,4 @@ declare global {
     }
 }
 export default CppkiesExport;
+export { InjectParams } from "./helpers";

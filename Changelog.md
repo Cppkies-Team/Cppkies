@@ -1,5 +1,9 @@
 # Changelog
 
+30/12/25 - V0.2.2
+
+- Export `InjectParams` to make using `injectCodes` easy
+
 30/12/25 - V0.2.1
 
 - Make `injectCodes` more useful

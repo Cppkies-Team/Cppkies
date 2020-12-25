@@ -23,7 +23,7 @@ export function escapeRegExp(str: string): string {
 /**
  * The parameters of an injection, in order: `source`, `target`, `where`
  */
-type InjectParams = [
+export type InjectParams = [
 	string | RegExp | null,
 	string,
 	"before" | "replace" | "after"
