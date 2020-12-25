@@ -16,7 +16,7 @@ import {
 	KittenUpgrade,
 } from "./upgrade"
 import Tier, { customTiers } from "./tiers"
-import { injectCode } from "./helpers"
+import { injectCode, injectCodes } from "./helpers"
 import {
 	patchIconsheet,
 	relinkColumn,
@@ -90,6 +90,7 @@ const master = {
 	DragonAuraLevel,
 	Milk,
 	injectCode,
+	injectCodes,
 	DEFAULT_ONBUY: defaultOnBuy,
 	DEFAULT_CPS: defaultCps,
 	icons: {

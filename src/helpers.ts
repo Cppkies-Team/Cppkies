@@ -21,6 +21,14 @@ export function escapeRegExp(str: string): string {
 	return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1")
 }
 /**
+ * The parameters of an injection, in order: `source`, `target`, `where`
+ */
+type InjectParams = [
+	string | RegExp | null,
+	string,
+	"before" | "replace" | "after"
+]
+/**
  * A helper function which replaces(or appends) code in a function, returning the new function, and it's eval free!
  * @param func The source function
  * @param source What to replace, can be null for slicing
@@ -60,8 +68,8 @@ export function injectCode<
 			else newFuncStr = newFuncStr.replace(regex, `${target}${source}`)
 			break
 		case "replace":
-			if (sliceMode) newFuncStr = `${target}`
-			else newFuncStr = newFuncStr.replace(regex, `${target}`)
+			if (sliceMode) newFuncStr = target as string
+			else newFuncStr = newFuncStr.replace(regex, target as string)
 			break
 		case "after":
 			if (sliceMode) newFuncStr = newFuncStr.replace(findEnd, `${target}$1`)
@@ -76,6 +84,23 @@ export function injectCode<
 	)(...Object.values(context))
 	newFunc.prototype = func.prototype
 	return newFunc
+}
+
+/**
+ * A helper function which replaces(or appends) code in a function, returning the new function, and it's eval free!
+ * @param func The source function
+ * @param injections The injections to apply, the parameters of an injection, in order: `source`, `target`, `where`
+ * @param context The optional context to use
+ * @helper
+ */
+export function injectCodes<
+	T extends
+		| ((...args: unknown[]) => unknown)
+		| (new (...args: unknown[]) => unknown)
+>(func: T, injections: InjectParams[], context?: object): T {
+	for (const injection of injections)
+		func = injectCode(func, injection[0], injection[1], injection[2], context)
+	return func
 }
 /**
  * Applies all props to an object via mutating

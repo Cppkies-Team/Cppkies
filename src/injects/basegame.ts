@@ -1,4 +1,4 @@
-import { injectCode } from "../helpers"
+import { injectCode, injectCodes } from "../helpers"
 import { ReturnableEventEmitter } from "../lib/eventemitter"
 import { Injection } from "./generic"
 
@@ -133,7 +133,7 @@ export function main(): Promise<Hooks> {
 					}
 					Cppkies.hooks.emit("menu")
 					`,
-					"before"
+					"after"
 				)
 			}),
 			//// -- Data manipulation -- ////
@@ -184,20 +184,15 @@ export function main(): Promise<Hooks> {
 				icon: Icon - the current icon
 			 */
 			new Injection("getIcon", () => {
-				Game.GetIcon = injectCode(
-					Game.GetIcon,
-					"return [col,Game.Tiers[tier].iconRow];",
-					`
-					// Cppkies Injection
+				Game.GetIcon = injectCodes(Game.GetIcon, [
+					[
+						"return [col,Game.Tiers[tier].iconRow];",
+						`// Cppkies Injection
 					return Cppkies.hooks.emit("getIcon", { icon: [col, Game.Tiers[tier].iconRow], tier: tier, type: type }).icon`,
-					"replace"
-				)
-				Game.GetIcon = injectCode(
-					Game.GetIcon,
-					"col=18;",
-					'else if (type === "Mouse") col = 11;',
-					"after"
-				)
+						"replace",
+					],
+					["col=18;", 'else if (type === "Mouse") col = 11;', "after"],
+				])
 			}),
 			//// -- Sugar Lump -- ////
 			// TODO Rewrite Game.computeLumpType
@@ -233,22 +228,21 @@ export function main(): Promise<Hooks> {
 			}),
 			//// -- Gameplay -- ////
 			new Injection("cps", () => {
-				Game.CalculateGains = injectCode(
-					Game.CalculateGains,
-					"var rawCookiesPs=Game.cookiesPs*mult;",
-					`// Cppkies injection
+				Game.CalculateGains = injectCodes(Game.CalculateGains, [
+					[
+						"var rawCookiesPs=Game.cookiesPs*mult;",
+						`// Cppkies injection
 					Game.cookiesPs = Cppkies.hooks.emit("rawCps", Game.cookiesPs);
 					mult = Cppkies.hooks.emit("rawCpsMult", mult);\n`,
-					"before"
-				)
-				Game.CalculateGains = injectCode(
-					Game.CalculateGains,
-					"Game.cookiesPs=Game.runModHookOnValue('cps',Game.cookiesPs);",
-					`// Cppkies injection
-mult = Cppkies.hooks.emit("cpsMult", mult);
-`,
-					"before"
-				)
+						"before",
+					],
+					[
+						"Game.cookiesPs=Game.runModHookOnValue('cps',Game.cookiesPs);",
+						`// Cppkies injection
+						mult = Cppkies.hooks.emit("cpsMult", mult);\n`,
+						"before",
+					],
+				])
 				Game.registerHook("cps", cps => emitter.emit("cps", cps))
 			}),
 			new Injection("cursorFingerMult", () => {
@@ -261,21 +255,22 @@ add = Cppkies.hooks.emit("cursorFingerMult", add);\n`,
 				)
 			}),
 			new Injection("cpc", () => {
-				Game.mouseCps = injectCode(
-					Game.mouseCps,
-					`var num=0;`,
-					`// Cppkies injection
-add = Cppkies.hooks.emit("cursorFingerMult", add);\n`,
-					"before"
-				)
+				Game.mouseCps = injectCodes(Game.mouseCps, [
+					[
+						`var num=0;`,
+						`// Cppkies injection
+						add = Cppkies.hooks.emit("cursorFingerMult", add);\n`,
+						"before",
+					],
+					[
+						`var out`,
+						`// Cppkies injection
+						add = Cppkies.hooks.emit("cpcAdd", add);\n`,
+						"before",
+					],
+				])
+
 				Game.registerHook("cookiesPerClick", cpc => emitter.emit("cpc", cpc))
-				Game.mouseCps = injectCode(
-					Game.mouseCps,
-					`var out`,
-					`// Cppkies injection
-add = Cppkies.hooks.emit("cpcAdd", add);\n`,
-					"before"
-				)
 			}),
 			// !!!INTERNAL DO NOT USE!!! Use buildingHooks' "cps" instead
 			new Injection("buildingCps", () => {
@@ -341,30 +336,31 @@ frame = override.frame;\n`,
 `,
 			"replace"
 		)
-		Game.UpdateMenu = injectCode(
-			Game.UpdateMenu,
-			"url(img/'+milk.pic+'.png)",
-			"url(' + (milk.pic.indexOf('http') >= 0 ? milk.pic : 'img/'+milk.pic) + '.png)",
-			"replace"
-		)
-		Game.UpdateMenu = injectCode(
-			Game.UpdateMenu,
-			"img/icons.png?v='+Game.version+'",
-			"' + (Game.Milks[i].iconLink ? Game.Milks[i].iconLink : 'img/icons.png?v='+Game.version) + '",
-			"replace"
-		)
-		Game.ToggleSpecialMenu = injectCode(
-			Game.ToggleSpecialMenu,
-			">=5",
-			'>=Game.dragonLevels.findIndex(val => val.name === "Krumblor, cookie hatchling")',
-			"replace"
-		)
-		Game.ToggleSpecialMenu = injectCode(
-			Game.ToggleSpecialMenu,
-			">=25",
-			'>=Game.dragonLevels.findIndex(val => val.action === "Train secondary aura<br><small>Lets you use two dragon auras simultaneously</small>") + 1',
-			"replace"
-		)
+		Game.UpdateMenu = injectCodes(Game.UpdateMenu, [
+			[
+				"url(img/'+milk.pic+'.png)",
+				"url(' + (milk.pic.indexOf('http') >= 0 ? milk.pic : 'img/'+milk.pic) + '.png)",
+				"replace",
+			],
+			[
+				"img/icons.png?v='+Game.version+'",
+				"' + (Game.Milks[i].iconLink ? Game.Milks[i].iconLink : 'img/icons.png?v='+Game.version) + '",
+				"replace",
+			],
+		])
+
+		Game.ToggleSpecialMenu = injectCodes(Game.ToggleSpecialMenu, [
+			[
+				">=5",
+				'>=Game.dragonLevels.findIndex(val => val.name === "Krumblor, cookie hatchling")',
+				"replace",
+			],
+			[
+				">=25",
+				'>=Game.dragonLevels.findIndex(val => val.action === "Train secondary aura<br><small>Lets you use two dragon auras simultaneously</small>") + 1',
+				"replace",
+			],
+		])
 		Game.Objects.Cursor.buyFunction = injectCode(
 			Game.Objects.Cursor.buyFunction,
 			"Game.Unlock('Octillion fingers');",

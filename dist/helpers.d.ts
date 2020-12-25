@@ -15,6 +15,14 @@ export declare function getValue<T>(value: CommonValue<T>): T;
  */
 export declare function escapeRegExp(str: string): string;
 /**
+ * The parameters of an injection, in order: `source`, `target`, `where`
+ */
+declare type InjectParams = [
+    string | RegExp | null,
+    string,
+    "before" | "replace" | "after"
+];
+/**
  * A helper function which replaces(or appends) code in a function, returning the new function, and it's eval free!
  * @param func The source function
  * @param source What to replace, can be null for slicing
@@ -24,6 +32,14 @@ export declare function escapeRegExp(str: string): string;
  * @helper
  */
 export declare function injectCode<T extends ((...args: unknown[]) => unknown) | (new (...args: unknown[]) => unknown)>(func: T, source: string | RegExp | null, target: string, where: "before" | "replace" | "after", context?: object): T;
+/**
+ * A helper function which replaces(or appends) code in a function, returning the new function, and it's eval free!
+ * @param func The source function
+ * @param injections The injections to apply, the parameters of an injection, in order: `source`, `target`, `where`
+ * @param context The optional context to use
+ * @helper
+ */
+export declare function injectCodes<T extends ((...args: unknown[]) => unknown) | (new (...args: unknown[]) => unknown)>(func: T, injections: InjectParams[], context?: object): T;
 /**
  * Applies all props to an object via mutating
  * @param targObj The object which will be mutated
@@ -46,3 +62,4 @@ export declare function hasOwnProperty<X extends object, Y extends PropertyKey>(
  * @helper
  */
 export declare function toRomanNumeral(num: number): string;
+export {};

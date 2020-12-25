@@ -2,7 +2,7 @@
 import { Building } from "./buildings";
 import { Upgrade, TieredUpgrade, HeavenlyUpgrade, GrandmaSynergy, SynergyUpgrade, KittenUpgrade } from "./upgrade";
 import Tier from "./tiers";
-import { injectCode } from "./helpers";
+import { injectCode, injectCodes } from "./helpers";
 import { patchIconsheet, relinkColumn, relinkRow, alias } from "./spritesheets";
 import { Hooks } from "./injects/basegame";
 import { hookAllBuildings } from "./buildings";
@@ -151,6 +151,7 @@ declare const master: {
     DragonAuraLevel: typeof DragonAuraLevel;
     Milk: typeof Milk;
     injectCode: typeof injectCode;
+    injectCodes: typeof injectCodes;
     DEFAULT_ONBUY: () => void;
     DEFAULT_CPS: (me: Building) => number;
     icons: {
