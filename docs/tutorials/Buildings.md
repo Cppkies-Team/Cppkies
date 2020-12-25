@@ -225,11 +225,15 @@ Cppkies.onLoad.push(() => {
 
 	// Dragon stuff
 
-	new Cppkies.DragonAura("Please do this", "Does stuff", "Cppkie Baker")
+	new Cppkies.DragonAura(
+		"Dragonsilk", 
+		"The shimmering veil is unbreakable. You can no longer click golden cookies or the big cookie.",
+		[0, 0]
+	)
 
 	new Cppkies.DragonAuraLevel(
-		"Please do this",
-		"Does stuff (short desc)",
+		"Dragon's Will", 
+		"Grants you a random positive buff every minute. You can only have one buff active at once.", // Just a note here, Reality Bending would not be given the one buff active at once, if someone ever were to implement this
 		"Cppkie Baker"
 	)
 })
