@@ -1,5 +1,11 @@
-import { CommonString } from "./helpers";
-import { Building } from "./buildings";
+declare class UndocumentedClassInstance {
+    [x: string]: any;
+    constructor(...props: any);
+}
+declare type UndocumentedClass = typeof UndocumentedClassInstance;
+/**
+ * The Game object, generated automatically
+ */
 export default interface Game {
     Launch: Function;
     version: number;
@@ -382,7 +388,7 @@ export default interface Game {
     ObjectsById: Array<any>;
     ObjectsN: number;
     BuildingsOwned: number;
-    Object: any;
+    Object: UndocumentedClass;
     DrawBuildings: Function;
     sortSprites: Function;
     sortSpritesById: Function;
@@ -401,12 +407,12 @@ export default interface Game {
     ClickProduct: Function;
     mutedBuildingTooltip: Function;
     upgradesToRebuild: number;
-    Upgrades: Array<any>;
-    UpgradesById: Array<any>;
+    Upgrades: Array<Game["Upgrade"]>;
+    UpgradesById: Array<Game["Upgrade"]>;
     UpgradesN: number;
     UpgradesInStore: Array<any>;
     UpgradesOwned: number;
-    Upgrade: Function;
+    Upgrade: UndocumentedClass;
     storeBuyAll: Function;
     vault: Array<any>;
     CountsAsUpgradeOwned: Function;
@@ -464,11 +470,11 @@ export default interface Game {
     goldenCookieUpgrades: Array<any>;
     cookieUpgrades: Array<any>;
     UpgradePositions: object;
-    Achievements: Array<any>;
-    AchievementsById: Array<any>;
+    Achievements: Array<Game["Achievement"]>;
+    AchievementsById: Array<Game["Achievement"]>;
     AchievementsN: number;
     AchievementsOwned: number;
-    Achievement: Function;
+    Achievement: UndocumentedClass;
     Win: Function;
     RemoveAchiev: Function;
     CountsAsAchievementOwned: Function;
@@ -548,23 +554,19 @@ export default interface Game {
     defaultBg: string;
     choiceSelectorOn: number;
 }
-export interface Cppkies {
-    injectCode: (func: Function, source: CommonString | null, target: CommonString, where: "before" | "replace" | "after") => Function | null;
-    hooks: {
-        [key: string]: Function[];
-    };
-    buildingHooks: Record<string, Record<string, Function[]>>;
-    buildingHooksById: Record<string, Function[]>[];
-    iconLink: string;
-    buildingLink: string;
-    Building: typeof Building | null;
-    onLoad: Function[];
-    DEFAULT_ONBUY: () => void | null;
-    DEFAULT_CPS: (me: Building) => number | null;
-}
+/**
+ * The icon type used in Cookie Clicker
+ */
+export declare type Icon = [number, number, string?];
+/**
+ * The Cppkies object interface
+ */
 export interface FoolBuilding {
     name: string;
     desc: string;
     icon: [number, number];
 }
 export declare type AddEvent = (htmlElement: HTMLElement, eventName: string, eventFunction: (e: Event | any) => void) => void;
+export declare type l = (name: string) => HTMLElement;
+export declare type PlaySound = (url: string, volume?: number, pitch?: number) => void;
+export {};

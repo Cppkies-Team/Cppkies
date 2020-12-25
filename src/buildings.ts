@@ -1,180 +1,241 @@
-import gameType, { FoolBuilding, AddEvent } from "./gameType"
 import master from "./vars"
-import Game from "./gameType"
 import { injectCode } from "./helpers"
 import { Injection } from "./injects/generic"
-declare let Game: gameType
-declare const l: (id: string) => HTMLElement
-declare const AddEvent: AddEvent
-declare const PlaySound: (url: string, volume?: number, pitch?: number) => void
-interface Art {
-	base?: string
-	xV?: number
-	yV?: number
-	w?: number
-	rows?: number
-	x?: number
-	y?: number
-	pic?: string
-	bg?: string
-}
-export function createHooks(building: Building | Game["Object"]): void {
-	const injections: Injection[] = [
-		new Injection("tooltip", [], () => {
+import { loadBuilding } from "./saves"
+import { resolveAlias } from "./spritesheets"
+import { ReturnableEventEmitter } from "./lib/eventemitter"
+
+export const buildingHooks: Record<string, BuildingHooks> = {}
+export const customBuildings: Building[] = []
+/**
+ * Creates the hooks for a building
+ * @param building The building to create hooks for
+ */
+
+export type BuildingHooks = ReturnableEventEmitter<{
+	tooltip: [string, string]
+	cps: [number, number]
+	buy: [void, void]
+	levelUp: [void, void]
+}>
+
+export function createHooks(building: Building | Game.Object): void {
+	const emitter: BuildingHooks = new ReturnableEventEmitter()
+	const injections = [
+		new Injection("tooltip", () => {
 			building.tooltip = injectCode(
-				injectCode(building.tooltip, "return", "let ret = ", "replace"),
+				injectCode(building.tooltip, "return", "let tempRet = ", "replace"),
 				null,
 				`\n//Cppkies injection
-		for(const i in Cppkies.buildingHooks["${building.name}"].tooltip) {
-			const tempRet = Cppkies.buildingHooks["${building.name}"].tooltip[i].call(this, ret)
-			ret = tempRet || ret
-		}
-		return ret`,
+				return Cppkies.buildingHooks[this.name].emit("tooltip", tempRet)`,
 				"after"
 			)
 		}),
+		new Injection("buy", () => {
+			building.buy = injectCode(
+				building.buy,
+				null,
+				`\n//Cppkies injection
+				if(success) {
+					Cppkies.buildingHooks[this.name].emit("buy")
+				}`,
+				"after"
+			)
+		}),
+		new Injection("levelUp", () => {
+			building.levelUp = injectCode(
+				building.levelUp,
+				"me.level+=1;",
+				`\n// Cppkies injection
+Cppkies.buildingHooks[me.name].emit("levelUp")`,
+				"after",
+				{ me: building }
+			)
+		}),
 	]
-	const dummy: Record<string, Function[]> = {}
 	injections.forEach(inject => {
-		dummy[inject.value] = inject.defValue
-		if (inject.func) inject.func()
+		inject.func?.()
 	})
-	master.buildingHooks[building.name] = dummy
+	master.hooks.on("buildingCps", val => ({
+		building: val.building,
+		cps:
+			Game.Objects[val.building] === building
+				? emitter.emit("cps", val.cps)
+				: val.cps,
+	}))
+	buildingHooks[building.name] = emitter
 }
 
+/**
+ * Automatically finds buildings without hooks and creates them
+ */
+export function hookAllBuildings(): void {
+	for (const building of Game.ObjectsById)
+		if (!buildingHooks[building.name]) createHooks(building)
+}
+
+/**
+ * The building class for creating new buildings
+ */
 export class Building extends Game.Object {
+	iconLink: string
+	buildingLink: string
+	/**
+	 * Creates a new building and creates the hooks for it
+	 * @param name The name of the building
+	 * @param commonName Various additional string for the building, split by |:  The name of the building, then in plural, how the building produced the cookies, the effect from sugar lumps, then in plural
+	 * @param desc The description of the building
+	 * @param icon The icon for the building (Only the column matters) (See http://cppkies.js.org/#/./CommonProblems?id=relink-column for instructions about the icons)
+	 * @param bigIcon The icon that shows up in store (Only the row matters) (See http://cppkies.js.org/#/./CommonProblems?id=big-icons for instructions about the big icons)
+	 * @param art The art for the building
+	 * @param cpsFunc The function to calculate CPS
+	 * @param buyFunction The function which gets called when it's bought
+	 * @param foolObject The fool building to display during business day
+	 * @param buildingSpecial The building special and building debuff
+	 */
 	constructor(
 		name: string,
 		commonName: string,
 		desc: string,
-		icon: [number, number],
-		art: Art,
+		icon: Game.Icon,
+		bigIcon: Game.Icon,
+		art: Game.Art,
 		cpsFunc: (me: Building) => number,
 		buyFunction: () => void,
-		foolObject: FoolBuilding,
+		foolObject: Game.FoolBuilding,
 		buildingSpecial: [string, string]
 	) {
+		if (Game.Objects[name])
+			throw new Error(
+				`Can't create building, "${name}" is already used as a building name`
+			)
+		//Warn about enforced orders
+		if (icon[1] !== 0) {
+			console.warn(
+				"All icon sheets must follow an order, see https://cppkies.js.org/#/CommonProblems#IconOrder?id=relink-column"
+			)
+		}
+		if (bigIcon[0] !== 0) {
+			console.warn(
+				"All big icon sheets must follow an order, see https://cppkies.js.org/#/CommonProblems#IconOrder?id=big-icons"
+			)
+		}
 		super(
 			name,
 			commonName,
 			desc,
+			bigIcon[1],
 			icon[0],
-			icon[1],
 			art,
-			0, //Game automatically calculates Price and BaseCps
+			0, // The game automatically calculates Price and BaseCps
 			cpsFunc,
 			buyFunction
 		)
-		createHooks(this)
+		customBuildings.push(this)
+		// Create hooks if they don't exist yet
+		if (!buildingHooks[name]) createHooks(this)
 		//Manually relink canvases and contexts because Orteil made it so new buildings break the old canvas and context links
 		for (const i in Game.ObjectsById) {
-			if (parseInt(i) > 0) {
-				const me = Game.ObjectsById[i]
-				me.canvas = l(`rowCanvas${i}`)
-				me.ctx = me.canvas.getContext("2d")
-				//Relink their events too
-				AddEvent(me.canvas, "mouseover", () => {
-					me.mouseOn = true
-				})
-				AddEvent(me.canvas, "mouseout", () => {
-					me.mouseOn = false
-				})
-				AddEvent(me.canvas, "mousemove", e => {
-					const box = me.canvas.getBoundingClientRect()
-					me.mousePos[0] = e.pageX - box.left
-					me.mousePos[1] = e.pageY - box.top
-				})
+			if (parseInt(i) <= 0) continue
+			const me = Game.ObjectsById[i]
+			me.canvas = l(`rowCanvas${i}`) as HTMLCanvasElement
+			if (!me.canvas) continue
+			// Why does getContext return null possibly???
+			me.ctx = me.canvas.getContext("2d") as CanvasRenderingContext2D
+			//Relink their events too
+			me.canvas.addEventListener("mouseover", () => {
+				me.mouseOn = true
+			})
+			me.canvas.addEventListener("mouseout", () => {
+				me.mouseOn = false
+			})
+			me.canvas.addEventListener("mousemove", e => {
+				const box = me.canvas.getBoundingClientRect()
+				me.mousePos[0] = e.pageX - box.left
+				me.mousePos[1] = e.pageY - box.top
+			})
+			//Restore minigames
+			if (me.minigame && me.minigameLoaded) {
+				const save = me.minigame.save()
+				me.minigame.launch()
+				me.minigame.load(save)
 			}
 		}
-		const localBuildingLink = master.buildingLink + "",
-			localIconLink = master.iconLink + ""
+		this.buildingLink = bigIcon[2] ?? master.buildingLink
+		this.iconLink = resolveAlias(icon[2] ?? master.iconLink)
 		// This is the name, description, and icon used during Business Season
 		if (foolObject) Game.foolObjects[name] = foolObject
 		// The name of this building's golden cookie buff and debuff
 		if (buildingSpecial) Game.goldenCookieBuildingBuffs[name] = buildingSpecial
 
-		//CCSE.ReplaceBuilding(name)
-
-		if (localIconLink) {
-			master.buildingHooks[this.name].tooltip.push(ret =>
+		if (this.iconLink) {
+			buildingHooks[this.name].on("tooltip", ret =>
 				this.locked
 					? ret
 					: ret.replace(
 							"background-position",
-							`background-image:url(${localIconLink});background-position`
+							`background-image:url(${this.iconLink});background-position`
 					  )
 			)
 		}
 
-		/*if (CCSE.save.Buildings[name]) {
-			var saved = CCSE.save.Buildings[name]
-			me.amount = saved.amount
-			me.bought = saved.bought
-			me.totalCookies = saved.totalCookies
-			me.level = saved.level
-			me.muted = saved.muted
-			me.free = saved.free ? saved.free : 0 // Left this out earlier, can't expect it to be there
-			me.minigameSave = saved.minigameSave
-
-			Game.BuildingsOwned += me.amount
-		} else {
-			var saved = {}
-			saved.amount = 0
-			saved.bought = 0
-			saved.totalCookies = 0
-			saved.level = 0
-			saved.muted = 0
-			saved.minigameSave = ""
-
-			CCSE.save.Buildings[name] = saved
-		}*/
-
 		Game.BuildStore()
-		if (localBuildingLink) {
-			master.hooks.postBuildStore.push(() => {
+		if (this.buildingLink) {
+			master.hooks.on("buildStore", () => {
 				l(
 					`productIcon${this.id}`
-				).style.backgroundImage = `url(${localBuildingLink})`
+				).style.backgroundImage = `url(${this.buildingLink})`
 				l(
 					`productIconOff${this.id}`
-				).style.backgroundImage = `url(${localBuildingLink})`
+				).style.backgroundImage = `url(${this.buildingLink})`
 			})
 		}
 		Game.BuildStore()
-		this.canvas = l(`rowCanvas${this.id}`)
-		this.ctx = this.canvas.getContext("2d")
-		this.context = this.ctx
+		this.canvas = l(`rowCanvas${this.id}`) as HTMLCanvasElement
+		// Why does getContext return null possibly???
+		this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D
+		//this.context = this.ctx
 		this.pics = []
 		const muteDiv = document.createElement("div")
 		muteDiv.className = "tinyProductIcon"
 		muteDiv.id = `mutedProduct${this.id}`
 		muteDiv.style.display = "none"
-		if (localBuildingLink)
-			muteDiv.style.backgroundImage = `url(${localBuildingLink})`
+		if (this.buildingLink)
+			muteDiv.style.backgroundImage = `url(${this.buildingLink})`
 		muteDiv.style.backgroundPositionX = `-${icon[0]}px`
 		muteDiv.style.backgroundPositionY = `-${icon[1]}px`
 		muteDiv.addEventListener("click", () => {
 			this.mute(0)
-			PlaySound(this.muted ? "snd/clickOff.mp3" : "snd/clickOn.mp3")
+			window.PlaySound(this.muted ? "snd/clickOff.mp3" : "snd/clickOn.mp3")
 		})
 
-		AddEvent(this.canvas, "mouseover", () => {
+		window.AddEvent(this.canvas, "mouseover", () => {
 			this.mouseOn = true
 		})
-		AddEvent(this.canvas, "mouseout", () => {
+		window.AddEvent(this.canvas, "mouseout", () => {
 			this.mouseOn = false
 		})
-		AddEvent(this.canvas, "mousemove", e => {
+		this.canvas.addEventListener("mousemove", e => {
 			const box = this.canvas.getBoundingClientRect()
 			this.mousePos[0] = e.pageX - box.left
 			this.mousePos[1] = e.pageY - box.top
 		})
 		l("buildingsMute").appendChild(muteDiv)
+		// Load the save stuff
+		const loadProps = loadBuilding(this)
+		for (const i in loadProps) this[i] = loadProps[i]
 		Game.recalculateGains = 1
 	}
 }
+/**
+ * The recommended function to pass in building CpsFunc
+ * @param me Itself
+ */
 export const defaultCps = (me: Building): number =>
 	Game.GetTieredCpsMult(me) * Game.magicCpS(me.name) * me.baseCps
+/**
+ * The reccomended function to pass in building BuyFunc
+ */
 export const defaultOnBuy = function(): void {
 	Game.UnlockTiered(this)
 	if (

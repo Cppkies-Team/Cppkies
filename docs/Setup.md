@@ -1,8 +1,8 @@
-### Setup
+# Setup
 
 There are 2 ways of using Cppkies, installing with NPM or importing though `Game.LoadMod`.
 
-#### Using NPM 
+## Using NPM - JS or TS
 
 Using Cppkies via NPM is the recommended way of using Cppkies, since you can split your code into files, use typescript, and have IDE autocompletion.
 
@@ -23,29 +23,25 @@ Cppkies.onLoad.push(() => {
 })
 ```
 
-#### Importing via `Game.LoadMod`
+(If you want a simple template to easily start working, you should check out [TheGLander/CppkiesModExample](https://github.com/TheGLander/CppkiesModExample))
+
+## Importing through `Game.LoadMod` - JS
 
 Importing Cppkies through `Game.LoadMod` is not recommended since you can't split your code into multiple files, use typescript, or have IDE autocompletion. This is recommended only if the mod is really small.
 
 To import it, you need to start your mod with
 
-```js
+```ts
 Game.LoadMod("https://unpkg.com/cppkies")
 ```
 
 For example:
 
-```js
+```ts
 Game.LoadMod("https://unpkg.com/cppkies")
-Cppkies.onLoad.push(() => {
+if (!window.CPPKIES_ONLOAD) CPPKIES_ONLOAD = []
+CPPKIES_ONLOAD.push(() => {
 	new Cppkies.Upgrade("Hello, World!", "My first upgrade!", 7, [10, 5])
 })
 ```
 
-### Setting up your Workspace
-
-<!-- Basically just creating a main mod file and explaining the benefits of separating your projects code into multiple files -->
-
-### Creating your addon's backbone
-
-<!-- All this would be is a simple explanation of pushing to functions, setting up Cppkies.onLoad, etc. -->

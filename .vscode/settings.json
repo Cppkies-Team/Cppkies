@@ -1,7 +1,13 @@
 {
 	"cSpell.words": [
 		"Cppkie",
+		"ONBUY",
+		"Orteil",
+		"achiev",
 		"cppkies",
-		"prefs"
-	]
+		"krumblor",
+		"prefs",
+		"targ"
+	],
+	"cmake.configureOnOpen": false
 }

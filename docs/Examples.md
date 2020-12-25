@@ -1,9 +1,14 @@
-# Examples
+# Examples <!-- {docsify-ignore-all} -->
 
-### [Think Tank Building](https://github.com/Cppkies-Team/examples/tree/master/ThinkTank)
+## [Think Tank Building](https://github.com/Cppkies-Team/examples/tree/master/ThinkTank)
 
-This addon provides an example on how to create a new building new upgrades and new achievements<!--Also could use this as a minigame creation example-->. Sprites by "Bt Y#0895".
+This mod provides an example on how to create a new building with upgrades, achievements, and auras. Sprites by "Bt Y#0895".
 
+## [Saffronyx Tier](https://github.com/Cppkies-Team/examples/tree/master/SaffronyxTier)
+
+This mod provides an example on how to create a new tier with upgrades, achievements. Sprites by "Kyleptune#6345"
+
+<!--
 ### [LumpExample](https://github.com/Cppkies-Team/examples/tree/master/LumpExample)
 
 This addon provides an example of creating a new lump type.
@@ -14,4 +19,5 @@ This addon provides an example of creating a new buff type, and adding a buff ty
 
 ### [MinigameExample](https://github.com/Cppkies-Team/examples/tree/master/MinigameExample)
 
-This addon provides an example of creating a new plant<!--, and maybe a new soil type. Not sure if it's possible.-->, a new spell, and a new pantheon spirit.
+This addon provides an example of creating a new plant, a new soil, a new spell, and a new pantheon spirit.
+-->

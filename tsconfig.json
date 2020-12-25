@@ -2,9 +2,14 @@
 	"compilerOptions": {
 		"sourceMap": true,
 		"module": "esnext",
-		"lib": ["dom"],
+		"lib": ["dom", "ESNext"],
 		"esModuleInterop": true,
-		"declaration": true
+		"declaration": true,
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"allowUmdGlobalAccess": true,
+		"incremental": true,
+		"strictNullChecks": true
 	},
-	"exclude": ["./dist"]
+	"exclude": ["./dist", "./tests"]
 }

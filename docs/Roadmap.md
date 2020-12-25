@@ -1,11 +1,11 @@
 # Roadmap
 
 - [x] Buildings
-- [ ] Upgrades
-  - [ ] Fortune Upgrades
-  - [ ] Seasonal Upgrades
-  - [ ] Heavenly Upgrades
-- [ ] Achievements
+- [x] Upgrades
+  - [x] Fortune Upgrades
+  - [x] Heavenly Upgrades
+- [x] Achievements
+- [x] Dragon levels & auras
 - [ ] Buffs
 - [ ] Garden Hooks
 - [ ] Grimoire Hooks <!-- Maybe? -->

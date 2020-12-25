@@ -1,9 +1,9 @@
-import gameType, { Cppkies as CppkiesType } from "./gameType";
+import master from "./vars";
+declare let CppkiesExport: typeof master;
 declare global {
     interface Window {
-        Game: gameType;
-        Cppkies: CppkiesType;
+        Cppkies: typeof master | undefined;
+        CPPKIES_ONLOAD: (() => void)[] | undefined;
     }
 }
-declare let CppkiesExport: CppkiesType;
 export default CppkiesExport;

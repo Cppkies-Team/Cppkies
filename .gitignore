@@ -102,3 +102,9 @@ typings/
 
 # TernJS port file
 .tern-port
+
+# Local misc tests
+localtestsetc/
+
+# rollup json bug folder(?)
+dist/src/
