@@ -1,8 +1,8 @@
-import master from "./vars"
 import { Building } from "./buildings"
 import { Upgrade } from "./upgrade"
 import { applyAllProps, hasOwnProperty } from "./helpers"
 import { Achievement } from "./achievement"
+import { customAchievements, customBuildings, customUpgrades } from "./vars"
 
 export const VANILLA_DRAGON_LEVEL_AMOUNT = Game.dragonLevels.length + 0
 
@@ -115,13 +115,14 @@ function createDefaultSave(): SaveType {
 	}
 }
 
-export let save: SaveType = createDefaultSave()
+export const save: SaveType = createDefaultSave()
 
 /**
  * Creates a save for Cppkies
  */
 export function initSave(): void {
-	master.save = save = createDefaultSave()
+	const newSave = createDefaultSave()
+	for (const i in newSave) save[i] = newSave[i]
 }
 /**
  * Loads the building save data
@@ -219,16 +220,16 @@ export function loadDragon(): void {
  * Loads everything
  */
 export function loadAll(): void {
-	for (const building of master.customBuildings)
+	for (const building of customBuildings)
 		applyAllProps(building, loadBuilding(building))
 
-	for (const upgrade of master.customUpgrades) {
+	for (const upgrade of customUpgrades) {
 		applyAllProps(upgrade, loadUpgrade(upgrade))
 		if (upgrade.bought && Game.CountsAsUpgradeOwned(upgrade.pool))
 			Game.UpgradesOwned++
 	}
 
-	for (const achievement of master.customAchievements) {
+	for (const achievement of customAchievements) {
 		applyAllProps(achievement, loadAchievement(achievement))
 		if (achievement.won && Game.CountsAsAchievementOwned(achievement.pool))
 			Game.AchievementsOwned++
@@ -240,10 +241,9 @@ export function loadAll(): void {
  * Saves everything
  */
 export function saveAll(): void {
-	for (const building of master.customBuildings) saveBuilding(building)
-	for (const upgrade of master.customUpgrades) saveUpgrade(upgrade)
-	for (const achievement of master.customAchievements)
-		saveAchievement(achievement)
+	for (const building of customBuildings) saveBuilding(building)
+	for (const upgrade of customUpgrades) saveUpgrade(upgrade)
+	for (const achievement of customAchievements) saveAchievement(achievement)
 	// Saving the dragon is in `injects/postInject.ts` due to no mod support
 }
 
@@ -362,11 +362,12 @@ export function importSave(data: string): void {
 	try {
 		newSave = JSON.parse(data)
 	} catch {
-		if (data !== "")
+		if (data !== "" && data !== "{}")
 			console.warn("CPPKIES: Found invalid save, creating new one...")
 		initSave()
 	}
-	save = master.save = applySave(newSave)
+	const computedSave = applySave(newSave)
+	for (const i in computedSave) save[i] = computedSave[i]
 	loadAll()
 }
 

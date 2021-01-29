@@ -1,5 +1,6 @@
 import { injectCode, injectCodes } from "../helpers"
 import { ReturnableEventEmitter } from "../lib/eventemitter"
+import { buildingHooks, hookAllBuildings } from "./buildings"
 import { Injection } from "./generic"
 
 export type Hooks = ReturnableEventEmitter<{
@@ -90,13 +91,28 @@ export type Hooks = ReturnableEventEmitter<{
 		{ tab: string; pic: string; frame: number }
 	]
 }>
+
+const hooks: Hooks = new ReturnableEventEmitter()
+
+export default hooks
+
+declare global {
+	interface Window {
+		__INTERNAL_CPPKIES_HOOKS__: {
+			basegame: Hooks
+			buildings: typeof buildingHooks
+			hiddenMilkMult: number
+			hookAllBuildings: typeof hookAllBuildings
+		}
+	}
+}
+
 /**
  * Creates the function hooks for base game
  * @returns A promise
  */
 export function main(): Promise<Hooks> {
 	return new Promise(resolve => {
-		const emitter: Hooks = new ReturnableEventEmitter()
 		const injections: Array<Injection> = [
 			//// -- Custom menus -- ////
 			/*
@@ -114,7 +130,7 @@ export function main(): Promise<Hooks> {
 			"menu"
 			Allows you to add entries to all menus
 			*/
-			new Injection("customMenu", () => {
+			new Injection("menu", () => {
 				Game.UpdateMenu = injectCode(
 					Game.UpdateMenu,
 					null,
@@ -122,16 +138,16 @@ export function main(): Promise<Hooks> {
 					// Cppkies injection
 					switch (Game.onMenu) {
 						case "prefs":
-							Cppkies.hooks.emit("optionsMenu")
+							__INTERNAL_CPPKIES_HOOKS__.basegame.emit("optionsMenu")
 							break
 						case "stats":
-							Cppkies.hooks.emit("statsMenu")
+							__INTERNAL_CPPKIES_HOOKS__.basegame.emit("statsMenu")
 							break
 						case "log":
-							Cppkies.hooks.emit("logMenu")
+							__INTERNAL_CPPKIES_HOOKS__.basegame.emit("logMenu")
 							break
 					}
-					Cppkies.hooks.emit("menu")
+					__INTERNAL_CPPKIES_HOOKS__.basegame.emit("menu")
 					`,
 					"after"
 				)
@@ -144,7 +160,7 @@ export function main(): Promise<Hooks> {
 					null,
 					`
 					// Cppkies injection
-					Cppkies.hooks.emit("preSave")
+					__INTERNAL_CPPKIES_HOOKS__.basegame.emit("preSave")
 					`,
 					"before"
 				)
@@ -155,7 +171,7 @@ export function main(): Promise<Hooks> {
 					"if (type==2 || type==3)",
 					`
 					// Cppkies injection
-					Cppkies.hooks.emit("postSave")
+					__INTERNAL_CPPKIES_HOOKS__.basegame.emit("postSave")
 					`,
 					"before"
 				)
@@ -167,13 +183,13 @@ export function main(): Promise<Hooks> {
 					null,
 					`
 					// Cppkies injection
-					Cppkies.hooks.constEmit("reset", hard)
+					__INTERNAL_CPPKIES_HOOKS__.basegame.constEmit("reset", hard)
 					`,
 					"before"
 				)
 			}),
 			new Injection("reincarnate", () => {
-				Game.registerHook("reincarnate", () => emitter.emit("reincarnate"))
+				Game.registerHook("reincarnate", () => hooks.emit("reincarnate"))
 			}),
 			//// -- Tiers -- ////
 			/**
@@ -188,7 +204,7 @@ export function main(): Promise<Hooks> {
 					[
 						"return [col,Game.Tiers[tier].iconRow];",
 						`// Cppkies Injection
-					return Cppkies.hooks.emit("getIcon", { icon: [col, Game.Tiers[tier].iconRow], tier: tier, type: type }).icon`,
+					return __INTERNAL_CPPKIES_HOOKS__.basegame.emit("getIcon", { icon: [col, Game.Tiers[tier].iconRow], tier: tier, type: type }).icon`,
 						"replace",
 					],
 					["col=18;", 'else if (type === "Mouse") col = 11;', "after"],
@@ -209,7 +225,7 @@ export function main(): Promise<Hooks> {
 				Game.BuildStore = injectCode(
 					Game.BuildStore,
 					null,
-					`;\nCppkies.hooks.emit("buildStore")`,
+					`;\n__INTERNAL_CPPKIES_HOOKS__.basegame.emit("buildStore")`,
 					"after"
 				)
 			}),
@@ -221,7 +237,7 @@ export function main(): Promise<Hooks> {
 					) => string,
 					"return choose(list)+'.png'",
 					`// Cppkies injection
-					list = Cppkies.hooks.emit("grandmaPic", list)
+					list = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("grandmaPic", list)
 					`,
 					"before"
 				)
@@ -232,25 +248,25 @@ export function main(): Promise<Hooks> {
 					[
 						"var rawCookiesPs=Game.cookiesPs*mult;",
 						`// Cppkies injection
-					Game.cookiesPs = Cppkies.hooks.emit("rawCps", Game.cookiesPs);
-					mult = Cppkies.hooks.emit("rawCpsMult", mult);\n`,
+					Game.cookiesPs = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("rawCps", Game.cookiesPs);
+					mult = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("rawCpsMult", mult);\n`,
 						"before",
 					],
 					[
 						"Game.cookiesPs=Game.runModHookOnValue('cps',Game.cookiesPs);",
 						`// Cppkies injection
-						mult = Cppkies.hooks.emit("cpsMult", mult);\n`,
+						mult = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("cpsMult", mult);\n`,
 						"before",
 					],
 				])
-				Game.registerHook("cps", cps => emitter.emit("cps", cps))
+				Game.registerHook("cps", cps => hooks.emit("cps", cps))
 			}),
 			new Injection("cursorFingerMult", () => {
 				Game.Objects.Cursor.cps = injectCode(
 					Game.Objects.Cursor.cps,
 					`var mult=1;`,
 					`// Cppkies injection
-add = Cppkies.hooks.emit("cursorFingerMult", add);\n`,
+add = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("cursorFingerMult", add);\n`,
 					"before"
 				)
 			}),
@@ -259,18 +275,18 @@ add = Cppkies.hooks.emit("cursorFingerMult", add);\n`,
 					[
 						`var num=0;`,
 						`// Cppkies injection
-						add = Cppkies.hooks.emit("cursorFingerMult", add);\n`,
+						add = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("cursorFingerMult", add);\n`,
 						"before",
 					],
 					[
 						`var out`,
 						`// Cppkies injection
-						add = Cppkies.hooks.emit("cpcAdd", add);\n`,
+						add = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("cpcAdd", add);\n`,
 						"before",
 					],
 				])
 
-				Game.registerHook("cookiesPerClick", cpc => emitter.emit("cpc", cpc))
+				Game.registerHook("cookiesPerClick", cpc => hooks.emit("cpc", cpc))
 			}),
 			// !!!INTERNAL DO NOT USE!!! Use buildingHooks' "cps" instead
 			new Injection("buildingCps", () => {
@@ -278,26 +294,26 @@ add = Cppkies.hooks.emit("cursorFingerMult", add);\n`,
 					Game.CalculateGains,
 					"me.storedTotalCps=me.amount*me.storedCps;",
 					`// Cppkies injection (internal, do not use)
-me.storedCps = Cppkies.hooks.emit("buildingCps", { building: i, cps: me.storedCps }).cps;\n`,
+me.storedCps = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("buildingCps", { building: i, cps: me.storedCps }).cps;\n`,
 					"before"
 				)
 			}),
 			//// -- Vanilla -- ////
 			new Injection("logic", () => {
-				Game.registerHook("logic", () => emitter.emit("logic"))
+				Game.registerHook("logic", () => hooks.emit("logic"))
 			}),
 			new Injection("draw", () => {
-				Game.registerHook("draw", () => emitter.emit("draw"))
+				Game.registerHook("draw", () => hooks.emit("draw"))
 			}),
 			new Injection("check", () => {
-				Game.registerHook("check", () => emitter.emit("check"))
+				Game.registerHook("check", () => hooks.emit("check"))
 			}),
 			new Injection("ticker", () => {
 				Game.getNewTicker = injectCode(
 					Game.getNewTicker,
 					"Game.TickerAge=Game.fps*10;",
 					`// Cppkies injection
-list = Cppkies.hooks.emit("ticker", list);\n`,
+list = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("ticker", list);\n`,
 					"before"
 				)
 			}),
@@ -307,7 +323,7 @@ list = Cppkies.hooks.emit("ticker", list);\n`,
 					Game.DrawSpecial,
 					"if (hovered || selected)",
 					`// Cppkies injection
-const override = Cppkies.hooks.emit("specialPic", {tab: Game.specialTabs[i], frame: frame, pic: pic})
+const override = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("specialPic", {tab: Game.specialTabs[i], frame: frame, pic: pic})
 pic = override.pic
 frame = override.frame;\n`,
 					"before"
@@ -316,17 +332,15 @@ frame = override.frame;\n`,
 					Game.ToggleSpecialMenu,
 					"else {pic='dragon.png?v='+Game.version;frame=4;}",
 					`// Cppkies injection
-const override = Cppkies.hooks.emit("specialPic", {tab: Game.specialTab, frame: frame, pic: pic})
+const override = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("specialPic", {tab: Game.specialTab, frame: frame, pic: pic})
 pic = override.pic
 frame = override.frame;\n`,
 					"after"
 				)
 			}),
 		]
-		injections.forEach(inject => {
-			inject.func?.()
-		})
-		//Misc stuff
+		injections.forEach(inject => inject.func?.())
+		// Misc stuff
 		Game.Loader.Load = injectCode(
 			Game.Loader.Load,
 			"img.src=this.domain",
@@ -378,16 +392,23 @@ frame = override.frame;\n`,
 			"Game.ObjectsN++",
 			`
 // Cppkies injection
-Cppkies.hookAllBuildings();\n`,
+__INTERNAL_CPPKIES_HOOKS__.hookAllBuildings();\n`,
 			"after"
 		)
 		Game.CalculateGains = injectCode(
 			Game.CalculateGains,
 			"var catMult=1;",
 			`// Cppkies injection
-			Cppkies.hiddenMilkMult = milkMult;\n`,
+			__INTERNAL_CPPKIES_HOOKS__.hiddenMilkMult = milkMult;\n`,
 			"before"
 		)
-		resolve(emitter)
+
+		window.__INTERNAL_CPPKIES_HOOKS__ = {
+			basegame: hooks,
+			buildings: buildingHooks,
+			hiddenMilkMult: 1,
+			hookAllBuildings,
+		}
+		resolve(hooks)
 	})
 }

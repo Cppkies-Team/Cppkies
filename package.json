@@ -3,15 +3,17 @@
 	"version": "0.2.3",
 	"description": "Cppkies is a modding framework for the game Cookie Clicker. It intends to make modding the game very simple.",
 	"main": "./dist/index.js",
+	"module": "./dist/esm/index.js",
+	"typings": "./dist/index.d.ts",
 	"scripts": {
 		"test": "npx jest",
 		"code-test": "npm run prodBuild && npm run eslint",
 		"build": "npx rollup -c",
-		"prodBuild": "echo {\\\"prod\\\":true} > isprod.json && export NODE_ENV=\"production\" && npm run build && npm run preprod",
+		"prodBuild": "rm dist -rf && echo {\\\"prod\\\":true} > isprod.json && export NODE_ENV=\"production\" && npm run build && npm run build-dts",
 		"watch": "echo {\\\"prod\\\":false} > isprod.json && export NODE_ENV=\"development\"&&npm run build -- --watch",
 		"eslint": "npx eslint ./src/**/*.ts ./src/*.ts ./*.js",
 		"eslint:fix": "npm run eslint -- --fix",
-		"preprod": "cp -r ./dist/src/* ./dist/ && rm -r dist/src"
+		"build-dts": "npx dts-bundle-generator src/index.ts -o dist/index.d.ts"
 	},
 	"husky": {
 		"hooks": {
@@ -30,16 +32,8 @@
 	},
 	"types": "./dist/index.d.ts",
 	"homepage": "https://github.com/Cppkies-Team/Cppkies#readme",
-	"peerDependencies": {},
-	"dependencies": {
-		"@types/cookieclicker": "^2.31.3"
-	},
 	"devDependencies": {
-		"@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.1",
-		"@babel/plugin-proposal-optional-chaining": "^7.12.7",
-		"@babel/plugin-transform-modules-commonjs": "^7.12.1",
-		"@babel/preset-env": "^7.12.7",
-		"@babel/preset-react": "^7.12.7",
+		"@types/cookieclicker": "^2.31.3",
 		"@rollup/plugin-commonjs": "^11.1.0",
 		"@rollup/plugin-json": "^4.1.0",
 		"@rollup/plugin-node-resolve": "^7.1.3",
@@ -47,11 +41,8 @@
 		"@types/puppeteer": "^3.0.5",
 		"@typescript-eslint/eslint-plugin": "^4.8.2",
 		"@typescript-eslint/parser": "^4.8.2",
-		"babel": "^6.23.0",
-		"babel-minify": "^0.5.1",
-		"babel-preset-env": "^1.7.0",
-		"babel-preset-minify": "^0.5.1",
 		"dotenv": "^8.2.0",
+		"dts-bundle-generator": "^5.6.0",
 		"eslint": "^6.8.0",
 		"eslint-config-prettier": "^6.15.0",
 		"eslint-plugin-prettier": "^3.1.4",
@@ -61,13 +52,14 @@
 		"puppeteer": "^3.3.0",
 		"rollup": "^1.32.1",
 		"rollup-plugin-analyzer": "^3.3.0",
-		"rollup-plugin-babel": "^4.4.0",
-		"rollup-plugin-babel-minify": "^9.1.1",
+		"rollup-plugin-terser": "^7.0.2",
 		"rollup-plugin-typescript2": "^0.25.3",
 		"serve": "^11.3.2",
-		"spawnd": "^4.4.0",
 		"ts-jest": "^26.4.4",
 		"tslib": "^2.0.3",
 		"typescript": "^4.1.2"
-	}
+	},
+	"sideEffects": [
+		"./dist/esm/index.js"
+	]
 }

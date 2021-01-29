@@ -4,12 +4,12 @@
 		"module": "esnext",
 		"lib": ["dom", "ESNext"],
 		"esModuleInterop": true,
-		"declaration": true,
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"allowUmdGlobalAccess": true,
 		"incremental": true,
 		"strictNullChecks": true
 	},
+	"include": ["./src/"],
 	"exclude": ["./dist", "./tests"]
 }

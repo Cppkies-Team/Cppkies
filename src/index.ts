@@ -1,33 +1,68 @@
+import {
+	alias,
+	aliases,
+	extraColumnIcons,
+	extraRowIcons,
+	patchIconsheet,
+	relinkColumn,
+	relinkRow,
+	resolveAlias,
+	resolveIcon,
+	unalias,
+} from "./spritesheets"
+const icons = {
+	alias,
+	aliases,
+	extraColumnIcons,
+	extraRowIcons,
+	patchIconsheet,
+	relinkColumn,
+	relinkRow,
+	resolveAlias,
+	resolveIcon,
+	unalias,
+}
+export { icons }
+
 import { main } from "./injects/basegame"
 
-import master from "./vars"
-import { exportSave, importSave } from "./saves"
+export { miscValues } from "./vars"
+export { InjectParams } from "./helpers"
+export * from "./upgrade"
+export * from "./achievement"
+export * from "./buildings"
+export * from "./dragon"
+export * from "./milk"
+export * from "./tiers"
+export { default as hooks } from "./injects/basegame"
+export { buildingHooks } from "./injects/buildings"
 import { prod } from "../isprod.json"
-import postInject from "./injects/postInject"
-import { hookAllBuildings } from "./buildings"
-import { InjectParams } from "./helpers"
-
-let CppkiesExport: typeof master
+import { exportSave, importSave } from "./saves"
+import { hookAllBuildings } from "./injects/buildings"
 
 declare global {
 	interface Window {
-		Cppkies: typeof master | undefined
 		CPPKIES_ONLOAD: (() => void)[] | undefined
 	}
 }
 
-//Check if Cppkies is already created
-if (window.Cppkies) {
-	//If so, just reexport it
-	CppkiesExport = window.Cppkies
-} else {
-	CppkiesExport = master
-	//Force manual addition since in-module injects b r e a k
-	window.Cppkies = CppkiesExport
-	//Inject maingame and create hooks
-	main().then(answer => {
-		CppkiesExport.hooks = answer
-		CppkiesExport.on = answer.on.bind(answer)
+let loaded = false
+
+export const onLoad: Array<() => void> = new Proxy([], {
+	set: (target, key, value): boolean => {
+		if (typeof value === "function" && loaded) value()
+		target[key] = value
+		return true
+	},
+})
+
+// If Cppkies exists, don't do much
+if (window.__INTERNAL_CPPKIES_HOOKS__) {
+	loaded = true
+	onLoad.forEach(val => val())
+} else
+	main().then(() => {
+		loaded = true
 		Game.Notify("Cppkies loaded!", "", [32, prod ? 17 : 21], 1.5)
 
 		const cppkiesNote = document.createElement("div")
@@ -45,27 +80,18 @@ if (window.Cppkies) {
 		Game.Win("Third-party")
 		hookAllBuildings()
 		//Run all onLoad events
-		master.onLoad.forEach(val => val())
+		onLoad.forEach(val => val())
 		//Force all new onLoad events to run
-		master.onLoad = new Proxy(master.onLoad, {
-			set: (_target, key, value): boolean => {
-				if (key !== "length") value()
-				return true
-			},
-		})
+
 		//Do the same for CPPKIES_ONLOAD
 		if (!window.CPPKIES_ONLOAD) window.CPPKIES_ONLOAD = []
 		//Run all onLoad events
 		window.CPPKIES_ONLOAD.forEach(val => val())
 		//Force all new onLoad events to run
-		window.CPPKIES_ONLOAD = new Proxy(master.onLoad, {
+		window.CPPKIES_ONLOAD = new Proxy([], {
 			set: (_target, key, value): boolean => {
 				if (key !== "length") value()
 				return true
 			},
 		})
-		postInject()
 	})
-}
-export default CppkiesExport
-export { InjectParams } from "./helpers"

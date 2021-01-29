@@ -1,78 +1,8 @@
-import master from "./vars"
-import { injectCode } from "./helpers"
-import { Injection } from "./injects/generic"
 import { loadBuilding } from "./saves"
 import { resolveAlias } from "./spritesheets"
-import { ReturnableEventEmitter } from "./lib/eventemitter"
-
-export const buildingHooks: Record<string, BuildingHooks> = {}
-export const customBuildings: Building[] = []
-/**
- * Creates the hooks for a building
- * @param building The building to create hooks for
- */
-
-export type BuildingHooks = ReturnableEventEmitter<{
-	tooltip: [string, string]
-	cps: [number, number]
-	buy: [void, void]
-	levelUp: [void, void]
-}>
-
-export function createHooks(building: Building | Game.Object): void {
-	const emitter: BuildingHooks = new ReturnableEventEmitter()
-	const injections = [
-		new Injection("tooltip", () => {
-			building.tooltip = injectCode(
-				injectCode(building.tooltip, "return", "let tempRet = ", "replace"),
-				null,
-				`\n//Cppkies injection
-				return Cppkies.buildingHooks[this.name].emit("tooltip", tempRet)`,
-				"after"
-			)
-		}),
-		new Injection("buy", () => {
-			building.buy = injectCode(
-				building.buy,
-				null,
-				`\n//Cppkies injection
-				if(success) {
-					Cppkies.buildingHooks[this.name].emit("buy")
-				}`,
-				"after"
-			)
-		}),
-		new Injection("levelUp", () => {
-			building.levelUp = injectCode(
-				building.levelUp,
-				"me.level+=1;",
-				`\n// Cppkies injection
-Cppkies.buildingHooks[me.name].emit("levelUp")`,
-				"after",
-				{ me: building }
-			)
-		}),
-	]
-	injections.forEach(inject => {
-		inject.func?.()
-	})
-	master.hooks.on("buildingCps", val => ({
-		building: val.building,
-		cps:
-			Game.Objects[val.building] === building
-				? emitter.emit("cps", val.cps)
-				: val.cps,
-	}))
-	buildingHooks[building.name] = emitter
-}
-
-/**
- * Automatically finds buildings without hooks and creates them
- */
-export function hookAllBuildings(): void {
-	for (const building of Game.ObjectsById)
-		if (!buildingHooks[building.name]) createHooks(building)
-}
+import hooks from "./injects/basegame"
+import { buildingHooks, createHooks } from "./injects/buildings"
+import { miscValues, customBuildings } from "./vars"
 
 /**
  * The building class for creating new buildings
@@ -161,8 +91,8 @@ export class Building extends Game.Object {
 				me.minigame.load(save)
 			}
 		}
-		this.buildingLink = bigIcon[2] ?? master.buildingLink
-		this.iconLink = resolveAlias(icon[2] ?? master.iconLink)
+		this.buildingLink = bigIcon[2] ?? miscValues.buildingLink
+		this.iconLink = resolveAlias(icon[2] ?? miscValues.iconLink)
 		// This is the name, description, and icon used during Business Season
 		if (foolObject) Game.foolObjects[name] = foolObject
 		// The name of this building's golden cookie buff and debuff
@@ -181,7 +111,7 @@ export class Building extends Game.Object {
 
 		Game.BuildStore()
 		if (this.buildingLink) {
-			master.hooks.on("buildStore", () => {
+			hooks.on("buildStore", () => {
 				l(
 					`productIcon${this.id}`
 				).style.backgroundImage = `url(${this.buildingLink})`

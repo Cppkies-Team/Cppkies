@@ -1,9 +1,9 @@
-import master from "./vars"
 import { loadUpgrade } from "./saves"
 import { CommonValue, toSentenseCase } from "./helpers"
 import { resolveIcon } from "./spritesheets"
-
-export const customUpgrades: Upgrade[] = []
+import hooks from "./injects/basegame"
+import { buildingHooks } from "./injects/buildings"
+import { miscValues, customUpgrades } from "./vars"
 
 /**
  * The class for upgrades
@@ -187,7 +187,7 @@ export class GrandmaSynergy extends Upgrade
 		if (building.id >= 12) this.order += 5
 		Game.GrandmaSynergies.push(this.name)
 		if (grandmaPicture) {
-			master.hooks.on("grandmaPic", src => {
+			hooks.on("grandmaPic", src => {
 				if (this.bought) return [...src, grandmaPicture] as string[]
 				else return src
 			})
@@ -290,9 +290,9 @@ export class CursorUpgrade<Tier extends string | number> extends Upgrade
 		this.tier = tier
 		this.pool = ""
 		this.order = 100 + this.id / 1000
-		master.on("cursorFingerMult", mult => (this.bought ? mult * power : mult))
+		hooks.on("cursorFingerMult", mult => (this.bought ? mult * power : mult))
 		if (!Game.Tiers[tier].special && !isNaN(tierPow))
-			master.buildingHooks.Cursor.on("buy", () => {
+			buildingHooks.Cursor.on("buy", () => {
 				if (building.amount >= (tierPow === 4 ? 25 : (tierPow - 4) * 50))
 					Game.Unlock(this.name)
 			})
@@ -388,14 +388,17 @@ export class KittenUpgrade<Tier extends string | number> extends Upgrade
 				"Please make sure to specify the cost if the kitten tier is special"
 			)
 		if (milkUnlockAmount !== null)
-			master.on("logic", () => {
+			hooks.on("logic", () => {
 				if (Game.milkProgress >= milkUnlockAmount) Game.Unlock(this.name)
 			})
 		this.order = 20000 + this.id / 1000
 		if (power !== null)
-			master.on("rawCpsMult", mult => {
+			hooks.on("rawCpsMult", mult => {
 				const addMult = this.bought
-					? 1 + Game.milkProgress * power * master.hiddenMilkMult
+					? 1 +
+					  Game.milkProgress *
+							power *
+							window.__INTERNAL_CPPKIES_HOOKS__.hiddenMilkMult
 					: 1
 				Game.cookiesMultByType["kittens"] *= addMult
 
@@ -425,11 +428,11 @@ export class MouseUpgrade<Tier extends string | number> extends Upgrade
 		)
 		const tierPow = parseInt(tier.toString())
 		this.order = 150 + this.id / 1000
-		master.on("cpcAdd", add =>
+		hooks.on("cpcAdd", add =>
 			this.bought ? add + (Game.cookiesPs * power) / 100 : add
 		)
 		if (!Game.Tiers[tier].special && !isNaN(tierPow))
-			master.on("check", () => {
+			hooks.on("check", () => {
 				if (Game.handmadeCookies >= 10 ** (1 + tierPow * 2))
 					Game.Unlock(this.name)
 			})
@@ -468,7 +471,7 @@ export class CookieUpgrade extends Upgrade implements Game.CookieUpgrade {
 			price,
 			icon
 		)
-		this.order = (order ?? master.cookieOrder ?? 10020) + this.id / 1000
+		this.order = (order ?? miscValues.cookieOrder ?? 10020) + this.id / 1000
 		this.unlockAt = {
 			name,
 			cookies: (typeof price === "function" ? price() : price) / 20,

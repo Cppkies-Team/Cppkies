@@ -1,4 +1,4 @@
-import master from "./vars"
+import { miscValues } from "./vars"
 // Resolve aliases
 /**
  * Currently defined alias
@@ -61,10 +61,6 @@ function toBlobURI(buf: CanvasRenderingContext2D): Promise<string> {
 }
 
 /**
- * A universal version of Icon which is not restricted to CC
- */
-export type UniversalIcon = [number, number]
-/**
  * Relocates the icons on an iconsheets
  * @param link The link to the original file
  * @param icons The definition of iconName: iconPosition
@@ -75,7 +71,7 @@ export type UniversalIcon = [number, number]
  */
 function relink(
 	link: string,
-	icons: Record<string, UniversalIcon>,
+	icons: Record<string, [number, number]>,
 	matrix: string[][] | string[],
 	iconSize: [number, number],
 	size: [number, number],
@@ -135,7 +131,7 @@ const columnRelinkAmount: Record<string, number> = {}
 /**
  * Additional icons which aren't defined with tiers
  */
-export const extraColumnIcons: Record<string, UniversalIcon> = {
+export const extraColumnIcons: Record<string, [number, number]> = {
 	"3d": [0, 21],
 	milestone1: [0, 22],
 	milestone2: [0, 23],
@@ -166,7 +162,7 @@ export async function relinkColumn(
 		if (!columnRelinkAmount[link]) columnRelinkAmount[link] = 0
 		offset = columnRelinkAmount[link]++
 	}
-	const columnIcons: Record<string, UniversalIcon> = {}
+	const columnIcons: Record<string, [number, number]> = {}
 	for (const i in extraColumnIcons) {
 		columnIcons[i] = [offset, extraColumnIcons[i][1]]
 	}
@@ -217,7 +213,7 @@ const rowRelinkAmount: Record<string, number> = {}
 /**
  * Additional icons which aren't defined with buildings
  */
-export const extraRowIcons: Record<string, UniversalIcon> = {
+export const extraRowIcons: Record<string, [number, number]> = {
 	research: [9, 0],
 	cookie: [10, 0],
 	mouse: [11, 0],
@@ -245,7 +241,7 @@ export async function relinkRow(
 		if (!rowRelinkAmount[link]) rowRelinkAmount[link] = 0
 		offset = rowRelinkAmount[link]++
 	}
-	const rowIcons: Record<string, UniversalIcon> = {}
+	const rowIcons: Record<string, [number, number]> = {}
 	for (const i in extraRowIcons) {
 		rowIcons[i] = [extraRowIcons[i][0], offset]
 	}
@@ -298,7 +294,7 @@ export async function relinkRow(
  */
 export async function patchIconsheet(
 	link: string,
-	replacements: [UniversalIcon, Game.Icon][],
+	replacements: [[number, number], Game.Icon][],
 	followAlias = true
 ): Promise<void> {
 	// First, create a canvas with the original image
@@ -320,9 +316,9 @@ export async function patchIconsheet(
 	// Generate a cache
 	const replacementCache: Record<string, HTMLImageElement> = {}
 	for (const replacement of replacements) {
-		// Little trick, here, if icon [2] is "", go to "img/icons.png" instead of `master.iconLink`
+		// Little trick, here, if icon [2] is "", go to "img/icons.png" instead of `miscValues.iconLink`
 		const iconLink = resolveAlias(
-			(replacement[1][2] ?? master.iconLink) || "img/icons.png"
+			(replacement[1][2] ?? miscValues.iconLink) || "img/icons.png"
 		)
 		if (!replacementCache[iconLink])
 			replacementCache[iconLink] = await generateImageFromLink(iconLink)
@@ -346,7 +342,8 @@ export async function patchIconsheet(
 
 export function resolveIcon(icon: Game.Icon): Game.Icon {
 	icon = [...icon]
-	if (icon[2] === undefined || icon[2] === null) icon[2] = master.iconLink
-	icon[2] = resolveAlias(icon[2])
+	if (icon[2] === undefined || icon[2] === null)
+		icon[2] = resolveAlias(miscValues.iconLink)
+	else icon[2] = resolveAlias(icon[2])
 	return icon
 }

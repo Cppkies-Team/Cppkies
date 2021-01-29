@@ -1,9 +1,11 @@
-import { Building } from "./buildings"
-import { save } from "./saves"
+import { hasOwnProperty } from "./helpers"
+import { save, VANILLA_DRAGON_LEVEL_AMOUNT } from "./saves"
 import { resolveIcon } from "./spritesheets"
+import hooks from "./injects/basegame"
 
 export class DragonAura implements Game.DragonAura {
 	pic: Game.Icon
+	isCppkies = true
 	/**
 	 * Creates a (non-building) dragon aura
 	 * @param name Name of the dragon aura (in HTML text)
@@ -29,7 +31,8 @@ export class DragonAura implements Game.DragonAura {
 			this.pic = resolveIcon([
 				buildingOrIcon.iconColumn,
 				25,
-				buildingOrIcon instanceof Building
+				hasOwnProperty(buildingOrIcon, "iconLink") &&
+				typeof buildingOrIcon.iconLink === "string"
 					? buildingOrIcon.iconLink
 					: undefined,
 			])
@@ -49,6 +52,7 @@ export class DragonAura implements Game.DragonAura {
 }
 
 export class DragonLevel implements Game.DragonLevel {
+	isCppkies = true
 	/**
 	 * The X position of the dragon icon
 	 */
@@ -146,3 +150,60 @@ export class DragonAuraLevel extends DragonLevel {
 		)
 	}
 }
+
+/**
+ * **Auras**
+ * Three levels of being loaded:
+ * 1. Not loaded
+ * The user can't manipulate Cppkies dragon data, has no aura if aura is custom
+ * 2. Cppkies loaded (here)
+ * When loaded with custom aura:
+ * a. If normal aura is none (has not been modified), keep it at that, but  keep  the custom aura data on save
+ * b. If normal aura is not none (has been modified), keep it at that, but remove the custom aura data on save
+ * 3. Aura loaded
+ * On aura creation, if aura id exists now, set the normal aura to the custom aura
+ */
+hooks.on("preSave", () => {
+	if (Game.dragonAura !== 0) save.dragon.auras[0] = "sync"
+	if (Game.dragonAura2 !== 0) save.dragon.auras[1] = "sync"
+
+	if (Game.dragonAuras[Game.dragonAura] instanceof DragonAura) {
+		save.dragon.auras[0] = Game.dragonAura
+		Game.dragonAura = 0
+	}
+	if (Game.dragonAuras[Game.dragonAura2] instanceof DragonAura) {
+		save.dragon.auras[1] = Game.dragonAura2
+		Game.dragonAura2 = 0
+	}
+	if (
+		Game.dragonLevels[Game.dragonLevel] instanceof DragonLevel ||
+		Game.dragonLevel >= VANILLA_DRAGON_LEVEL_AMOUNT
+	) {
+		save.dragon.level = Game.dragonLevel
+		while (
+			Game.dragonLevels[Game.dragonLevel] instanceof DragonLevel ||
+			Game.dragonLevel >= VANILLA_DRAGON_LEVEL_AMOUNT
+		)
+			Game.dragonLevel--
+	} // else save.dragon.level = "sync"
+})
+hooks.on("postSave", () => {
+	if (save.dragon.auras[0] !== "sync" && Game.dragonAuras[save.dragon.auras[0]])
+		Game.dragonAura = save.dragon.auras[0]
+	if (save.dragon.auras[1] !== "sync" && Game.dragonAuras[save.dragon.auras[1]])
+		Game.dragonAura2 = save.dragon.auras[1]
+	if (save.dragon.level !== "sync" && Game.dragonLevels[save.dragon.level])
+		Game.dragonLevel = save.dragon.level
+})
+
+hooks.on("reset", () => {
+	save.dragon.auras = ["sync", "sync"]
+	save.dragon.level = "sync"
+})
+
+hooks.on("specialPic", pic => {
+	const level = Game.dragonLevels[Game.dragonLevel]
+	if (pic.tab === "dragon" && level instanceof DragonLevel)
+		pic.pic = level.picLink ?? pic.pic
+	return pic
+})

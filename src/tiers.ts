@@ -1,7 +1,5 @@
 import { resolveAlias } from "./spritesheets"
-import master from "./vars"
-
-export const customTiers: Tier[] = []
+import { miscValues, customTiers } from "./vars"
 
 export default class Tier implements Game.Tier {
 	achievUnlock: number
@@ -75,7 +73,7 @@ export default class Tier implements Game.Tier {
 			Analyze sample icon
 		*/
 		this.iconRow = sampleIcon[1]
-		this.iconLink = resolveAlias(sampleIcon[2] ?? master.iconLink)
+		this.iconLink = resolveAlias(sampleIcon[2] ?? miscValues.iconLink)
 		Game.Tiers[this.keyName] = this
 		customTiers.push(this)
 	}

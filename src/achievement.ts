@@ -1,10 +1,9 @@
 import { resolveIcon } from "./spritesheets"
-import master from "./vars"
 import { loadAchievement } from "./saves"
-import { applyAllProps } from "./helpers"
-import { Building } from "./buildings"
-
-export const customAchievements: Achievement[] = []
+import { applyAllProps, hasOwnProperty } from "./helpers"
+import hooks from "./injects/basegame"
+import { buildingHooks } from "./injects/buildings"
+import { customAchievements } from "./vars"
 
 export class Achievement extends Game.Achievement {
 	/**
@@ -120,7 +119,7 @@ export class TieredAchievement<Tier extends string | number> extends Achievement
 					req = tier === 1 ? 1 : Game.Tiers[tier].achievUnlock * 2
 					break
 			}
-			master.buildingHooks.Cursor.on("buy", () => {
+			buildingHooks.Cursor.on("buy", () => {
 				if (Game.Objects.Cursor.amount >= req) Game.Win(this.name)
 			})
 		} else req = Game.Tiers[tier].achievUnlock
@@ -167,7 +166,10 @@ export class ProductionAchievement extends Achievement {
 		const icon: Game.Icon = [
 			building.iconColumn,
 			21 + tier,
-			building instanceof Building ? building.iconLink : undefined,
+			hasOwnProperty(building, "iconLink") &&
+			typeof building.iconLink === "string"
+				? building.iconLink
+				: undefined,
 		]
 		const pow = 10 ** (12 + building.id + (mult ?? 0) + (tier - 1) * 7)
 		super(
@@ -202,7 +204,10 @@ export class Level10Achievement extends Achievement {
 		const icon: Game.Icon = [
 			building.iconColumn,
 			26,
-			building instanceof Building ? building.iconLink : undefined,
+			hasOwnProperty(building, "iconLink") &&
+			typeof building.iconLink === "string"
+				? building.iconLink
+				: undefined,
 		]
 		super(
 			name,
@@ -244,7 +249,7 @@ export class MouseAchievement<
 		this.tier = tier
 		this.order = 1000 + this.id / 1000
 		if (!Game.Tiers[tier].special && !isNaN(tierPow))
-			master.on("check", () => {
+			hooks.on("check", () => {
 				if (Game.handmadeCookies >= 10 ** (1 + tierPow * 2)) Game.Win(this.name)
 			})
 	}
