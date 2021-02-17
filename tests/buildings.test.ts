@@ -1,10 +1,6 @@
-import preparePage from "./setup-page"
-import puppeteer, { Page } from "puppeteer"
-
-let page: Page = null
+import preparePage, { waitFor } from "./setup-page"
 
 beforeAll(async () => {
-	page = await (await puppeteer.launch()).newPage()
 	await preparePage(page)
 })
 
@@ -102,7 +98,7 @@ it("Should load data on reload", async () => {
 	})
 
 	// Wait for save
-	await page.waitFor(1000 * 1.5)
+	await waitFor(1500)
 
 	await preparePage(page)
 
@@ -130,8 +126,4 @@ it("Should load data on reload", async () => {
 				).amount
 		)
 	).toBe(12345)
-})
-
-afterAll(async () => {
-	await page.browser().close()
 })

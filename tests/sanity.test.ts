@@ -1,14 +1,9 @@
 /*import GameT from "../src/types/gameType"
 declare let Game: typeof GameT*/
 jest.setTimeout(60000)
-import puppeteer, { Page } from "puppeteer"
-
-let page: Page = null
 
 beforeAll(async () => {
-	page = await (await puppeteer.launch()).newPage()
 	await page.goto("https://orteil.dashnet.org/cookieclicker")
-	await page.waitFor(1000 * 1.5)
 	await ((): Promise<void> => {
 		return new Promise(res => {
 			const timeoutId = setInterval(() => {
@@ -45,5 +40,3 @@ describe("Sanity checks", () => {
 		})
 	})
 })
-
-afterAll(() => page.browser().close())

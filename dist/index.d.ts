@@ -267,11 +267,11 @@ export declare class Building extends Game.Object {
  * The recommended function to pass in building CpsFunc
  * @param me Itself
  */
-export declare const defaultCps: (me: Building) => number;
+export declare const DEFAULT_CPS: (me: Building) => number;
 /**
  * The reccomended function to pass in building BuyFunc
  */
-export declare const defaultOnBuy: () => void;
+export declare const DEFAULT_ONBUY: () => void;
 export declare const miscValues: {
 	cookieOrder: number;
 	iconLink: string;

@@ -1,10 +1,7 @@
 import preparePage from "./setup-page"
-import puppeteer, { Page } from "puppeteer"
-
-let page: Page = null
+import { waitFor } from "./setup-page"
 
 beforeAll(async () => {
-	page = await (await puppeteer.launch()).newPage()
 	await preparePage(page)
 })
 
@@ -36,7 +33,7 @@ it("Should load upgrade data on reload", async () => {
 	})
 
 	// Wait for save
-	await page.waitFor(1000 * 1.5)
+	await waitFor(1000 * 1.5)
 
 	await preparePage(page)
 
@@ -77,8 +74,4 @@ it("Should be able to correctly assign grandma upgrades to buildings", async () 
 			return !!Game.Objects.Grandma.grandma
 		})
 	).toBeTruthy()
-})
-
-afterAll(async () => {
-	await page.browser().close()
 })

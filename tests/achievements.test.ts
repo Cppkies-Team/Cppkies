@@ -1,10 +1,6 @@
-import preparePage from "./setup-page"
-import puppeteer, { Page } from "puppeteer"
-
-let page: Page = null
+import preparePage, { waitFor } from "./setup-page"
 
 beforeAll(async () => {
-	page = await (await puppeteer.launch()).newPage()
 	await preparePage(page)
 })
 
@@ -34,7 +30,7 @@ it("Should load achievement data on reload", async () => {
 	})
 
 	// Wait for save
-	await page.waitFor(1000 * 1.5)
+	await waitFor(1000 * 1.5)
 
 	await preparePage(page)
 
@@ -61,9 +57,5 @@ it("Should be able to create special tiered", async () => {
 			)
 			return [achievement.icon, achievement.desc]
 		})
-	).toStrictEqual([[0, 6, ""], "Have <b>2</b> cursors."])
-})
-
-afterAll(async () => {
-	await page.browser().close()
+	).toMatchObject([[0, 6, ""], "Have <b>2</b> cursors."])
 })

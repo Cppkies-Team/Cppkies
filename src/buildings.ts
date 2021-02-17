@@ -161,12 +161,12 @@ export class Building extends Game.Object {
  * The recommended function to pass in building CpsFunc
  * @param me Itself
  */
-export const defaultCps = (me: Building): number =>
+export const DEFAULT_CPS = (me: Building): number =>
 	Game.GetTieredCpsMult(me) * Game.magicCpS(me.name) * me.baseCps
 /**
  * The reccomended function to pass in building BuyFunc
  */
-export const defaultOnBuy = function(): void {
+export const DEFAULT_ONBUY = function(): void {
 	Game.UnlockTiered(this)
 	if (
 		this.amount >= Game.SpecialGrandmaUnlock &&

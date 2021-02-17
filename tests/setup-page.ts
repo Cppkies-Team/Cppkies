@@ -1,8 +1,7 @@
-import { Page } from "puppeteer"
+import { Page } from "playwright"
 
 export default async function(page: Page): Promise<void> {
 	await page.goto("https://orteil.dashnet.org/cookieclicker")
-	await page.waitFor(1000 * 1.5)
 	await ((): Promise<void> => {
 		return new Promise(res => {
 			const timeoutId = setInterval(async () => {
@@ -28,3 +27,6 @@ export default async function(page: Page): Promise<void> {
 	//globalThis.Game = await page.evaluate(() => globalThis.Game)
 	//globalThis.Cppkies = await page.evaluate(() => globalThis.Cppkies)
 }
+
+export const waitFor = (time: number) =>
+	new Promise<void>(res => setTimeout(res, time))
