@@ -24,6 +24,19 @@ export declare class Achievement extends Game.Achievement {
 	 */
 	constructor(name: string, desc: string, icon: Game.Icon);
 }
+export declare class TieredAchievement<Tier extends string | number> extends Achievement implements Game.TieredAchievementClass<Tier> {
+	buildingTie: Game.Object;
+	pool: "normal";
+	tier: Tier;
+	/**
+	 * Creates an achievement which is won by having an amount of buildings
+	 * @param name The name of it
+	 * @param quote The optional quote of it
+	 * @param tier The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), etc. (Can be "cursor2" or "cursor50" for special cursor amounts)
+	 * @param building The buildings linked to this achievement
+	 */
+	constructor(name: string, quote: string | null, building: Game.Object | string, tier: Tier | "cursor2" | "cursor50");
+}
 export declare class BankAchievement extends Achievement implements Game.BankAchievementClass {
 	treshold: number;
 	/**
@@ -46,30 +59,6 @@ export declare class CpsAchievement extends Achievement implements Game.CpsAchie
 	 */
 	constructor(name: string, icon: Game.Icon, q?: string | null, treshold?: number);
 }
-export declare class TieredAchievement<Tier extends string | number> extends Achievement implements Game.TieredAchievementClass<Tier> {
-	buildingTie: Game.Object;
-	pool: "normal";
-	tier: Tier;
-	/**
-	 * Creates an achievement which is won by having an amount of buildings
-	 * @param name The name of it
-	 * @param quote The optional quote of it
-	 * @param tier The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), etc. (Can be "cursor2" or "cursor50" for special cursor amounts)
-	 * @param building The buildings linked to this achievement
-	 */
-	constructor(name: string, quote: string | null, building: Game.Object | string, tier: Tier | "cursor2" | "cursor50");
-}
-export declare class ProductionAchievement extends Achievement {
-	/**
-	 * Creates a production achievement (Make \_ from only \_ achievements)
-	 * @param name Name of the achievement
-	 * @param building The building of the achivement
-	 * @param tier The tier of productivity, not the normal tier, fully works with only `1`, `2`, `3`, otherwise icon will be messed up.
-	 * @param quote The (optional) quote of it
-	 * @param mult The additional multiplier, should be used if the achievement is too easy to obtain
-	 */
-	constructor(name: string, building: string | Game.Object, tier: number, quote?: string | null, mult?: number | null);
-}
 export declare class Level10Achievement extends Achievement {
 	/**
 	 * Creates an achievement which is given for getting level 10 of the building
@@ -90,6 +79,17 @@ export declare class MouseAchievement<Tier extends string | number> extends Achi
 	 */
 	constructor(name: string, tier: Tier, quote: string);
 }
+export declare class ProductionAchievement extends Achievement {
+	/**`
+	 * Creates a production achievement (Make \_ from only \_ achievements)
+	 * @param name Name of the achievement
+	 * @param building The building of the achivement
+	 * @param tier The tier of productivity, not the normal tier, fully works with only `1`, `2`, `3`, otherwise icon will be messed up.
+	 * @param quote The (optional) quote of it
+	 * @param mult The additional multiplier, should be used if the achievement is too easy to obtain
+	 */
+	constructor(name: string, building: string | Game.Object, tier: number, quote?: string | null, mult?: number | null);
+}
 /**
  * The common type for a value, can be either the value or a function that returns a value with the type.
  */
@@ -102,6 +102,21 @@ export declare type InjectParams = [
 	string,
 	"before" | "replace" | "after"
 ];
+export declare class TieredUpgrade<Tier extends string | number = string | number> extends Upgrade implements Game.TieredUpgradeClass<Tier> {
+	buildingTie: Game.Object;
+	buildingTie1: Game.Object;
+	tier: Tier;
+	pool: "";
+	/**
+	 * Creates a tiered upgrade
+	 * @param name The name of the tiered upgrade
+	 * @param quote The description of the upgrade
+	 * @param building The building it boosts
+	 * @param tier The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), `synergy2`(Synergy II), etc.
+	 */
+	constructor(name: string, quote: string, building: Game.Object | string, tier: Tier);
+}
+export declare function isFortune(upgrade: TieredUpgrade): upgrade is TieredUpgrade<"fortune">;
 /**
  * The class for upgrades
  */
@@ -137,20 +152,6 @@ export declare class HeavenlyUpgrade extends Upgrade implements Game.HeavenlyUpg
 		number,
 		number
 	], parents?: (string | number)[], buyFunc?: () => void);
-}
-export declare class TieredUpgrade<Tier extends string | number = string | number> extends Upgrade implements Game.TieredUpgradeClass<Tier> {
-	buildingTie: Game.Object;
-	buildingTie1: Game.Object;
-	tier: Tier;
-	pool: "";
-	/**
-	 * Creates a tiered upgrade
-	 * @param name The name of the tiered upgrade
-	 * @param quote The description of the upgrade
-	 * @param building The building it boosts
-	 * @param tier The upgrade's tier, is the id of the tier, ex. `2`(Berrylium), `7`(Jetmint), `synergy2`(Synergy II), etc.
-	 */
-	constructor(name: string, quote: string, building: Game.Object | string, tier: Tier);
 }
 export declare class GrandmaSynergy extends Upgrade implements Game.GrandmaSynergyClass {
 	buildingTie: Game.Object;
@@ -191,20 +192,6 @@ export declare class CursorUpgrade<Tier extends string | number> extends Upgrade
 	 */
 	constructor(name: string, quote: string, tier: Tier, power?: number);
 }
-/**
- * Exceptions when the change kitten cost is not 3 (in log10)
- */
-export declare const kittenPriceRules: {
-	1: number;
-	2: number;
-	4: number;
-	default: number;
-};
-/**
- * Calculates the cost of a kitten, based on price rules and tier.
- * @param tier The tier, must be a number
- */
-export declare function computeKittenCost(tier: number): number;
 export declare class KittenUpgrade<Tier extends string | number> extends Upgrade implements Game.KittenUpgrade<Tier> {
 	tier: Tier;
 	kitten: true;

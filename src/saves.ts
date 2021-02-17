@@ -1,7 +1,7 @@
 import { Building } from "./buildings"
-import { Upgrade } from "./upgrade"
+import { Upgrade } from "./upgrades"
 import { applyAllProps, hasOwnProperty } from "./helpers"
-import { Achievement } from "./achievement"
+import { Achievement } from "./achievements"
 import { customAchievements, customBuildings, customUpgrades } from "./vars"
 
 export const VANILLA_DRAGON_LEVEL_AMOUNT = Game.dragonLevels.length + 0

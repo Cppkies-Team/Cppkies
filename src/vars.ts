@@ -1,6 +1,6 @@
-import { Achievement } from "./achievement"
+import { Achievement } from "./achievements"
 import Tier from "./tiers"
-import { Upgrade } from "./upgrade"
+import { Upgrade } from "./upgrades"
 import { Building } from "./buildings"
 export const miscValues = {
 	cookieOrder: 121212,
