@@ -34,11 +34,14 @@ export * from "./buildings"
 export * from "./dragon"
 export * from "./milk"
 export * from "./tiers"
+export * from "./modUI"
+export * from "./mods"
 export { default as hooks } from "./injects/basegame"
 export { buildingHooks } from "./injects/buildings"
 import { prod } from "../isprod.json"
 import { exportSave, importSave } from "./saves"
 import { hookAllBuildings } from "./injects/buildings"
+export * from "./ccUI"
 
 declare global {
 	interface Window {
@@ -66,7 +69,7 @@ if (window.__INTERNAL_CPPKIES_HOOKS__) {
 		Game.Prompt(
 			`<h3>Hello!</h3>
 <div class="block">
-It seems like you are trying to load Cppkies 0.3 or higher while having Cppkies 0.2 or less already loaded.<br/>
+It seems like you are trying to load Cppkies 0.3 or higher while having Cppkies 0.2 or lower already loaded.<br/>
 Sadly, due to internal changes, Cppkies 0.3 mods are incompatible with Cppkies 0.2 mods. <br/>
 (The mod will still be launched, but it may or may not work correctly)<br/>
 <small>((If you are a mod author, please update your mods to use Cppkies 0.3 or higher.))</small><br/>

@@ -5,8 +5,6 @@ beforeAll(async () => {
 	await preparePage(page)
 })
 
-jest.setTimeout(60000)
-
 it("Should be able to create upgrades", async () => {
 	expect(
 		await page.evaluate(

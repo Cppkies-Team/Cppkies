@@ -1,7 +1,3 @@
-/*import GameT from "../src/types/gameType"
-declare let Game: typeof GameT*/
-jest.setTimeout(60000)
-
 beforeAll(async () => {
 	await page.goto("https://orteil.dashnet.org/cookieclicker")
 	await ((): Promise<void> => {

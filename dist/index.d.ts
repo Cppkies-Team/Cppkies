@@ -272,6 +272,84 @@ export declare const DEFAULT_CPS: (me: Building) => number;
  * The reccomended function to pass in building BuyFunc
  */
 export declare const DEFAULT_ONBUY: () => void;
+export declare abstract class ToggleBase {
+	mod: Mod;
+	constructor();
+	abstract render(): HTMLElement;
+}
+export declare class Button extends ToggleBase {
+	name: CommonValue<string>;
+	description?: string | (() => string) | undefined;
+	onClick?: ((this: Button) => void) | undefined;
+	type?: "normal" | "warning" | "neato" | null | undefined;
+	additionalClasses: string[];
+	constructor(name: CommonValue<string>, description?: string | (() => string) | undefined, onClick?: ((this: Button) => void) | undefined, type?: "normal" | "warning" | "neato" | null | undefined);
+	render(): HTMLDivElement;
+}
+export declare class MultiStateButton<T extends string[]> extends Button {
+	states: T;
+	description?: string | (() => string) | undefined;
+	type?: "normal" | "warning" | "neato" | null | undefined;
+	state: T[number];
+	constructor(name: string | ((state: T[number]) => string), states: T, description?: string | (() => string) | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined);
+}
+export declare class ToggleButton extends MultiStateButton<[
+	"ON",
+	"OFF"
+]> {
+	description?: string | (() => string) | undefined;
+	type?: "normal" | "warning" | "neato" | null | undefined;
+	defaultState?: boolean | undefined;
+	constructor(name: string | ((state: boolean) => string), description?: string | (() => string) | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined, defaultState?: boolean | undefined);
+}
+export declare let currentMod: Mod | null;
+export interface ModMetadata {
+	/**
+	 * The unique keyname of the mod, can consist of
+	 * A-Z a-z 0-9 - _ . ! ~ * ' ( )
+	 */
+	keyname: string;
+	/**
+	 * The shown name of the mod, doesn't contain any restrictions
+	 */
+	name?: string;
+	/**
+	 * The icon of the mod
+	 */
+	icon?: Game.Icon;
+	/**
+	 * The version of the mod, must be in semver
+	 */
+	version: string;
+}
+export declare class Mod implements ModMetadata {
+	modFunction?: ((this: Mod) => void) | undefined;
+	/**
+	 * The unique keyname of the mod, can consist of
+	 * A-Z a-z 0-9 - _ . ! ~ * ' ( )
+	 */
+	keyname: string;
+	/**
+	 * The shown name of the mod, doesn't contain any restrictions
+	 */
+	name?: string;
+	/**
+	 * The icon of the mod
+	 */
+	icon?: Game.Icon;
+	/**
+	 * The version of the mod, must be in semver
+	 */
+	version: string;
+	toggles: ToggleBase[];
+	/**
+	 * Creates a mod which can have a settings UI and is only launched on Cppkies load
+	 * @param metadata The metadata of the mod, it is strongly recommended to set a name
+	 * @param modFunction The function which is called when cppkies is loaded
+	 */
+	constructor(metadata: ModMetadata, modFunction?: ((this: Mod) => void) | undefined);
+	render(): HTMLElement;
+}
 export declare const miscValues: {
 	cookieOrder: number;
 	iconLink: string;
@@ -588,6 +666,26 @@ export declare type Hooks = ReturnableEventEmitter<{
 	];
 }>;
 export declare const hooks: Hooks;
+export declare type FriendlyHtml = CommonValue<string | HTMLElement>;
+/**
+ * Creates a cookie clicker UI button
+ * @param name Text on the button
+ * @param description The grey label describing the effects of the button
+ * @param onClick Is called on click
+ * @param type The color type of the button
+ * @param off If it is true, the button is faded out
+ * @param additionalClasses Additional classes to add to the button
+ */
+export declare function ccButton(name: FriendlyHtml, description?: FriendlyHtml | null, onClick?: null | (() => void), type?: "normal" | "warning" | "neato" | null, off?: boolean | null, additionalClasses?: string[]): HTMLDivElement;
+/**
+ * Creates a section which can be collapsed by a button
+ * Note that you need to manually refresh the menu the section is in
+ * @param keyname The id name reference to track if the
+ * @param title The title of the section, which is never hidden
+ * @param body The collapsible part of the section
+ * @param onClick Called when the collapse button is clicked
+ */
+export declare function ccHideableSection(keyname: string, title: FriendlyHtml, body: FriendlyHtml, onClick?: (() => void) | null): HTMLDivElement;
 export declare const icons: {
 	alias: typeof alias;
 	aliases: Record<string, string>;
