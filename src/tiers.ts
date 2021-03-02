@@ -1,5 +1,6 @@
 import { resolveAlias } from "./spritesheets"
 import { miscValues, customTiers } from "./vars"
+import hooks from "./injects/basegame"
 
 export default class Tier implements Game.Tier {
 	achievUnlock: number
@@ -78,3 +79,18 @@ export default class Tier implements Game.Tier {
 		customTiers.push(this)
 	}
 }
+
+hooks.on("getIcon", ({ icon, type, tier }) => {
+	customTiers.forEach(val => {
+		if (val.keyName === tier.toString() && val.iconLink) icon[2] = val.iconLink
+	})
+	return { icon, type, tier }
+})
+hooks.on("getIcon", ({ icon, type, tier }) => {
+	if (
+		(icon[2] === undefined || icon[2] === null) &&
+		Game.Tiers[tier.toString()] instanceof Tier
+	)
+		icon[2] = ""
+	return { icon, tier, type }
+})

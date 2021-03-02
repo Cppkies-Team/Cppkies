@@ -175,3 +175,10 @@ export const DEFAULT_ONBUY = function(): void {
 	)
 		Game.Unlock(this.grandma.name)
 }
+
+hooks.on("getIcon", ({ icon, type, tier }) => {
+	customBuildings.forEach(val => {
+		if (val.name === type && val.iconLink) icon[2] = val.iconLink
+	})
+	return { icon, tier, type }
+})

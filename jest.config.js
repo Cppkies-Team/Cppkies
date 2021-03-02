@@ -7,7 +7,7 @@ module.exports = {
 	preset: "jest-playwright-preset",
 	globals: {
 		"ts-jest": {
-			tsConfig: "./tests/tsconfig.json",
+			tsconfig: "./tests/tsconfig.json",
 		},
 	},
 	transform: {
