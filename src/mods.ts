@@ -1,6 +1,7 @@
 import { applyAllProps } from "./helpers"
 import { mods } from "./vars"
 import { ToggleBase } from "./modUI"
+import { applyModSave, loadMod } from "./saves"
 
 export let currentMod: Mod | null = null
 
@@ -24,7 +25,7 @@ export interface ModMetadata {
 	version: string
 }
 
-export class Mod implements ModMetadata {
+export class Mod<C extends object = object> implements ModMetadata {
 	/**
 	 * The unique keyname of the mod, can consist of
 	 * A-Z a-z 0-9 - _ . ! ~ * ' ( )
@@ -42,6 +43,10 @@ export class Mod implements ModMetadata {
 	 * The version of the mod, must be in semver
 	 */
 	version: string
+	/**
+	 * Custom additional data which mods can read/write to
+	 */
+	custom: C | null = null
 
 	toggles: ToggleBase[] = []
 
@@ -50,7 +55,10 @@ export class Mod implements ModMetadata {
 	 * @param metadata The metadata of the mod, it is strongly recommended to set a name
 	 * @param modFunction The function which is called when cppkies is loaded
 	 */
-	constructor(metadata: ModMetadata, public modFunction?: (this: Mod) => void) {
+	constructor(
+		metadata: ModMetadata,
+		public modFunction?: (this: Mod<C>) => void
+	) {
 		applyAllProps(this, metadata)
 		const ogMod = mods.find(val => val.keyname === metadata.keyname)
 		if (ogMod)
@@ -64,7 +72,8 @@ export class Mod implements ModMetadata {
 			}
 		mods.push(this)
 		currentMod = this
-		// TODO: Add on Cppkies load waitting
+		applyModSave(this, loadMod(this))
+		// TODO: Add on Cppkies load waiting
 		modFunction?.apply(this)
 		// Update the menu, just in case
 		Game.UpdateMenu()

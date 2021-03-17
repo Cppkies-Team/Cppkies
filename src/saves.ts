@@ -2,11 +2,17 @@ import { Building } from "./buildings"
 import { Upgrade } from "./upgrades"
 import { applyAllProps, hasOwnProperty } from "./helpers"
 import { Achievement } from "./achievements"
-import { customAchievements, customBuildings, customUpgrades } from "./vars"
+import {
+	customAchievements,
+	customBuildings,
+	customUpgrades,
+	mods,
+} from "./vars"
+import { Mod } from "./mods"
 
 export const VANILLA_DRAGON_LEVEL_AMOUNT = Game.dragonLevels.length + 0
 
-export const SAVE_VER = 1 as const
+export const SAVE_VER = 3 as const
 /**
  * The save type for Cppkies
  */
@@ -15,59 +21,6 @@ export interface SaveType {
 	mods: Record<string, ModSave>
 	foreign: ModSave
 	dragon: DragonSave
-}
-/**
- * Legacy save types of Cppkies
- */
-
-export type LegacySave = {
-	saveVer: 0
-	mods: Record<string, never>
-	foreign: {
-		buildings: Record<string, BuildingSave>
-	}
-	exists: true
-}
-
-/**
- * The save type for a mod
- */
-export interface ModSave {
-	buildings: Record<string, BuildingSave>
-	upgrades: Record<string, UpgradeSave>
-	achievements: Record<string, AchievementSave>
-}
-/**
- * The save type for a building
- */
-export interface BuildingSave {
-	amount: number
-	bought: number
-	free: number
-	totalCookies: number
-	level: number
-	muted: number
-	minigameSave: string
-}
-/**
- * The save type for an upgrade
- */
-export interface UpgradeSave {
-	unlocked: boolean
-	bought: boolean
-}
-/**
- * The save type for an achievement
- */
-export interface AchievementSave {
-	won: boolean
-}
-/**
- * The save type for Krumblor
- */
-interface DragonSave {
-	level: number | "sync"
-	auras: [number | "sync", number | "sync"]
 }
 
 function createDefaultSaveFragment(name: "building"): BuildingSave
@@ -78,7 +31,13 @@ function createDefaultSaveFragment(name: "mod"): ModSave
 function createDefaultSaveFragment(name: string): unknown {
 	switch (name) {
 		case "mod":
-			return { achievements: {}, buildings: {}, upgrades: {} }
+			return {
+				achievements: {},
+				buildings: {},
+				upgrades: {},
+				ui: {},
+				custom: null,
+			}
 		case "dragon":
 			return {
 				level: "sync",
@@ -124,17 +83,22 @@ export function initSave(): void {
 	const newSave = createDefaultSave()
 	for (const i in newSave) save[i] = newSave[i]
 }
+
+// #region Building
+
 /**
- * Loads the building save data
- * @param building The building to load savedata for
+ * The save type for a building
  */
-export function loadBuilding(building: Building): BuildingSave {
-	//Use names because ID conflicts
-	return (
-		save.foreign.buildings[building.name] ||
-		createDefaultSaveFragment("building")
-	)
+export interface BuildingSave {
+	amount: number
+	bought: number
+	free: number
+	totalCookies: number
+	level: number
+	muted: number
+	minigameSave: string
 }
+
 /**
  * Saves a building
  * @param building The building to save
@@ -159,6 +123,42 @@ export function saveBuilding({
 		minigameSave,
 	}
 }
+
+/**
+ * Loads the building save data
+ * @param building The building to load savedata for
+ */
+export function loadBuilding(building: Building): BuildingSave {
+	//Use names because ID conflicts
+	return (
+		save.foreign.buildings[building.name] ||
+		createDefaultSaveFragment("building")
+	)
+}
+
+//#endregion
+
+// #region Upgrade
+
+/**
+ * The save type for an upgrade
+ */
+export interface UpgradeSave {
+	unlocked: boolean
+	bought: boolean
+}
+
+/**
+ * Saves an upgrade
+ * @param upgrade The upgrade to save
+ */
+export function saveUpgrade(upgrade: Upgrade): void {
+	save.foreign.upgrades[upgrade.name] = {
+		unlocked: !!upgrade.unlocked,
+		bought: !!upgrade.bought,
+	}
+}
+
 /**
  * Loads an upgrade
  * @param upgrade The upgrade to load
@@ -168,14 +168,25 @@ export function loadUpgrade(upgrade: Upgrade): UpgradeSave {
 		save.foreign.upgrades[upgrade.name] || createDefaultSaveFragment("upgrade")
 	)
 }
+
+//#endregion
+
+// #region Achievement
+
 /**
- * Saves an upgrade
- * @param upgrade The upgrade to save
+ * The save type for an achievement
  */
-export function saveUpgrade(upgrade: Upgrade): void {
-	save.foreign.upgrades[upgrade.name] = {
-		unlocked: !!upgrade.unlocked,
-		bought: !!upgrade.bought,
+export interface AchievementSave {
+	won: boolean
+}
+
+/**
+ * Saves an achievement
+ * @param upgrade The achievement to save
+ */
+export function saveAchievement(upgrade: Achievement): void {
+	save.foreign.achievements[upgrade.name] = {
+		won: !!upgrade.won,
 	}
 }
 
@@ -189,15 +200,21 @@ export function loadAchievement(upgrade: Achievement): AchievementSave {
 		createDefaultSaveFragment("achievement")
 	)
 }
+
+// #endregion
+
+// #region Dragon
+
 /**
- * Saves an achievement
- * @param upgrade The achievement to save
+ * The save type for Krumblor
  */
-export function saveAchievement(upgrade: Achievement): void {
-	save.foreign.achievements[upgrade.name] = {
-		won: !!upgrade.won,
-	}
+interface DragonSave {
+	level: number | "sync"
+	auras: [number | "sync", number | "sync"]
 }
+
+// Dragon saving stuff is in dragon.ts
+
 export function loadDragon(): void {
 	if (
 		save.dragon.level !== "sync" &&
@@ -215,6 +232,48 @@ export function loadDragon(): void {
 	)
 		Game.dragonAura2 = save.dragon.auras[1]
 }
+
+//#endregion
+
+// #region Mod
+
+/**
+ * The save type for a mod
+ */
+export interface ModSave {
+	buildings: Record<string, BuildingSave>
+	upgrades: Record<string, UpgradeSave>
+	achievements: Record<string, AchievementSave>
+	ui: Record<string, unknown>
+	custom: object | null
+}
+
+export function saveMod(mod: Mod): void {
+	const uiSave: Record<string, unknown> = {}
+
+	for (const ui of mod.toggles) if (ui.save) uiSave[ui.keyname] = ui.save()
+
+	save.mods[mod.keyname] = {
+		achievements: {},
+		upgrades: {},
+		buildings: {},
+		custom: mod.custom,
+		ui: uiSave,
+	}
+}
+
+export function loadMod(mod: Mod): ModSave {
+	return save.mods[mod.keyname] || createDefaultSaveFragment("mod")
+}
+
+export function applyModSave(mod: Mod, modSave: ModSave): void {
+	mod.custom = modSave.custom
+	for (const ui of mod.toggles)
+		if (ui.load && hasOwnProperty(modSave.ui, ui.keyname))
+			ui.load(modSave.ui[ui.keyname])
+}
+
+// #endregion
 
 /**
  * Loads everything
@@ -236,6 +295,8 @@ export function loadAll(): void {
 	}
 
 	loadDragon()
+
+	for (const mod of mods) applyModSave(mod, loadMod(mod))
 }
 /**
  * Saves everything
@@ -244,7 +305,8 @@ export function saveAll(): void {
 	for (const building of customBuildings) saveBuilding(building)
 	for (const upgrade of customUpgrades) saveUpgrade(upgrade)
 	for (const achievement of customAchievements) saveAchievement(achievement)
-	// Saving the dragon is in `injects/postInject.ts` due to no mod support
+	// Saving the dragon is in dragon.ts
+	for (const mod of mods) saveMod(mod)
 }
 
 export function applySave(newSave: unknown): SaveType {
@@ -259,9 +321,10 @@ export function applySave(newSave: unknown): SaveType {
 	)
 		return virtualSave
 
-	// Assert mods
+	// Create mods
 	function applyModSave(modSave: unknown): ModSave {
 		const virtualModSave = createDefaultSaveFragment("mod")
+
 		// Assert type
 		if (typeof modSave !== "object" || modSave === null) return virtualModSave
 		// Assert buildings
@@ -276,12 +339,7 @@ export function applySave(newSave: unknown): SaveType {
 				virtualModSave.buildings[buildingName] = createDefaultSaveFragment(
 					"building"
 				)
-				for (const prop in building)
-					if (
-						typeof virtualModSave.buildings[buildingName][prop] ===
-						typeof building[prop]
-					)
-						virtualModSave.buildings[buildingName][prop] = building[prop]
+				applyAllProps(virtualModSave.buildings[buildingName], building)
 			}
 
 		// Assert upgrades and achievements
@@ -296,12 +354,7 @@ export function applySave(newSave: unknown): SaveType {
 				virtualModSave.upgrades[upgradeName] = createDefaultSaveFragment(
 					"upgrade"
 				)
-				for (const prop in virtualModSave.upgrades[upgradeName])
-					if (
-						typeof virtualModSave.upgrades[upgradeName][prop] ===
-						typeof upgrade[prop]
-					)
-						virtualModSave.upgrades[upgradeName][prop] = upgrade[prop]
+				applyAllProps(virtualModSave.upgrades[upgradeName], upgrade)
 			}
 
 		if (
@@ -315,14 +368,20 @@ export function applySave(newSave: unknown): SaveType {
 				virtualModSave.achievements[
 					achievementName
 				] = createDefaultSaveFragment("achievement")
-				for (const prop in virtualModSave.achievements[achievementName])
-					if (
-						typeof virtualModSave.achievements[achievementName][prop] ===
-						typeof achievement[prop]
-					)
-						virtualModSave.achievements[achievementName][prop] =
-							achievement[prop]
+				applyAllProps(virtualModSave.achievements[achievementName], achievement)
 			}
+
+		if (
+			hasOwnProperty(modSave, "ui") &&
+			typeof modSave.ui === "object" &&
+			modSave.ui !== null
+		) {
+			for (const uiName in modSave.ui)
+				virtualModSave.ui[uiName] = modSave.ui[uiName]
+		}
+
+		if (hasOwnProperty(modSave, "custom") && typeof modSave.custom === "object")
+			virtualModSave.custom = modSave.custom
 
 		return virtualModSave
 	}
@@ -331,6 +390,14 @@ export function applySave(newSave: unknown): SaveType {
 	if (!hasOwnProperty(newSave, "foreign"))
 		virtualSave.foreign = createDefaultSaveFragment("mod")
 	else virtualSave.foreign = applyModSave(newSave.foreign)
+	if (
+		hasOwnProperty(newSave, "mods") &&
+		typeof newSave.mods === "object" &&
+		newSave.mods !== null
+	)
+		for (const modName in newSave.mods)
+			virtualSave.mods[modName] = applyModSave(newSave.mods[modName])
+
 	// Dragon
 	if (
 		hasOwnProperty(newSave, "dragon") &&

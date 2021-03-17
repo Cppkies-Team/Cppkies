@@ -31,7 +31,7 @@ export type Hooks = ReturnableEventEmitter<{
 
 	postSave: [void, void]
 	/**
-	 * Allows you to execute a function on data load, useful for custom data resetting
+	 * Allows you to execute a function on data reset, useful for custom data resetting
 	 * @param hard whether or not this is a hard reset
 	 */
 	reset: [boolean, void]

@@ -102,6 +102,24 @@ export declare type InjectParams = [
 	string,
 	"before" | "replace" | "after"
 ];
+/**
+ * A helper function which replaces(or appends) code in a function, returning the new function, and it's eval free!
+ * @param func The source function
+ * @param source What to replace, can be null for slicing
+ * @param target What to put instead of (or before/after) the source
+ * @param where Where to insert or replace your injection
+ * @param context The optional context to use
+ * @helper
+ */
+export declare function injectCode<T extends ((...args: unknown[]) => unknown) | (new (...args: unknown[]) => unknown)>(func: T, source: string | RegExp | null, target: string, where: "before" | "replace" | "after", context?: object): T;
+/**
+ * A helper function which replaces(or appends) code in a function, returning the new function, and it's eval free!
+ * @param func The source function
+ * @param injections The injections to apply, the parameters of an injection, in order: `source`, `target`, `where`
+ * @param context The optional context to use
+ * @helper
+ */
+export declare function injectCodes<T extends ((...args: unknown[]) => unknown) | (new (...args: unknown[]) => unknown)>(func: T, injections: InjectParams[], context?: object): T;
 export declare class TieredUpgrade<Tier extends string | number = string | number> extends Upgrade implements Game.TieredUpgradeClass<Tier> {
 	buildingTie: Game.Object;
 	buildingTie1: Game.Object;
@@ -272,26 +290,36 @@ export declare const DEFAULT_CPS: (me: Building) => number;
  * The reccomended function to pass in building BuyFunc
  */
 export declare const DEFAULT_ONBUY: () => void;
-export declare abstract class ToggleBase {
+export declare abstract class ToggleBase<C = unknown> {
 	mod: Mod;
+	abstract keyname: string;
 	constructor();
 	abstract render(): HTMLElement;
+	save?(this: this): C;
+	load?(this: this, save: C): void;
 }
-export declare class Button extends ToggleBase {
+export declare class Button<C extends object = object> extends ToggleBase<C> {
+	keyname: string;
 	name: CommonValue<string>;
 	description?: string | (() => string) | undefined;
 	onClick?: ((this: Button) => void) | undefined;
 	type?: "normal" | "warning" | "neato" | null | undefined;
 	additionalClasses: string[];
-	constructor(name: CommonValue<string>, description?: string | (() => string) | undefined, onClick?: ((this: Button) => void) | undefined, type?: "normal" | "warning" | "neato" | null | undefined);
+	off?: boolean;
+	constructor(keyname: string, name: CommonValue<string>, description?: string | (() => string) | undefined, onClick?: ((this: Button) => void) | undefined, type?: "normal" | "warning" | "neato" | null | undefined);
 	render(): HTMLDivElement;
 }
-export declare class MultiStateButton<T extends string[]> extends Button {
+export interface MultiStateButtonSave<T extends string[]> {
+	state: T[number];
+}
+export declare class MultiStateButton<T extends string[]> extends Button<MultiStateButtonSave<T>> {
 	states: T;
 	description?: string | (() => string) | undefined;
 	type?: "normal" | "warning" | "neato" | null | undefined;
 	state: T[number];
-	constructor(name: string | ((state: T[number]) => string), states: T, description?: string | (() => string) | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined);
+	constructor(keyname: string, name: string | ((state: T[number]) => string), states: T, description?: string | (() => string) | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined);
+	save(): MultiStateButtonSave<T>;
+	load(save: MultiStateButtonSave<T>): void;
 }
 export declare class ToggleButton extends MultiStateButton<[
 	"ON",
@@ -300,7 +328,8 @@ export declare class ToggleButton extends MultiStateButton<[
 	description?: string | (() => string) | undefined;
 	type?: "normal" | "warning" | "neato" | null | undefined;
 	defaultState?: boolean | undefined;
-	constructor(name: string | ((state: boolean) => string), description?: string | (() => string) | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined, defaultState?: boolean | undefined);
+	constructor(keyname: string, name: string | ((state: boolean) => string), description?: string | (() => string) | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined, defaultState?: boolean | undefined);
+	render(): HTMLDivElement;
 }
 export declare let currentMod: Mod | null;
 export interface ModMetadata {
@@ -322,8 +351,8 @@ export interface ModMetadata {
 	 */
 	version: string;
 }
-export declare class Mod implements ModMetadata {
-	modFunction?: ((this: Mod) => void) | undefined;
+export declare class Mod<C extends object = object> implements ModMetadata {
+	modFunction?: ((this: Mod<C>) => void) | undefined;
 	/**
 	 * The unique keyname of the mod, can consist of
 	 * A-Z a-z 0-9 - _ . ! ~ * ' ( )
@@ -341,13 +370,17 @@ export declare class Mod implements ModMetadata {
 	 * The version of the mod, must be in semver
 	 */
 	version: string;
+	/**
+	 * Custom additional data which mods can read/write to
+	 */
+	custom: C | null;
 	toggles: ToggleBase[];
 	/**
 	 * Creates a mod which can have a settings UI and is only launched on Cppkies load
 	 * @param metadata The metadata of the mod, it is strongly recommended to set a name
 	 * @param modFunction The function which is called when cppkies is loaded
 	 */
-	constructor(metadata: ModMetadata, modFunction?: ((this: Mod) => void) | undefined);
+	constructor(metadata: ModMetadata, modFunction?: ((this: Mod<C>) => void) | undefined);
 	render(): HTMLElement;
 }
 export declare const miscValues: {
@@ -555,7 +588,7 @@ export declare type Hooks = ReturnableEventEmitter<{
 		void
 	];
 	/**
-	 * Allows you to execute a function on data load, useful for custom data resetting
+	 * Allows you to execute a function on data reset, useful for custom data resetting
 	 * @param hard whether or not this is a hard reset
 	 */
 	reset: [
@@ -666,6 +699,62 @@ export declare type Hooks = ReturnableEventEmitter<{
 	];
 }>;
 export declare const hooks: Hooks;
+declare const SAVE_VER: 3;
+/**
+ * The save type for Cppkies
+ */
+export interface SaveType {
+	saveVer: typeof SAVE_VER;
+	mods: Record<string, ModSave>;
+	foreign: ModSave;
+	dragon: DragonSave;
+}
+export declare const save: SaveType;
+/**
+ * The save type for a building
+ */
+export interface BuildingSave {
+	amount: number;
+	bought: number;
+	free: number;
+	totalCookies: number;
+	level: number;
+	muted: number;
+	minigameSave: string;
+}
+/**
+ * The save type for an upgrade
+ */
+export interface UpgradeSave {
+	unlocked: boolean;
+	bought: boolean;
+}
+/**
+ * The save type for an achievement
+ */
+export interface AchievementSave {
+	won: boolean;
+}
+/**
+ * The save type for Krumblor
+ */
+export interface DragonSave {
+	level: number | "sync";
+	auras: [
+		number | "sync",
+		number | "sync"
+	];
+}
+/**
+ * The save type for a mod
+ */
+export interface ModSave {
+	buildings: Record<string, BuildingSave>;
+	upgrades: Record<string, UpgradeSave>;
+	achievements: Record<string, AchievementSave>;
+	ui: Record<string, unknown>;
+	custom: object | null;
+}
 export declare type FriendlyHtml = CommonValue<string | HTMLElement>;
 /**
  * Creates a cookie clicker UI button

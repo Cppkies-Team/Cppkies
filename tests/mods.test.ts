@@ -44,29 +44,17 @@ it("Should be able to warn and error on duplicate mod", async () => {
 	).toBe("You are trying to load multiple versions of the same mod")
 })
 
-/*it("Should load data on reload", async () => {
-	await page.evaluate(() => {
-		new Cppkies.Building(
-			"Save test building",
-			"test|tests|tested|[X] more test|[X] more tests",
-			"Test",
-			[0, 0],
-			[0, 0],
-			{
-				bg: "bank",
-				base: "bank",
-			},
-			Cppkies.DEFAULT_CPS,
-			Cppkies.DEFAULT_ONBUY,
-			{
-				desc: "Test fool",
-				icon: [0, 0],
-				name: "Test building fool",
-			},
-			["Test BS", "Test BD"]
-		).amount = 12345
+it("Should load data on reload", async () => {
+	const testNumber = Math.random()
+	await page.evaluate(testNumber => {
+		new Cppkies.Mod<{ test: number }>(
+			{ keyname: "loadingtest", version: "1.2.3" },
+			function() {
+				this.custom = { test: testNumber }
+			}
+		)
 		Game.WriteSave()
-	})
+	}, testNumber)
 
 	// Wait for save
 	await waitFor(1500)
@@ -74,28 +62,16 @@ it("Should be able to warn and error on duplicate mod", async () => {
 	await preparePage(page)
 
 	expect(
-		await page.evaluate(
+		await await page.evaluate(
 			() =>
-				new Cppkies.Building(
-					"Save test building",
-					"test|tests|tested|[X] more test|[X] more tests",
-					"Test",
-					[0, 0],
-					[0, 0],
-					{
-						bg: "bank",
-						base: "bank",
-					},
-					Cppkies.DEFAULT_CPS,
-					Cppkies.DEFAULT_ONBUY,
-					{
-						desc: "Test fool",
-						icon: [0, 0],
-						name: "Test building fool",
-					},
-					["Test BS", "Test BD"]
-				).amount
+				new Promise(res => {
+					new Cppkies.Mod<{ test: number }>(
+						{ keyname: "loadingtest", version: "1.2.3" },
+						function() {
+							res(this.custom.test)
+						}
+					)
+				})
 		)
-	).toBe(12345)
+	).toBe(testNumber)
 })
-*/
