@@ -2,6 +2,7 @@ import { applyAllProps } from "./helpers"
 import { mods } from "./vars"
 import { ToggleBase } from "./modUI"
 import { applyModSave, loadMod } from "./saves"
+import { deffer } from "./onLoad"
 
 export let currentMod: Mod | null = null
 
@@ -71,13 +72,14 @@ export class Mod<C extends object = object> implements ModMetadata {
 				return
 			}
 		mods.push(this)
-		currentMod = this
 		applyModSave(this, loadMod(this))
-		// TODO: Add on Cppkies load waiting
-		modFunction?.apply(this)
-		// Update the menu, just in case
-		Game.UpdateMenu()
-		currentMod = null
+		deffer.then(() => {
+			currentMod = this
+			modFunction?.apply(this)
+			// Update the menu, just in case
+			Game.UpdateMenu()
+			currentMod = null
+		})
 	}
 
 	render(): HTMLElement {

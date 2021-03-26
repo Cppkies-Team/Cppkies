@@ -775,6 +775,8 @@ export declare function ccButton(name: FriendlyHtml, description?: FriendlyHtml 
  * @param onClick Called when the collapse button is clicked
  */
 export declare function ccHideableSection(keyname: string, title: FriendlyHtml, body: FriendlyHtml, onClick?: (() => void) | null): HTMLDivElement;
+export declare const onLoad: Array<() => void>;
+export declare const deffer: Promise<void>;
 export declare const icons: {
 	alias: typeof alias;
 	aliases: Record<string, string>;
@@ -793,6 +795,5 @@ export declare const icons: {
 	resolveIcon: typeof resolveIcon;
 	unalias: typeof unalias;
 };
-export declare const onLoad: Array<() => void>;
 
 export {};

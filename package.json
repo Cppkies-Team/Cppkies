@@ -61,6 +61,6 @@
 		"typescript": "^4.1.2"
 	},
 	"sideEffects": [
-		"./dist/esm/index3.js"
+		"./dist/esm/onLoad.js"
 	]
 }
