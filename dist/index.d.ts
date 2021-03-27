@@ -775,7 +775,15 @@ export declare function ccButton(name: FriendlyHtml, description?: FriendlyHtml 
  * @param onClick Called when the collapse button is clicked
  */
 export declare function ccHideableSection(keyname: string, title: FriendlyHtml, body: FriendlyHtml, onClick?: (() => void) | null): HTMLDivElement;
+/**
+ * An array of functions to call on Cppkies load
+ * Functions pushed here after Cppkies has loaded are executed immediately
+ * It is reccomended to use `Cppkies.deffer` instead
+ */
 export declare const onLoad: Array<() => void>;
+/**
+ * A promise which is resolved on Cppkies load
+ */
 export declare const deffer: Promise<void>;
 export declare const icons: {
 	alias: typeof alias;

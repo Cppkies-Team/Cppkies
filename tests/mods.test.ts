@@ -46,15 +46,22 @@ it("Should be able to warn and error on duplicate mod", async () => {
 
 it("Should load data on reload", async () => {
 	const testNumber = Math.random()
-	await page.evaluate(testNumber => {
-		new Cppkies.Mod<{ test: number }>(
-			{ keyname: "loadingtest", version: "1.2.3" },
-			function() {
-				this.custom = { test: testNumber }
-			}
-		)
-		Game.WriteSave()
-	}, testNumber)
+	await page.evaluate(
+		testNumber =>
+			new Promise<void>(res => {
+				new Cppkies.Mod<{ test: number }>(
+					{ keyname: "loadingtest", version: "1.2.3" },
+					function() {
+						this.custom = { test: testNumber }
+					}
+				)
+				Cppkies.deffer.then(() => {
+					Game.WriteSave()
+					res()
+				})
+			}),
+		testNumber
+	)
 
 	// Wait for save
 	await waitFor(1500)
