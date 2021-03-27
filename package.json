@@ -39,6 +39,7 @@
 		"@rollup/plugin-node-resolve": "^7.1.3",
 		"@types/cookieclicker": "^2.31.3",
 		"@types/jest": "^26.0.15",
+		"@types/lz-string": "^1.3.34",
 		"@typescript-eslint/eslint-plugin": "^4.8.2",
 		"@typescript-eslint/parser": "^4.8.2",
 		"dotenv": "^8.2.0",

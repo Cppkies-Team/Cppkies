@@ -11,13 +11,13 @@ const production = process.env.NODE_ENV === "production"
 const esmDebugging = process.env.CPPKIES_ESM_DEBUGGING === "yes"
 
 const plugins = [
+	resolve({ browser: true }),
+	commonjs(),
 	typescript({
 		tsconfig: production ? "./tsconfig.json" : "./tsconfig.dev.json",
 		objectHashIgnoreUnknownHack: true,
 	}),
 	json(),
-	resolve(),
-	commonjs(),
 	analyze({
 		summaryOnly: true,
 	}),
@@ -26,8 +26,9 @@ const plugins = [
 
 function getFilesRecursive(dir) {
 	const files = []
-	fs.readdirSync(dir).forEach(File => {
-		const absolute = path.join(dir, File)
+	fs.readdirSync(dir).forEach(file => {
+		if (/\.d\.ts$/.test(file)) return
+		const absolute = path.join(dir, file)
 		if (fs.statSync(absolute).isDirectory())
 			files.push(...getFilesRecursive(absolute))
 		else files.push(absolute)

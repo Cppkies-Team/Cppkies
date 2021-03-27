@@ -9,6 +9,7 @@ import {
 	mods,
 } from "./vars"
 import { Mod } from "./mods"
+import { compressToUTF16, decompressFromUTF16 } from "./lib/lz-string"
 
 export const VANILLA_DRAGON_LEVEL_AMOUNT = Game.dragonLevels.length + 0
 
@@ -427,12 +428,16 @@ export function applySave(newSave: unknown): SaveType {
 export function importSave(data: string): void {
 	let newSave: unknown
 	try {
-		newSave = JSON.parse(data)
+		let decompressedData = decompressFromUTF16(data)
+		// If it's invalid LZ-string, try raw string
+		if (!decompressedData) decompressedData = data
+		newSave = JSON.parse(decompressedData)
 	} catch {
 		if (data !== "" && data !== "{}")
 			console.warn("CPPKIES: Found invalid save, creating new one...")
 		initSave()
 	}
+
 	const computedSave = applySave(newSave)
 	for (const i in computedSave) save[i] = computedSave[i]
 	loadAll()
@@ -440,5 +445,5 @@ export function importSave(data: string): void {
 
 export function exportSave(): string {
 	saveAll()
-	return JSON.stringify(save)
+	return compressToUTF16(JSON.stringify(save))
 }
