@@ -1,6 +1,6 @@
 <p align="center"><img align="center" src=./static/CppkiesLogoBig.png alt="Cppkies Logo"/></p>
 <p align="center">
-	<i> &nbspAll the mods,<br><underline>Zero the hassle </i>
+	<i>&nbsp All of the mods,<br>None of the hassle</i>
 </p>
 <p align="center">The only <a href="https://orteil.dashnet.org/cookieclicker/">Cookie Clicker</a> modding framework you'll ever need.</p>
 
@@ -9,8 +9,8 @@
 - [Cppkies](#cppkies)
 	- [Documentation](#documentation)
 	- [Examples](#examples)
-		- [Think Tank **Building**](#think-tank-building)
-		- [Saffronyx **Tier**](#saffronyx-tier)
+		- [Think Tank Building](#think-tank-building)
+		- [Saffronyx Tier](#saffronyx-tier)
 	- [Credits](#credits)
 </details>	
 
@@ -20,7 +20,7 @@ You can find detailed documentation [here](https://cppkies.js.org/#).
 
 ## Examples
 
-### [Think Tank **Building**](https://github.com/Cppkies-Team/examples/tree/master/ThinkTank)
+### [Think Tank Building](https://github.com/Cppkies-Team/examples/tree/master/ThinkTank)
 
 Examples on how to create new:
 * Buildings
@@ -29,7 +29,7 @@ Examples on how to create new:
 <!--* (ALSO COULD USE AS) Minigames-->
 Sprites: *Bt Y#0895*
 
-### [Saffronyx **Tier**](https://github.com/Cppkies-Team/examples/tree/master/SaffronyxTier)
+### [Saffronyx Tier](https://github.com/Cppkies-Team/examples/tree/master/SaffronyxTier)
 
 Examples on how to create new:
 * Upgrade tiers
