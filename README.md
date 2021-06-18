@@ -1,21 +1,18 @@
-# Cppkies
+<img  src=./static/CppkiesLogoBig.png?raw=true alt="CppkiesLogo"/>
 
-![Cppkies](./static/CppkiesLogo.png?raw=true)
+<p align="center">The only modding framework for [Cookie Clicker](https://orteil.dashnet.org/cookieclicker/) you'll ever need.</p>
 
-## Table of Contents
+<details><summary><h2>Table of contents (click to expand!)</h2></summary>
 
 - [Cppkies](#cppkies)
 	- [Table of Contents](#table-of-contents)
-	- [What is Cppkies](#what-is-cppkies)
 	- [Documentation](#documentation)
 	- [Examples](#examples)
-		- [Think Tank Building](#think-tank-building)
-		- [Saffronyx Tier](#saffronyx-tier)
+		- [Think Tank **Building**](#think-tank-building)
+		- [Saffronyx **Tier**](#saffronyx-tier)
 	- [Credits](#credits)
 
-## What is Cppkies
-
-Cppkies is a modding framework for the game [Cookie Clicker](https://orteil.dashnet.org/cookieclicker/). It intends to make modding the game very simple.
+</details>	
 
 ## Documentation
 
@@ -23,13 +20,13 @@ The documentation is located [here](https://cppkies.js.org/#).
 
 ## Examples
 
-### [Think Tank Building](https://github.com/Cppkies-Team/examples/tree/master/ThinkTank)
+### [Think Tank **Building**](https://github.com/Cppkies-Team/examples/tree/master/ThinkTank)
 
-This mod provides an example on how to create a new building new upgrades and new achievements<!--Also could use this as a minigame creation example-->. Sprites by "Bt Y#0895".
+This mod provides an example on how to create a new building new upgrades and new achievements<!--Also could use this as a minigame creation example-->. Sprites: *Bt Y#0895"*
 
-### [Saffronyx Tier](https://github.com/Cppkies-Team/examples/tree/master/SaffronyxTier)
+### [Saffronyx **Tier**](https://github.com/Cppkies-Team/examples/tree/master/SaffronyxTier)
 
-This mod provides an example on how to create a new tier with upgrades, achievements. Sprites by "Kyleptune#6345"
+This mod provides an example on how to create a new tier with upgrades, achievements. Sprites: *Kyleptune#6345*
 
 <!--
 ### [LumpExample](https://github.com/Cppkies-Team/examples/tree/master/LumpExample)
@@ -54,7 +51,7 @@ This addon provides an example of creating a new plant, and a new soil type, a n
 - [TheSkullyKO](https://github.com/TheSkullyKO) (Mistow OwO#0245) :
   - Helped with Ideas
 - [Klattmose](https://github.com/klattmose/) :
-  - Gave us the idea to begin the project
+  - Project inspiration
 - [James](https://github.com/staticvariablejames/) (staticvariablejames#2499),
   [thegamemaster1234](https://github.com/gamrguy) (thegamemaster1234#4278)
-  - Helpful suggestions and feedback, mostly on the DashNet discord server
+  - Helpful suggestions and feedback in the [DashNet discord server](https://discord.gg/cookie)
