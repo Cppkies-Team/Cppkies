@@ -9,8 +9,8 @@
 - [Cppkies](#cppkies)
 	- [Documentation](#documentation)
 	- [Examples](#examples)
-		- [Think Tank Building](#think-tank-building)
-		- [Saffronyx Tier](#saffronyx-tier)
+		- [Buildings](#think-tank-building)
+		- [Tiers](#saffronyx-tier)
 	- [Credits](#credits)
 </details>	
 
