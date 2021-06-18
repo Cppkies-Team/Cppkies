@@ -1,33 +1,41 @@
-<img  src=./static/CppkiesLogoBig.png?raw=true alt="CppkiesLogo"/>
+<p align="center"><img align="center" src=./static/CppkiesLogoBig.png alt="Cppkies Logo"/></p>
+<p align="center">
+	<i> &nbspAll the mods,<br><underline>Zero the hassle </i>
+</p>
+<p align="center">The only <a href="https://orteil.dashnet.org/cookieclicker/">Cookie Clicker</a> modding framework you'll ever need.</p>
 
-<p align="center">The only modding framework for [Cookie Clicker](https://orteil.dashnet.org/cookieclicker/) you'll ever need.</p>
-
-<details><summary><h2>Table of contents (click to expand!)</h2></summary>
-
+<details><summary><b>Table of contents (Click to expand!)</b></summary>
+	
 - [Cppkies](#cppkies)
-	- [Table of Contents](#table-of-contents)
 	- [Documentation](#documentation)
 	- [Examples](#examples)
 		- [Think Tank **Building**](#think-tank-building)
 		- [Saffronyx **Tier**](#saffronyx-tier)
 	- [Credits](#credits)
-
 </details>	
 
 ## Documentation
 
-The documentation is located [here](https://cppkies.js.org/#).
+You can find detailed documentation [here](https://cppkies.js.org/#).
 
 ## Examples
 
 ### [Think Tank **Building**](https://github.com/Cppkies-Team/examples/tree/master/ThinkTank)
 
-This mod provides an example on how to create a new building new upgrades and new achievements<!--Also could use this as a minigame creation example-->. Sprites: *Bt Y#0895"*
+Examples on how to create new:
+* Buildings
+* Upgrades
+* Achievements
+<!--* (ALSO COULD USE AS) Minigames-->
+Sprites: *Bt Y#0895*
 
 ### [Saffronyx **Tier**](https://github.com/Cppkies-Team/examples/tree/master/SaffronyxTier)
 
-This mod provides an example on how to create a new tier with upgrades, achievements. Sprites: *Kyleptune#6345*
+Examples on how to create new:
+* Upgrade tiers
+* Achievements
 
+Sprites: *Kyleptune#6345*
 <!--
 ### [LumpExample](https://github.com/Cppkies-Team/examples/tree/master/LumpExample)
 
