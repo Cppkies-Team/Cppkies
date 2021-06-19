@@ -2,11 +2,20 @@
 
 ## [Think Tank Building](https://github.com/Cppkies-Team/examples/tree/master/ThinkTank)
 
-This mod provides an example on how to create a new building with upgrades, achievements, and auras. Sprites by "Bt Y#0895".
+Examples on how to create new:
+* Buildings
+* Upgrades
+* Achievements
+<!--* (ALSO COULD USE AS) Minigames-->
+Sprites: *Bt Y#0895*
 
 ## [Saffronyx Tier](https://github.com/Cppkies-Team/examples/tree/master/SaffronyxTier)
 
-This mod provides an example on how to create a new tier with upgrades, achievements. Sprites by "Kyleptune#6345"
+Examples on how to create new:
+* Upgrade tiers
+* Achievements
+
+Sprites: *Kyleptune#6345*
 
 <!--
 ### [LumpExample](https://github.com/Cppkies-Team/examples/tree/master/LumpExample)
