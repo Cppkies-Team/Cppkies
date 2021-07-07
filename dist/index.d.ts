@@ -290,36 +290,78 @@ export declare const DEFAULT_CPS: (me: Building) => number;
  * The reccomended function to pass in building BuyFunc
  */
 export declare const DEFAULT_ONBUY: () => void;
+export declare type FriendlyHtml = CommonValue<string | HTMLElement>;
+/**
+ * Creates a cookie clicker UI button
+ * @param name Text on the button
+ * @param description The grey label describing the effects of the button
+ * @param onClick Is called on click
+ * @param type The color type of the button
+ * @param off If it is true, the button is faded out
+ * @param additionalClasses Additional classes to add to the button
+ */
+export declare function ccButton(name: FriendlyHtml, description?: FriendlyHtml | null, onClick?: null | (() => void), type?: "normal" | "warning" | "neato" | null, off?: boolean | null, additionalClasses?: string[]): HTMLDivElement;
+/**
+ * Creates a section which can be collapsed by a button
+ * Note that you need to manually refresh the menu the section is in
+ * @param keyname The id name reference to track if the
+ * @param title The title of the section, which is never hidden
+ * @param body The collapsible part of the section
+ * @param onClick Called when the collapse button is clicked
+ */
+export declare function ccHideableSection(keyname: string, title: FriendlyHtml, body: FriendlyHtml, onClick?: (() => void) | null): HTMLDivElement;
+export declare function ccSlider(name: FriendlyHtml, valueFunc: (value: number) => FriendlyHtml, value: number, bounds: [
+	number,
+	number,
+	number?
+], onChange?: (newValue: number) => void): HTMLDivElement;
 export declare abstract class ToggleBase<C = unknown> {
+	keyname: string;
 	mod: Mod;
-	abstract keyname: string;
-	constructor();
+	constructor(keyname: string);
 	abstract render(): HTMLElement;
 	save?(this: this): C;
 	load?(this: this, save: C): void;
 }
-export declare class Button<C extends object = object> extends ToggleBase<C> {
-	keyname: string;
-	name: CommonValue<string>;
-	description?: string | (() => string) | undefined;
+export declare class Slider extends ToggleBase<number> {
+	name: FriendlyHtml;
+	bounds: [
+		number,
+		number,
+		number?
+	];
+	valueFunc: (value: number) => FriendlyHtml;
+	onChange?: ((this: Slider, value: number) => void) | undefined;
+	value: number;
+	constructor(keyname: string, name: FriendlyHtml, bounds: [
+		number,
+		number,
+		number?
+	], valueFunc: (value: number) => FriendlyHtml, defaultValue?: number, onChange?: ((this: Slider, value: number) => void) | undefined);
+	save(): number;
+	load(save: number): void;
+	render(): HTMLDivElement;
+}
+export declare class Button<C = unknown> extends ToggleBase<C> {
+	name: FriendlyHtml;
+	description?: string | HTMLElement | (() => string | HTMLElement) | undefined;
 	onClick?: ((this: Button) => void) | undefined;
 	type?: "normal" | "warning" | "neato" | null | undefined;
 	additionalClasses: string[];
 	off?: boolean;
-	constructor(keyname: string, name: CommonValue<string>, description?: string | (() => string) | undefined, onClick?: ((this: Button) => void) | undefined, type?: "normal" | "warning" | "neato" | null | undefined);
+	constructor(keyname: string, name: FriendlyHtml, description?: string | HTMLElement | (() => string | HTMLElement) | undefined, onClick?: ((this: Button) => void) | undefined, type?: "normal" | "warning" | "neato" | null | undefined);
 	render(): HTMLDivElement;
 }
-export interface MultiStateButtonSave<T extends string[]> {
-	state: T[number];
-}
-export declare class MultiStateButton<T extends string[]> extends Button<MultiStateButtonSave<T>> {
+export declare class MultiStateButton<T extends string[]> extends Button<string> {
 	states: T;
-	description?: string | (() => string) | undefined;
+	description?: string | HTMLElement | (() => string | HTMLElement) | undefined;
 	type?: "normal" | "warning" | "neato" | null | undefined;
 	state: T[number];
-	constructor(keyname: string, name: string | ((state: T[number]) => string), states: T, description?: string | (() => string) | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined);
-	save(): MultiStateButtonSave<T>;
-	load(save: MultiStateButtonSave<T>): void;
+	private stateFunc?;
+	constructor(keyname: string, name: FriendlyHtml | ((state: string) => FriendlyHtml), states: T, description?: string | HTMLElement | (() => string | HTMLElement) | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined);
+	save(): string;
+	load(save: string): void;
+	render(): HTMLDivElement;
 }
 export declare class ToggleButton extends MultiStateButton<[
 	"ON",
@@ -328,7 +370,7 @@ export declare class ToggleButton extends MultiStateButton<[
 	description?: string | (() => string) | undefined;
 	type?: "normal" | "warning" | "neato" | null | undefined;
 	defaultState?: boolean | undefined;
-	constructor(keyname: string, name: string | ((state: boolean) => string), description?: string | (() => string) | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined, defaultState?: boolean | undefined);
+	constructor(keyname: string, name: FriendlyHtml | ((state: boolean) => FriendlyHtml), description?: string | (() => string) | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined, defaultState?: boolean | undefined);
 	render(): HTMLDivElement;
 }
 export declare let currentMod: Mod | null;
@@ -755,26 +797,6 @@ export interface ModSave {
 	ui: Record<string, unknown>;
 	custom: object | null;
 }
-export declare type FriendlyHtml = CommonValue<string | HTMLElement>;
-/**
- * Creates a cookie clicker UI button
- * @param name Text on the button
- * @param description The grey label describing the effects of the button
- * @param onClick Is called on click
- * @param type The color type of the button
- * @param off If it is true, the button is faded out
- * @param additionalClasses Additional classes to add to the button
- */
-export declare function ccButton(name: FriendlyHtml, description?: FriendlyHtml | null, onClick?: null | (() => void), type?: "normal" | "warning" | "neato" | null, off?: boolean | null, additionalClasses?: string[]): HTMLDivElement;
-/**
- * Creates a section which can be collapsed by a button
- * Note that you need to manually refresh the menu the section is in
- * @param keyname The id name reference to track if the
- * @param title The title of the section, which is never hidden
- * @param body The collapsible part of the section
- * @param onClick Called when the collapse button is clicked
- */
-export declare function ccHideableSection(keyname: string, title: FriendlyHtml, body: FriendlyHtml, onClick?: (() => void) | null): HTMLDivElement;
 /**
  * An array of functions to call on Cppkies load
  * Functions pushed here after Cppkies has loaded are executed immediately
