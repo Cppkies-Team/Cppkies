@@ -276,7 +276,7 @@ export declare class Building extends Game.Object {
 	 * @param foolObject The fool building to display during business day
 	 * @param buildingSpecial The building special and building debuff
 	 */
-	constructor(name: string, commonName: string, desc: string, icon: Game.Icon, bigIcon: Game.Icon, art: Game.Art, cpsFunc: (me: Building) => number, buyFunction: () => void, foolObject: Game.FoolBuilding, buildingSpecial: [
+	constructor(name: string, commonName: string, desc: string, icon: Game.Icon, bigIcon: Game.Icon, art: Game.Art, cpsFunc: (me: Building) => number, buyFunction: (this: Building) => void, foolObject: Game.FoolBuilding, buildingSpecial: [
 		string,
 		string
 	]);
@@ -289,7 +289,7 @@ export declare const DEFAULT_CPS: (me: Building) => number;
 /**
  * The reccomended function to pass in building BuyFunc
  */
-export declare const DEFAULT_ONBUY: () => void;
+export declare const DEFAULT_ONBUY: (this: Building) => void;
 export declare type FriendlyHtml = CommonValue<string | HTMLElement>;
 /**
  * Creates a cookie clicker UI button

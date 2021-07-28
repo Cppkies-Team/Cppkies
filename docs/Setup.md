@@ -17,9 +17,9 @@ yarn add cppkies
 Then you can use a bundler, like Webpack or Rollup, to bundle them.
 
 ```js
-import * as Cppkies from "cppkies"
-Cppkies.onLoad.push(() => {
-	new Cppkies.Upgrade("Hello, World!", "My first upgrade!", 7, [10, 5])
+import { onLoad, Upgrade } from "cppkies"
+onLoad.push(() => {
+	new Upgrade("Hello, World!", "My first upgrade!", 7, [10, 5])
 })
 ```
 
@@ -31,14 +31,14 @@ Importing Cppkies through `Game.LoadMod` is not recommended since you can't spli
 
 To import it, you need to start your mod with
 
-```ts
-Game.LoadMod("https://unpkg.com/cppkies")
+```js
+Game.LoadMod("https://unpkg.com/cppkies@0.3")
 ```
 
 For example:
 
-```ts
-Game.LoadMod("https://unpkg.com/cppkies")
+```js
+Game.LoadMod("https://unpkg.com/cppkies@0.3")
 if (!window.CPPKIES_ONLOAD) CPPKIES_ONLOAD = []
 CPPKIES_ONLOAD.push(() => {
 	new Cppkies.Upgrade("Hello, World!", "My first upgrade!", 7, [10, 5])

@@ -155,7 +155,7 @@ Synergy upgrades are upgrades which boosts two buildings at once, proportionate 
 #### Example
 
 ```ts
-new Cppkies.CookieUpgrade(
+new Cppkies.SynergyUpgrade(
 	"Grandma sisters",
 	"A nice grandma to help other grandmas",
 	"Grandma",

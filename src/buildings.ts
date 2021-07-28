@@ -31,7 +31,7 @@ export class Building extends Game.Object {
 		bigIcon: Game.Icon,
 		art: Game.Art,
 		cpsFunc: (me: Building) => number,
-		buyFunction: () => void,
+		buyFunction: (this: Building) => void,
 		foolObject: Game.FoolBuilding,
 		buildingSpecial: [string, string]
 	) {
@@ -166,8 +166,9 @@ export const DEFAULT_CPS = (me: Building): number =>
 /**
  * The reccomended function to pass in building BuyFunc
  */
-export const DEFAULT_ONBUY = function(): void {
-	Game.UnlockTiered(this)
+export const DEFAULT_ONBUY = function(this: Building): void {
+	// A @types/cookieclicker failure
+	Game.UnlockTiered((this as unknown) as Game.Upgrade)
 	if (
 		this.amount >= Game.SpecialGrandmaUnlock &&
 		Game.Objects["Grandma"].amount > 0 &&

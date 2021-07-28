@@ -6,12 +6,11 @@
 
 <details><summary><b>Table of contents (Click to expand!)</b></summary>
 	
-- [Cppkies](#cppkies)
-	- [Documentation](#documentation)
-	- [Examples](#examples)
-		- [Buildings](#think-tank-building)
-		- [Tiers](#saffronyx-tier)
-	- [Credits](#credits)
+- [Documentation](#documentation)
+- [Examples](#examples)
+	- [Think Tank Building](#think-tank-building)
+	- [Saffronyx Tier](#saffronyx-tier)
+- [Credits](#credits)
 </details>	
 
 ## Documentation
