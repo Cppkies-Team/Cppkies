@@ -1,7 +1,7 @@
 import { loadBuilding } from "./saves"
 import { resolveAlias } from "./spritesheets"
 import hooks from "./injects/basegame"
-import { buildingHooks, createHooks } from "./injects/buildings"
+import { buildingHooks, createBuildingHooks } from "./injects/buildings"
 import { miscValues, customBuildings } from "./vars"
 
 /**
@@ -63,7 +63,7 @@ export class Building extends Game.Object {
 		)
 		customBuildings.push(this)
 		// Create hooks if they don't exist yet
-		if (!buildingHooks[name]) createHooks(this)
+		if (!buildingHooks[name]) createBuildingHooks(this)
 		//Manually relink canvases and contexts because Orteil made it so new buildings break the old canvas and context links
 		for (const i in Game.ObjectsById) {
 			if (parseInt(i) <= 0) continue

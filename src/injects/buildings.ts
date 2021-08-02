@@ -3,7 +3,11 @@ import { Injection } from "./generic"
 import { injectCode } from "../helpers"
 import { ReturnableEventEmitter } from "../lib/eventemitter"
 
-export const buildingHooks: Record<string, BuildingHooks> = {}
+const isFirst = !window.__INTERNAL_CPPKIES_HOOKS__
+
+export const buildingHooks: Record<string, BuildingHooks> = isFirst
+	? {}
+	: window.__INTERNAL_CPPKIES_HOOKS__.buildings
 
 /**
  * Creates the hooks for a building
@@ -17,10 +21,10 @@ export type BuildingHooks = ReturnableEventEmitter<{
 	levelUp: [void, void]
 }>
 
-export function createHooks(building: Game.Object): void {
+export function createBuildingHooks(building: Game.Object): void {
 	const emitter: BuildingHooks = new ReturnableEventEmitter()
 	const injections = [
-		new Injection("tooltip", () => {
+		new Injection("tooltip", 1, () => {
 			building.tooltip = injectCode(
 				injectCode(building.tooltip, "return", "let tempRet = ", "replace"),
 				null,
@@ -29,7 +33,7 @@ export function createHooks(building: Game.Object): void {
 				"after"
 			)
 		}),
-		new Injection("buy", () => {
+		new Injection("buy", 1, () => {
 			building.buy = injectCode(
 				building.buy,
 				null,
@@ -40,34 +44,19 @@ export function createHooks(building: Game.Object): void {
 				"after"
 			)
 		}),
-		new Injection("levelUp", () => {
-			building.levelUp = injectCode(
-				building.levelUp,
-				"me.level+=1;",
-				`\n// Cppkies injection
+		isFirst
+			? undefined
+			: new Injection("levelUp", 2, () => {
+					building.levelUp = injectCode(
+						building.levelUp,
+						"me.level+=1;",
+						`\n// Cppkies injection
 __INTERNAL_CPPKIES_HOOKS__.buildings[me.name].emit("levelUp")`,
-				"after",
-				{ me: building }
-			)
-		}),
+						"after",
+						{ me: building }
+					)
+			  }),
 	]
-	injections.forEach(inject => {
-		inject.func?.()
-	})
-	hooks.on("buildingCps", val => ({
-		building: val.building,
-		cps:
-			Game.Objects[val.building] === building
-				? emitter.emit("cps", val.cps)
-				: val.cps,
-	}))
+	injections.forEach(inject => inject?.runHook())
 	buildingHooks[building.name] = emitter
-}
-
-/**
- * Automatically finds buildings without hooks and creates them
- */
-export function hookAllBuildings(): void {
-	for (const building of Game.ObjectsById)
-		if (!buildingHooks[building.name]) createHooks(building)
 }

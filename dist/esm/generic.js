@@ -1,1 +1,1 @@
-var t=function(t,i){this.value=t,this.func=i};export{t as Injection};
+var o=1,n=function(){function o(o,n,i){this.value=o,this.hookVersion=n,this.func=i}return o.prototype.runHook=function(){var o;(!window.__INTERNAL_CPPKIES_HOOKS__||this.hookVersion>window.__INTERNAL_CPPKIES_HOOKS__.hooksVersion)&&(null===(o=this.func)||void 0===o||o.call(this))},o}();export{o as HOOKS_VERSION,n as Injection};

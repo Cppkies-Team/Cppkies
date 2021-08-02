@@ -1,7 +1,7 @@
 import { main } from "./injects/basegame"
 import { prod } from "../isprod.json"
 import { exportSave, importSave } from "./saves"
-import { hookAllBuildings } from "./injects/buildings"
+import { createBuildingHooks } from "./injects/buildings"
 
 let loaded = false
 
@@ -25,25 +25,24 @@ let defferResolve: (() => void) | undefined
  */
 export const deffer = new Promise<void>(res => (defferResolve = res))
 
-// If Cppkies exists, don't do much
-if (window.__INTERNAL_CPPKIES_HOOKS__) {
-	loaded = true
-	onLoad.forEach(val => val())
-} else {
-	if (Game.UpdateMenu.toString().includes("Cppkies")) {
-		Game.Prompt(
-			`<h3>Hello!</h3>
+const isFirstCppkies = !window.__INTERNAL_CPPKIES_HOOKS__
+
+if (isFirstCppkies && Game.UpdateMenu.toString().includes("Cppkies")) {
+	Game.Prompt(
+		`<h3>Hello!</h3>
 <div class="block">
 It seems like you are trying to load Cppkies 0.3 or higher while having Cppkies 0.2 or lower already loaded.<br/>
 Sadly, due to internal changes, Cppkies 0.3 mods are incompatible with Cppkies 0.2 mods. <br/>
 (The mod will still be launched, but it may or may not work correctly)<br/>
 <small>((If you are a mod author, please update your mods to use Cppkies 0.3 or higher.))</small><br/>
 </div>`,
-			[[`Ok${Math.random() < 0.01 ? " boomer" : ""}`, "Game.ClosePrompt()"]]
-		)
-	} else
-		main().then(() => {
-			loaded = true
+		[[`Ok${Math.random() < 0.01 ? " boomer" : ""}`, "Game.ClosePrompt()"]]
+	)
+} else {
+	for (const building of Game.ObjectsById) createBuildingHooks(building)
+	main().then(() => {
+		loaded = true
+		if (isFirstCppkies) {
 			Game.Notify("Cppkies loaded!", "", [32, prod ? 17 : 21], 1.5)
 
 			const cppkiesNote = document.createElement("div")
@@ -59,11 +58,11 @@ Sadly, due to internal changes, Cppkies 0.3 mods are incompatible with Cppkies 0
 				load: importSave,
 			})
 			Game.Win("Third-party")
-			hookAllBuildings()
-			//Run all onLoad events
-			onLoad.forEach(val => val())
-			//Force all new onLoad events to run
-
+		}
+		//Run all onLoad events
+		onLoad.forEach(val => val())
+		//Force all new onLoad events to run
+		if (isFirstCppkies) {
 			//Do the same for CPPKIES_ONLOAD
 			if (!window.CPPKIES_ONLOAD) window.CPPKIES_ONLOAD = []
 			//Run all onLoad events
@@ -75,6 +74,7 @@ Sadly, due to internal changes, Cppkies 0.3 mods are incompatible with Cppkies 0
 					return true
 				},
 			})
-			defferResolve?.()
-		})
+		}
+		defferResolve?.()
+	})
 }

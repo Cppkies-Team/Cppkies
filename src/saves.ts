@@ -427,16 +427,18 @@ export function applySave(newSave: unknown): SaveType {
 
 export function importSave(data: string): void {
 	let newSave: unknown
-	try {
-		let decompressedData = decompressFromUTF16(data)
-		// If it's invalid LZ-string, try raw string
-		if (!decompressedData) decompressedData = data
-		newSave = JSON.parse(decompressedData)
-	} catch {
-		if (data !== "" && data !== "{}")
+	if (data !== "" && data !== "{}") initSave()
+	else
+		try {
+			let decompressedData = decompressFromUTF16(data)
+			// If it's invalid LZ-string, try raw string
+			if (!decompressedData) decompressedData = data
+			newSave = JSON.parse(decompressedData)
+		} catch (err) {
 			console.warn("CPPKIES: Found invalid save, creating new one...")
-		initSave()
-	}
+			console.error(err)
+			initSave()
+		}
 
 	const computedSave = applySave(newSave)
 	for (const i in computedSave) save[i] = computedSave[i]

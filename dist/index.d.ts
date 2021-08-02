@@ -527,6 +527,7 @@ declare class ReturnableEventEmitter<T extends Record<string, [
 	unknown
 ]>> {
 	_events: EventList<T>;
+	forwardTo?: this;
 	/**
 	 * Registers an event listener which is called each time the event is emitted
 	 * @param name Name of the hook
@@ -565,6 +566,7 @@ declare class ReturnableEventEmitter<T extends Record<string, [
 	] : [
 		T[N][0]
 	]): void;
+	setForwardTarget(target: this): void;
 }
 export declare const buildingHooks: Record<string, BuildingHooks>;
 /**

@@ -1,7 +1,7 @@
 import { injectCode, injectCodes } from "../helpers"
 import { ReturnableEventEmitter } from "../lib/eventemitter"
-import { buildingHooks, hookAllBuildings } from "./buildings"
-import { Injection } from "./generic"
+import { buildingHooks, createBuildingHooks } from "./buildings"
+import { HOOKS_VERSION, Injection } from "./generic"
 
 export type Hooks = ReturnableEventEmitter<{
 	//! Custom menus
@@ -102,7 +102,8 @@ declare global {
 			basegame: Hooks
 			buildings: typeof buildingHooks
 			hiddenMilkMult: number
-			hookAllBuildings: typeof hookAllBuildings
+			createBuildingHooks: typeof createBuildingHooks
+			hooksVersion: number
 		}
 	}
 }
@@ -113,6 +114,13 @@ declare global {
  */
 export function main(): Promise<Hooks> {
 	return new Promise(resolve => {
+		if (window.__INTERNAL_CPPKIES_HOOKS__) {
+			// The hooks with the lower version target the greater ones, if this is the lower version hooks, just return the good one
+			if (window.__INTERNAL_CPPKIES_HOOKS__.hooksVersion > HOOKS_VERSION) {
+				hooks.setForwardTarget(window.__INTERNAL_CPPKIES_HOOKS__.basegame)
+				return window.__INTERNAL_CPPKIES_HOOKS__.basegame
+			} else window.__INTERNAL_CPPKIES_HOOKS__.basegame.setForwardTarget(hooks)
+		}
 		const injections: Array<Injection> = [
 			//// -- Custom menus -- ////
 			/*
@@ -130,7 +138,7 @@ export function main(): Promise<Hooks> {
 			"menu"
 			Allows you to add entries to all menus
 			*/
-			new Injection("menu", () => {
+			new Injection("menu", 1, () => {
 				Game.UpdateMenu = injectCode(
 					Game.UpdateMenu,
 					null,
@@ -154,7 +162,7 @@ export function main(): Promise<Hooks> {
 			}),
 			//// -- Data manipulation -- ////
 
-			new Injection("preSave", () => {
+			new Injection("preSave", 1, () => {
 				Game.WriteSave = injectCode(
 					Game.WriteSave,
 					null,
@@ -165,7 +173,7 @@ export function main(): Promise<Hooks> {
 					"before"
 				)
 			}),
-			new Injection("postSave", () => {
+			new Injection("postSave", 1, () => {
 				Game.WriteSave = injectCode(
 					Game.WriteSave,
 					"if (type==2 || type==3)",
@@ -176,7 +184,7 @@ export function main(): Promise<Hooks> {
 					"before"
 				)
 			}),
-			new Injection("reset", () => {
+			new Injection("reset", 1, () => {
 				// Called before everything else, so ascend with _ achievements are possible
 				Game.Reset = injectCode(
 					Game.Reset,
@@ -188,7 +196,7 @@ export function main(): Promise<Hooks> {
 					"before"
 				)
 			}),
-			new Injection("reincarnate", () => {
+			new Injection("reincarnate", 1, () => {
 				Game.registerHook("reincarnate", () => hooks.emit("reincarnate"))
 			}),
 			//// -- Tiers -- ////
@@ -199,7 +207,7 @@ export function main(): Promise<Hooks> {
 				tier: string - The tier of the icon, gotten from Tier.iconRow
 				icon: Icon - the current icon
 			 */
-			new Injection("getIcon", () => {
+			new Injection("getIcon", 1, () => {
 				Game.GetIcon = injectCodes(Game.GetIcon, [
 					[
 						"return [col,Game.Tiers[tier].iconRow];",
@@ -221,7 +229,7 @@ export function main(): Promise<Hooks> {
 			//// -- Menus -- ////
 			// TODO Patch disabled buttons(?)
 			//// -- Buildings -- ////
-			new Injection("buildStore", () => {
+			new Injection("buildStore", 1, () => {
 				Game.BuildStore = injectCode(
 					Game.BuildStore,
 					null,
@@ -229,7 +237,7 @@ export function main(): Promise<Hooks> {
 					"after"
 				)
 			}),
-			new Injection("grandmaPic", () => {
+			new Injection("grandmaPic", 1, () => {
 				Game.Objects.Grandma.art.pic = injectCode(
 					Game.Objects.Grandma.art.pic as (
 						building: Game.Object,
@@ -243,7 +251,7 @@ export function main(): Promise<Hooks> {
 				)
 			}),
 			//// -- Gameplay -- ////
-			new Injection("cps", () => {
+			new Injection("cps", 1, () => {
 				Game.CalculateGains = injectCodes(Game.CalculateGains, [
 					[
 						"var rawCookiesPs=Game.cookiesPs*mult;",
@@ -261,7 +269,7 @@ export function main(): Promise<Hooks> {
 				])
 				Game.registerHook("cps", cps => hooks.emit("cps", cps))
 			}),
-			new Injection("cursorFingerMult", () => {
+			new Injection("cursorFingerMult", 1, () => {
 				Game.Objects.Cursor.cps = injectCode(
 					Game.Objects.Cursor.cps,
 					`var mult=1;`,
@@ -270,7 +278,7 @@ add = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("cursorFingerMult", add);\n`,
 					"before"
 				)
 			}),
-			new Injection("cpc", () => {
+			new Injection("cpc", 1, () => {
 				Game.mouseCps = injectCodes(Game.mouseCps, [
 					[
 						`var num=0;`,
@@ -289,7 +297,7 @@ add = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("cursorFingerMult", add);\n`,
 				Game.registerHook("cookiesPerClick", cpc => hooks.emit("cpc", cpc))
 			}),
 			// !!!INTERNAL DO NOT USE!!! Use buildingHooks' "cps" instead
-			new Injection("buildingCps", () => {
+			new Injection("buildingCps", 1, () => {
 				Game.CalculateGains = injectCode(
 					Game.CalculateGains,
 					"me.storedTotalCps=me.amount*me.storedCps;",
@@ -299,16 +307,16 @@ me.storedCps = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("buildingCps", { buildin
 				)
 			}),
 			//// -- Vanilla -- ////
-			new Injection("logic", () => {
+			new Injection("logic", 1, () => {
 				Game.registerHook("logic", () => hooks.emit("logic"))
 			}),
-			new Injection("draw", () => {
+			new Injection("draw", 1, () => {
 				Game.registerHook("draw", () => hooks.emit("draw"))
 			}),
-			new Injection("check", () => {
+			new Injection("check", 1, () => {
 				Game.registerHook("check", () => hooks.emit("check"))
 			}),
-			new Injection("ticker", () => {
+			new Injection("ticker", 1, () => {
 				Game.getNewTicker = injectCode(
 					Game.getNewTicker,
 					"Game.TickerAge=Game.fps*10;",
@@ -318,7 +326,7 @@ list = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("ticker", list);\n`,
 				)
 			}),
 			//// -- Specials -- ////
-			new Injection("specialPic", () => {
+			new Injection("specialPic", 1, () => {
 				Game.DrawSpecial = injectCode(
 					Game.DrawSpecial,
 					"if (hovered || selected)",
@@ -338,76 +346,71 @@ frame = override.frame;\n`,
 					"after"
 				)
 			}),
-		]
-		injections.forEach(inject => inject.func?.())
-		// Misc stuff
-		Game.Loader.Load = injectCode(
-			Game.Loader.Load,
-			"img.src=this.domain",
-			`
+			new Injection("autoMoveDragonLevels", 1, () => {
+				Game.ToggleSpecialMenu = injectCodes(Game.ToggleSpecialMenu, [
+					[
+						">=5",
+						'>=Game.dragonLevels.findIndex(val => val.name === "Krumblor, cookie hatchling")',
+						"replace",
+					],
+					[
+						">=25",
+						'>=Game.dragonLevels.findIndex(val => val.action === "Train secondary aura<br><small>Lets you use two dragon auras simultaneously</small>") + 1',
+						"replace",
+					],
+				])
+			}),
+			new Injection("loaderFreedom", 1, () => {
+				Game.Loader.Load = injectCode(
+					Game.Loader.Load,
+					"img.src=this.domain",
+					`
 			// Cppkies injection
 			img.src = (assets[i].indexOf('http') !== -1 ? "" : this.domain)
 `,
-			"replace"
-		)
-		Game.UpdateMenu = injectCodes(Game.UpdateMenu, [
-			[
-				"url(img/'+milk.pic+'.png)",
-				"url(' + (milk.pic.indexOf('http') >= 0 ? milk.pic : 'img/'+milk.pic) + '.png)",
-				"replace",
-			],
-			[
-				"img/icons.png?v='+Game.version+'",
-				"' + (Game.Milks[i].iconLink ? Game.Milks[i].iconLink : 'img/icons.png?v='+Game.version) + '",
-				"replace",
-			],
-		])
-
-		Game.ToggleSpecialMenu = injectCodes(Game.ToggleSpecialMenu, [
-			[
-				">=5",
-				'>=Game.dragonLevels.findIndex(val => val.name === "Krumblor, cookie hatchling")',
-				"replace",
-			],
-			[
-				">=25",
-				'>=Game.dragonLevels.findIndex(val => val.action === "Train secondary aura<br><small>Lets you use two dragon auras simultaneously</small>") + 1',
-				"replace",
-			],
-		])
-		Game.Objects.Cursor.buyFunction = injectCode(
-			Game.Objects.Cursor.buyFunction,
-			"Game.Unlock('Octillion fingers');",
-			`
- 			// Cppkies injection
-			for(const i in this.tieredUpgrades) {
-				if (isNaN(parseInt(i))) continue
-				if (this.amount >= Game.Tiers[this.tieredUpgrades[i].tier].unlock - 50) this.tieredUpgrades[i].unlock()
-			}
-`,
-			"after"
-		)
-		Game.Object = injectCode(
-			Game.Object,
-			"Game.ObjectsN++",
-			`
+					"replace"
+				)
+				Game.UpdateMenu = injectCodes(Game.UpdateMenu, [
+					[
+						"url(img/'+milk.pic+'.png)",
+						"url(' + (milk.pic.indexOf('http') >= 0 ? milk.pic : 'img/'+milk.pic) + '.png)",
+						"replace",
+					],
+					[
+						"img/icons.png?v='+Game.version+'",
+						"' + (Game.Milks[i].iconLink ? Game.Milks[i].iconLink : 'img/icons.png?v='+Game.version) + '",
+						"replace",
+					],
+				])
+			}),
+			new Injection("buildingAutoHook", 1, () => {
+				Game.Object = injectCode(
+					Game.Object,
+					"Game.ObjectsN++",
+					`
 // Cppkies injection
-__INTERNAL_CPPKIES_HOOKS__.hookAllBuildings();\n`,
-			"after"
-		)
-		Game.CalculateGains = injectCode(
-			Game.CalculateGains,
-			"var catMult=1;",
-			`// Cppkies injection
+__INTERNAL_CPPKIES_HOOKS__.createBuildingHooks(this);\n`,
+					"after"
+				)
+			}),
+			new Injection("milkMult", 1, () => {
+				Game.CalculateGains = injectCode(
+					Game.CalculateGains,
+					"var catMult=1;",
+					`// Cppkies injection
 			__INTERNAL_CPPKIES_HOOKS__.hiddenMilkMult = milkMult;\n`,
-			"before"
-		)
+					"before"
+				)
+			}),
+		]
+		injections.forEach(inject => inject.runHook())
 
 		window.__INTERNAL_CPPKIES_HOOKS__ = {
 			basegame: hooks,
 			buildings: buildingHooks,
 			hiddenMilkMult: 1,
-			hookAllBuildings,
+			createBuildingHooks,
+			hooksVersion: HOOKS_VERSION,
 		}
 		resolve(hooks)
 	})

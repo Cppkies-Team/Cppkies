@@ -15,13 +15,14 @@ export class ReturnableEventEmitter<
 	T extends Record<string, [unknown, unknown]>
 > {
 	_events = {} as EventList<T>
-
+	forwardTo?: this
 	/**
 	 * Registers an event listener which is called each time the event is emitted
 	 * @param name Name of the hook
 	 * @param func The event listener function
 	 */
 	on<N extends keyof T>(name: N, func: EventListenerFunction<T, N>): void {
+		if (this.forwardTo) return this.forwardTo.on(name, func)
 		if (!this._events[name]) {
 			this._events[name] = [func]
 		} else this._events[name].push(func)
@@ -43,6 +44,7 @@ export class ReturnableEventEmitter<
 	 * @param func The event listener function
 	 */
 	off<N extends keyof T>(name: N, func: EventListenerFunction<T, N>): void {
+		if (this.forwardTo) return this.forwardTo.off(name, func)
 		this._events[name].splice(this._events[name].indexOf(func), 1)
 	}
 
@@ -56,6 +58,7 @@ export class ReturnableEventEmitter<
 		name: N,
 		...startingValue: T[N][0] extends void ? [undefined?] : [T[N][0]]
 	): T[N][1] {
+		if (this.forwardTo) return this.forwardTo.emit(name, ...startingValue)
 		let retVal: T[N][0] | T[N][1] = startingValue[0]
 		if (!this._events[name]) this._events[name] = []
 		for (const func of this._events[name]) retVal = func(retVal)
@@ -70,7 +73,14 @@ export class ReturnableEventEmitter<
 		name: N,
 		...startingValue: T[N][0] extends void ? [undefined?] : [T[N][0]]
 	): void {
+		if (this.forwardTo) return this.forwardTo.constEmit(name, ...startingValue)
 		if (!this._events[name]) this._events[name] = []
 		for (const func of this._events[name]) func(startingValue[0])
+	}
+	setForwardTarget(target: this): void {
+		for (const key in this._events)
+			if (target._events[key]) target._events[key].push(...this._events[key])
+			else target._events[key] = Array.from(this._events[key])
+		this.forwardTo = target
 	}
 }
