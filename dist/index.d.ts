@@ -291,6 +291,7 @@ export declare const DEFAULT_CPS: (me: Building) => number;
  */
 export declare const DEFAULT_ONBUY: (this: Building) => void;
 export declare type FriendlyHtml = CommonValue<string | HTMLElement>;
+export declare function friendlyAppendHtml(value: FriendlyHtml, element: HTMLElement, containerName?: string | null): void;
 /**
  * Creates a cookie clicker UI button
  * @param name Text on the button
@@ -323,6 +324,27 @@ export declare abstract class ToggleBase<C = unknown> {
 	save?(this: this): C;
 	load?(this: this, save: C): void;
 }
+export declare class Button<C = unknown> extends ToggleBase<C> {
+	name: FriendlyHtml;
+	description?: string | HTMLElement | (() => string | HTMLElement) | undefined;
+	onClick?: ((this: Button) => void) | undefined;
+	type?: "normal" | "warning" | "neato" | null | undefined;
+	additionalClasses: string[];
+	off?: boolean;
+	constructor(keyname: string, name: FriendlyHtml, description?: string | HTMLElement | (() => string | HTMLElement) | undefined, onClick?: ((this: Button) => void) | undefined, type?: "normal" | "warning" | "neato" | null | undefined);
+	render(): HTMLDivElement;
+}
+export declare class MultiStateButton<T extends string[]> extends Button<string> {
+	states: T;
+	description?: string | HTMLElement | (() => string | HTMLElement) | undefined;
+	type?: "normal" | "warning" | "neato" | null | undefined;
+	state: T[number];
+	private stateFunc?;
+	constructor(keyname: string, name: FriendlyHtml | ((state: T[number]) => FriendlyHtml), states: T, description?: string | HTMLElement | (() => string | HTMLElement) | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined);
+	save(): string;
+	load(save: string): void;
+	render(): HTMLDivElement;
+}
 export declare class Slider extends ToggleBase<number> {
 	name: FriendlyHtml;
 	bounds: [
@@ -342,27 +364,6 @@ export declare class Slider extends ToggleBase<number> {
 	load(save: number): void;
 	render(): HTMLDivElement;
 }
-export declare class Button<C = unknown> extends ToggleBase<C> {
-	name: FriendlyHtml;
-	description?: string | HTMLElement | (() => string | HTMLElement) | undefined;
-	onClick?: ((this: Button) => void) | undefined;
-	type?: "normal" | "warning" | "neato" | null | undefined;
-	additionalClasses: string[];
-	off?: boolean;
-	constructor(keyname: string, name: FriendlyHtml, description?: string | HTMLElement | (() => string | HTMLElement) | undefined, onClick?: ((this: Button) => void) | undefined, type?: "normal" | "warning" | "neato" | null | undefined);
-	render(): HTMLDivElement;
-}
-export declare class MultiStateButton<T extends string[]> extends Button<string> {
-	states: T;
-	description?: string | HTMLElement | (() => string | HTMLElement) | undefined;
-	type?: "normal" | "warning" | "neato" | null | undefined;
-	state: T[number];
-	private stateFunc?;
-	constructor(keyname: string, name: FriendlyHtml | ((state: string) => FriendlyHtml), states: T, description?: string | HTMLElement | (() => string | HTMLElement) | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined);
-	save(): string;
-	load(save: string): void;
-	render(): HTMLDivElement;
-}
 export declare class ToggleButton extends MultiStateButton<[
 	"ON",
 	"OFF"
@@ -370,7 +371,7 @@ export declare class ToggleButton extends MultiStateButton<[
 	description?: string | (() => string) | undefined;
 	type?: "normal" | "warning" | "neato" | null | undefined;
 	defaultState?: boolean | undefined;
-	constructor(keyname: string, name: FriendlyHtml | ((state: boolean) => FriendlyHtml), description?: string | (() => string) | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined, defaultState?: boolean | undefined);
+	constructor(keyname: string, name: FriendlyHtml | ((state: boolean) => FriendlyHtml), description?: string | (() => string) | undefined, onClick?: (this: ToggleButton) => void, type?: "normal" | "warning" | "neato" | null | undefined, defaultState?: boolean | undefined);
 	render(): HTMLDivElement;
 }
 export declare let currentMod: Mod | null;

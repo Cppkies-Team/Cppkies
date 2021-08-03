@@ -1,0 +1,37 @@
+import { FriendlyHtml } from "../ccUI"
+import { Button } from "./button"
+
+export class MultiStateButton<T extends string[]> extends Button<string> {
+	state: T[number]
+	private stateFunc?: (state: T[number]) => FriendlyHtml
+	constructor(
+		keyname: string,
+		name: FriendlyHtml | ((state: T[number]) => FriendlyHtml),
+		public states: T,
+		public description?: FriendlyHtml,
+		onClick?: (this: Button) => void,
+		public type?: "warning" | "neato" | "normal" | null
+	) {
+		super(
+			keyname,
+			typeof name === "function" ? "TEMP" : name,
+			description,
+			() => {
+				this.state =
+					this.states[this.states.indexOf(this.state) + 1] ?? this.states[0]
+				onClick?.apply(this)
+			}
+		)
+		if (this.state === undefined) this.state = this.states[0]
+	}
+	save(): string {
+		return this.state
+	}
+	load(save: string): void {
+		this.state = save
+	}
+	render(): HTMLDivElement {
+		if (this.stateFunc) this.name = this.stateFunc(this.state)
+		return super.render()
+	}
+}
