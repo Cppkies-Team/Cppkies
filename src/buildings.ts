@@ -3,6 +3,7 @@ import { resolveAlias } from "./spritesheets"
 import hooks from "./injects/basegame"
 import { buildingHooks, createBuildingHooks } from "./injects/buildings"
 import { miscValues, customBuildings } from "./vars"
+import { shouldRunVersioned } from "./injects/generic"
 
 /**
  * The building class for creating new buildings
@@ -177,9 +178,10 @@ export const DEFAULT_ONBUY = function(this: Building): void {
 		Game.Unlock(this.grandma.name)
 }
 
-hooks.on("getIcon", ({ icon, type, tier }) => {
-	customBuildings.forEach(val => {
-		if (val.name === type && val.iconLink) icon[2] = val.iconLink
+if (shouldRunVersioned(1))
+	hooks.on("getIcon", ({ icon, type, tier }) => {
+		customBuildings.forEach(val => {
+			if (val.name === type && val.iconLink) icon[2] = val.iconLink
+		})
+		return { icon, tier, type }
 	})
-	return { icon, tier, type }
-})

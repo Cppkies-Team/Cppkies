@@ -7,10 +7,13 @@ export class Injection {
 		public func?: () => void
 	) {}
 	runHook(): void {
-		if (
-			!window.__INTERNAL_CPPKIES_HOOKS__ ||
-			this.hookVersion > window.__INTERNAL_CPPKIES_HOOKS__.hooksVersion
-		)
-			this.func?.()
+		if (shouldRunVersioned(this.hookVersion)) this.func?.()
 	}
+}
+
+export function shouldRunVersioned(hookVersion: number): boolean {
+	return (
+		!window.__INTERNAL_CPPKIES_HOOKS__ ||
+		hookVersion > window.__INTERNAL_CPPKIES_HOOKS__.hooksVersion
+	)
 }

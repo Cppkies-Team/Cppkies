@@ -1,13 +1,13 @@
-import hooks from "./basegame"
 import { Injection } from "./generic"
 import { injectCode } from "../helpers"
 import { ReturnableEventEmitter } from "../lib/eventemitter"
 
-const isFirst = !window.__INTERNAL_CPPKIES_HOOKS__
-
-export const buildingHooks: Record<string, BuildingHooks> = isFirst
-	? {}
-	: window.__INTERNAL_CPPKIES_HOOKS__.buildings
+export const buildingHooks: Record<
+	string,
+	BuildingHooks
+> = window.__INTERNAL_CPPKIES_HOOKS__
+	? window.__INTERNAL_CPPKIES_HOOKS__.buildings
+	: {}
 
 /**
  * Creates the hooks for a building
@@ -44,19 +44,17 @@ export function createBuildingHooks(building: Game.Object): void {
 				"after"
 			)
 		}),
-		isFirst
-			? undefined
-			: new Injection("levelUp", 2, () => {
-					building.levelUp = injectCode(
-						building.levelUp,
-						"me.level+=1;",
-						`\n// Cppkies injection
+		new Injection("levelUp", 1, () => {
+			building.levelUp = injectCode(
+				building.levelUp,
+				"me.level+=1;",
+				`\n// Cppkies injection
 __INTERNAL_CPPKIES_HOOKS__.buildings[me.name].emit("levelUp")`,
-						"after",
-						{ me: building }
-					)
-			  }),
+				"after",
+				{ me: building }
+			)
+		}),
 	]
-	injections.forEach(inject => inject?.runHook())
+	injections.forEach(inject => inject.runHook())
 	buildingHooks[building.name] = emitter
 }

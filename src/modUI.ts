@@ -4,6 +4,7 @@ import { ccButton, ccHideableSection, ccSlider, FriendlyHtml } from "./ccUI"
 import hooks from "./injects/basegame"
 import { mods } from "./vars"
 import { save } from "./saves"
+import { shouldRunVersioned } from "./injects/generic"
 
 export abstract class ToggleBase<C = unknown> {
 	mod: Mod
@@ -155,20 +156,21 @@ export class ToggleButton extends MultiStateButton<["ON", "OFF"]> {
 	}
 }
 
-hooks.on("optionsMenu", () => {
-	const menuDiv = document.querySelector("#menu")
-	if (!menuDiv || mods.length === 0) return
-	const menuSubsection = menuDiv.children[menuDiv.children.length - 1]
-	const menuListing =
-		menuSubsection.children[menuSubsection.children.length - 2]
+if (shouldRunVersioned(1))
+	hooks.on("optionsMenu", () => {
+		const menuDiv = document.querySelector("#menu")
+		if (!menuDiv || mods.length === 0) return
+		const menuSubsection = menuDiv.children[menuDiv.children.length - 1]
+		const menuListing =
+			menuSubsection.children[menuSubsection.children.length - 2]
 
-	for (const mod of mods)
-		menuListing.appendChild(
-			ccHideableSection(
-				`${mod.keyname}ui`,
-				mod.name ?? mod.keyname,
-				mod.render(),
-				Game.UpdateMenu
+		for (const mod of mods)
+			menuListing.appendChild(
+				ccHideableSection(
+					`${mod.keyname}ui`,
+					mod.name ?? mod.keyname,
+					mod.render(),
+					Game.UpdateMenu
+				)
 			)
-		)
-})
+	})

@@ -427,7 +427,7 @@ export function applySave(newSave: unknown): SaveType {
 
 export function importSave(data: string): void {
 	let newSave: unknown
-	if (data !== "" && data !== "{}") initSave()
+	if (data === "" || data === "{}") initSave()
 	else
 		try {
 			let decompressedData = decompressFromUTF16(data)

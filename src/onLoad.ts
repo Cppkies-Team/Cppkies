@@ -5,6 +5,8 @@ import { createBuildingHooks } from "./injects/buildings"
 
 let loaded = false
 
+const isFirstCppkies = !window.__INTERNAL_CPPKIES_HOOKS__
+
 /**
  * An array of functions to call on Cppkies load
  * Functions pushed here after Cppkies has loaded are executed immediately
@@ -24,8 +26,6 @@ let defferResolve: (() => void) | undefined
  * A promise which is resolved on Cppkies load
  */
 export const deffer = new Promise<void>(res => (defferResolve = res))
-
-const isFirstCppkies = !window.__INTERNAL_CPPKIES_HOOKS__
 
 if (isFirstCppkies && Game.UpdateMenu.toString().includes("Cppkies")) {
 	Game.Prompt(
@@ -47,10 +47,8 @@ Sadly, due to internal changes, Cppkies 0.3 mods are incompatible with Cppkies 0
 
 			const cppkiesNote = document.createElement("div")
 			cppkiesNote.textContent = "Cppkies!"
-			;(document.querySelector("#topBar") as HTMLElement).insertBefore(
-				cppkiesNote,
-				(document.querySelector("#topBar") as HTMLElement).children[1]
-			)
+			const topBar = document.querySelector("#topBar")
+			if (topBar) topBar.insertBefore(cppkiesNote, topBar.children[1])
 
 			if (!Game.modSaveData["cppkies"]) Game.modSaveData["cppkies"] = "{}"
 			Game.registerMod("cppkies", {
