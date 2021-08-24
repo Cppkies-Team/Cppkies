@@ -42,6 +42,7 @@ export class SynergyUpgrade<Tier extends string> extends Upgrade
 				Game.Tiers[tier].price,
 			icon
 		)
+		this.pool = ""
 		this.tier = tier
 		this.buildingTie1 = building1
 		this.buildingTie2 = building2

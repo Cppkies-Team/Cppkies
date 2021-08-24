@@ -53,12 +53,10 @@ it("Should load data on reload", async () => {
 					{ keyname: "loadingtest", version: "1.2.3" },
 					function() {
 						this.custom = { test: testNumber }
+						Game.WriteSave()
+						res()
 					}
 				)
-				Cppkies.deffer.then(() => {
-					Game.WriteSave()
-					res()
-				})
 			}),
 		testNumber
 	)
@@ -81,4 +79,26 @@ it("Should load data on reload", async () => {
 				})
 		)
 	).toBe(testNumber)
+})
+
+it("Should create ownership links for ownable units", async () => {
+	expect(
+		await page.evaluate(
+			() =>
+				new Promise<boolean>(res => {
+					new Cppkies.Mod(
+						{ keyname: "ownershiptest", version: "1.0.0" },
+						function() {
+							const upgrade = new Cppkies.Upgrade(
+								"Cppkies 0.3",
+								"Power up you CC modding with Cppkies!",
+								0,
+								[0, 0]
+							)
+							res(upgrade.owner === this)
+						}
+					)
+				})
+		)
+	).toBe(true)
 })

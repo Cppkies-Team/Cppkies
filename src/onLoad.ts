@@ -15,7 +15,7 @@ const isFirstCppkies = !window.__INTERNAL_CPPKIES_HOOKS__
 export const onLoad: Array<() => void> = new Proxy([], {
 	set: (target, key, value): boolean => {
 		if (typeof value === "function" && loaded) value()
-		target[key] = value
+		else target[(key as unknown) as number] = value as never
 		return true
 	},
 })

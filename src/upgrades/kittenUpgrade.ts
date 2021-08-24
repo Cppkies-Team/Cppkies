@@ -4,7 +4,12 @@ import { Upgrade } from "./baseUpgrade"
 /**
  * Exceptions when the change kitten cost is not 3 (in log10)
  */
-const kittenPriceRules = { 1: 5, 2: 4, 4: 4, default: 3 }
+const kittenPriceRules: Record<number | "default", number> = {
+	1: 5,
+	2: 4,
+	4: 4,
+	default: 3,
+}
 
 /**
  * Calculates the cost of a kitten, based on price rules and tier.
@@ -13,7 +18,8 @@ const kittenPriceRules = { 1: 5, 2: 4, 4: 4, default: 3 }
 function computeKittenCost(tier: number): number {
 	let cost = 1
 	for (let i = 1; i <= tier; i++)
-		cost += kittenPriceRules[i] ?? kittenPriceRules.default
+		if (i in kittenPriceRules) cost += kittenPriceRules[i]
+		else cost += kittenPriceRules.default
 	return 9 * 10 ** cost
 }
 

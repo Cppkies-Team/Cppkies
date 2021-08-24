@@ -1,11 +1,14 @@
 import { toRomanNumeral } from "./helpers"
+import { Mod, OwnershipUnit } from "./mods"
 import { resolveIcon } from "./spritesheets"
+import { setUnitOwner } from "./vars"
 
 type MilkClass = typeof Game.Milk & Game.ChoiceCosmetics
 
-export class Milk implements MilkClass {
+export class Milk implements MilkClass, OwnershipUnit {
 	icon: [number, number]
 	iconLink?: string
+	owner?: Mod
 	/**
 	 * Creates a new milk type
 	 * @param name The name of the milk
@@ -19,6 +22,7 @@ export class Milk implements MilkClass {
 		public pic: string,
 		public special = false
 	) {
+		setUnitOwner(this)
 		if (!pic.endsWith(".png"))
 			throw new Error(
 				`Can't create milk with the milk URL "${pic}", the URL must end with .png!`

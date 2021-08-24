@@ -52,12 +52,11 @@ export class TieredAchievement<Tier extends string | number> extends Achievement
 			}.${quote ? `<q>${quote}</q>` : ""}`,
 			icon ?? Game.GetIcon(buildingObject.name, tier)
 		)
-		Game.SetTier(
-			buildingObject.name,
-			tier === "cursor2" || tier === "cursor50" ? 1 : tier
-		)
-
+		this.pool = "normal"
+		this.tier = tier === "cursor2" || tier === "cursor50" ? (1 as Tier) : tier
+		this.buildingTie = buildingObject
 		buildingObject.tieredAchievs[tier] = this
+
 		this.buildingTie = buildingObject
 
 		this.order = 1000 + buildingObject.id * 100 + this.id / 1000

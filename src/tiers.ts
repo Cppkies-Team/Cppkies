@@ -1,20 +1,22 @@
 import { resolveAlias } from "./spritesheets"
-import { miscValues, customTiers } from "./vars"
+import { miscValues, customTiers, setUnitOwner } from "./vars"
 import hooks from "./injects/basegame"
+import { Mod, OwnershipUnit } from "./mods"
 
-export default class Tier implements Game.Tier {
-	achievUnlock: number
+export default class Tier implements Game.Tier, OwnershipUnit {
+	achievUnlock = 0
 	iconRow: number
 	iconLink?: string
-
-	/**
+	owner?: Mod<
+		object
+	> /**
 		Indicates if the tier shouldn't be accounted for tiered upgrades
 	*/
 	special: boolean
 	req?: string
-	upgrades: Game.GenericTieredUpgrade[]
+	upgrades: Game.GenericTieredUpgrade[] = []
 
-	unlock: number
+	unlock = 0
 	price: number
 	keyName: string
 
@@ -42,7 +44,7 @@ export default class Tier implements Game.Tier {
 		keyName: string | "auto" = "auto"
 	) {
 		this.special = special
-
+		setUnitOwner(this)
 		if (keyName === "auto")
 			if (!special)
 				this.keyName = (

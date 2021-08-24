@@ -8,7 +8,7 @@
 		"resolveJsonModule": true,
 		"allowUmdGlobalAccess": true,
 		"incremental": true,
-		"strictNullChecks": true
+		"strict": true
 	},
 	"include": ["./src/"],
 	"exclude": ["./dist", "./tests"]

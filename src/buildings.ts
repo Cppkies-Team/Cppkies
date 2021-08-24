@@ -1,16 +1,18 @@
-import { loadBuilding } from "./saves"
+import { BuildingSave, loadBuilding } from "./saves"
 import { resolveAlias } from "./spritesheets"
 import hooks from "./injects/basegame"
 import { buildingHooks, createBuildingHooks } from "./injects/buildings"
-import { miscValues, customBuildings } from "./vars"
+import { miscValues, customBuildings, setUnitOwner } from "./vars"
 import { shouldRunVersioned } from "./injects/generic"
+import { Mod, OwnershipUnit } from "./mods"
 
 /**
  * The building class for creating new buildings
  */
-export class Building extends Game.Object {
+export class Building extends Game.Object implements OwnershipUnit {
 	iconLink: string
 	buildingLink: string
+	owner?: Mod
 	/**
 	 * Creates a new building and creates the hooks for it
 	 * @param name The name of the building
@@ -31,8 +33,8 @@ export class Building extends Game.Object {
 		icon: Game.Icon,
 		bigIcon: Game.Icon,
 		art: Game.Art,
-		cpsFunc: (me: Building) => number,
-		buyFunction: (this: Building) => void,
+		cpsFunc: (me: Game.Object) => number,
+		buyFunction: (this: Game.Object) => void,
 		foolObject: Game.FoolBuilding,
 		buildingSpecial: [string, string]
 	) {
@@ -62,6 +64,7 @@ export class Building extends Game.Object {
 			cpsFunc,
 			buyFunction
 		)
+		setUnitOwner(this)
 		customBuildings.push(this)
 		// Create hooks if they don't exist yet
 		if (!buildingHooks[name]) createBuildingHooks(this)
@@ -113,12 +116,11 @@ export class Building extends Game.Object {
 		Game.BuildStore()
 		if (this.buildingLink) {
 			hooks.on("buildStore", () => {
-				l(
-					`productIcon${this.id}`
-				).style.backgroundImage = `url(${this.buildingLink})`
-				l(
-					`productIconOff${this.id}`
-				).style.backgroundImage = `url(${this.buildingLink})`
+				const productIcon = document.getElementById(`productIcon${this.id}`),
+					productIconOff = document.getElementById(`productIconOff${this.id}`)
+				if (!(productIcon && productIconOff)) return
+				productIcon.style.backgroundImage = `url(${this.buildingLink})`
+				productIconOff.style.backgroundImage = `url(${this.buildingLink})`
 			})
 		}
 		Game.BuildStore()
@@ -151,9 +153,11 @@ export class Building extends Game.Object {
 			this.mousePos[0] = e.pageX - box.left
 			this.mousePos[1] = e.pageY - box.top
 		})
-		l("buildingsMute").appendChild(muteDiv)
+		const muteElement = document.getElementById("buildingsMute")
+		if (muteElement) muteElement.appendChild(muteDiv)
 		// Load the save stuff
 		const loadProps = loadBuilding(this)
+		// @ts-expect-error Typescript is kinda dumb here
 		for (const i in loadProps) this[i] = loadProps[i]
 		Game.recalculateGains = 1
 	}
@@ -168,8 +172,7 @@ export const DEFAULT_CPS = (me: Building): number =>
  * The reccomended function to pass in building BuyFunc
  */
 export const DEFAULT_ONBUY = function(this: Building): void {
-	// A @types/cookieclicker failure
-	Game.UnlockTiered((this as unknown) as Game.Upgrade)
+	Game.UnlockTiered(this)
 	if (
 		this.amount >= Game.SpecialGrandmaUnlock &&
 		Game.Objects["Grandma"].amount > 0 &&

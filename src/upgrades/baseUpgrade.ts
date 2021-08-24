@@ -1,8 +1,9 @@
 import { loadUpgrade } from "../saves"
-import { CommonValue } from "../helpers"
+import { applyAllProps, CommonValue } from "../helpers"
 import { resolveIcon } from "../spritesheets"
-import { customUpgrades } from "../vars"
+import { customUpgrades, setUnitOwner } from "../vars"
 import { TieredUpgrade } from "./tieredUpgrade"
+import { Mod, OwnershipUnit } from "../mods"
 
 // This file splitting is for the ebic treeshaking
 
@@ -15,7 +16,8 @@ export function isFortune(
 /**
  * The class for upgrades
  */
-export class Upgrade extends Game.Upgrade {
+export class Upgrade extends Game.Upgrade implements OwnershipUnit {
+	owner?: Mod
 	/**
 	 * Creates an upgrade
 	 * @param name The name of the upgrade
@@ -39,14 +41,14 @@ export class Upgrade extends Game.Upgrade {
 			typeof icon === "function" ? [0, 0] : resolveIcon(icon),
 			buyFunc
 		)
-
+		setUnitOwner(this)
 		if (typeof desc === "function") this.descFunc = desc
 		if (typeof price === "function") this.priceFunc = price
 		if (typeof icon === "function")
 			this.iconFunction = () => resolveIcon(icon())
 		customUpgrades.push(this)
 		const loadProps = loadUpgrade(this)
-		for (const i in loadProps) this[i] = loadProps[i]
+		applyAllProps(this, loadProps)
 		Game.upgradesToRebuild = 1
 		if (this.bought && Game.CountsAsUpgradeOwned(this.pool))
 			Game.UpgradesOwned++

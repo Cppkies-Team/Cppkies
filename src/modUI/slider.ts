@@ -12,6 +12,7 @@ export class Slider extends ToggleBase<number> {
 		public onChange?: (this: Slider, value: number) => void
 	) {
 		super(keyname)
+		// @ts-expect-error No, load may or may not have triggered already
 		if (this.value === undefined) this.value = defaultValue
 	}
 	save(): number {

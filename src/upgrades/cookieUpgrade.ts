@@ -20,19 +20,25 @@ export class CookieUpgrade extends Upgrade implements Game.CookieUpgrade {
 		quote: string,
 		price: CommonValue<number>,
 		icon: Game.Icon,
-		public power: CommonValue<number>,
+		public power: Upgrade["power"],
 		req?: { require?: string; season?: string; locked?: boolean },
 		order?: number
 	) {
 		super(
 			name,
-			`Cookie production multiplier <b>+${Beautify(
-				typeof power === "function" ? power() : power,
-				1
-			)}%</b>.<q>${quote}</q>`,
+			`Cookie production multiplier <b>+${
+				typeof power === "function" ? "???" : Beautify(power, 1)
+			}%</b>.<q>${quote}</q>`,
 			price,
 			icon
 		)
+		if (typeof power === "function") {
+			this.baseDesc = `Cookie production multiplier <b>+${Beautify(
+				power(this),
+				1
+			)}%</b>.<q>${quote}</q>`
+			this.desc = BeautifyInText(this.baseDesc)
+		}
 		this.order = (order ?? miscValues.cookieOrder ?? 10020) + this.id / 1000
 		this.unlockAt = {
 			name,

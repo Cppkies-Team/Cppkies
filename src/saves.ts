@@ -82,7 +82,7 @@ export const save: SaveType = createDefaultSave()
  */
 export function initSave(): void {
 	const newSave = createDefaultSave()
-	for (const i in newSave) save[i] = newSave[i]
+	applyAllProps(save, newSave)
 }
 
 // #region Building
@@ -237,7 +237,6 @@ export function loadDragon(): void {
 //#endregion
 
 // #region Mod
-
 /**
  * The save type for a mod
  */
@@ -310,6 +309,10 @@ export function saveAll(): void {
 	for (const mod of mods) saveMod(mod)
 }
 
+function assume<T>(val: unknown): val is T {
+	return true
+}
+
 export function applySave(newSave: unknown): SaveType {
 	const virtualSave = createDefaultSave()
 	// Assert type
@@ -332,10 +335,11 @@ export function applySave(newSave: unknown): SaveType {
 		if (
 			hasOwnProperty(modSave, "buildings") &&
 			typeof modSave.buildings === "object" &&
-			modSave.buildings !== null
+			modSave.buildings !== null &&
+			assume<Record<string, unknown>>(modSave.buildings)
 		)
 			for (const buildingName in modSave.buildings) {
-				const building = modSave.buildings[buildingName]
+				const building = modSave.buildings[buildingName] as object
 				if (typeof building !== "object" || building === null) continue
 				virtualModSave.buildings[buildingName] = createDefaultSaveFragment(
 					"building"
@@ -347,7 +351,8 @@ export function applySave(newSave: unknown): SaveType {
 		if (
 			hasOwnProperty(modSave, "upgrades") &&
 			typeof modSave.upgrades === "object" &&
-			modSave.upgrades !== null
+			modSave.upgrades !== null &&
+			assume<Record<string, unknown>>(modSave.upgrades)
 		)
 			for (const upgradeName in modSave.upgrades) {
 				const upgrade = modSave.upgrades[upgradeName]
@@ -361,7 +366,8 @@ export function applySave(newSave: unknown): SaveType {
 		if (
 			hasOwnProperty(modSave, "achievements") &&
 			typeof modSave.achievements === "object" &&
-			modSave.achievements !== null
+			modSave.achievements !== null &&
+			assume<Record<string, unknown>>(modSave.achievements)
 		)
 			for (const achievementName in modSave.achievements) {
 				const achievement = modSave.achievements[achievementName]
@@ -375,7 +381,8 @@ export function applySave(newSave: unknown): SaveType {
 		if (
 			hasOwnProperty(modSave, "ui") &&
 			typeof modSave.ui === "object" &&
-			modSave.ui !== null
+			modSave.ui !== null &&
+			assume<Record<string, unknown>>(modSave.ui)
 		) {
 			for (const uiName in modSave.ui)
 				virtualModSave.ui[uiName] = modSave.ui[uiName]
@@ -394,7 +401,8 @@ export function applySave(newSave: unknown): SaveType {
 	if (
 		hasOwnProperty(newSave, "mods") &&
 		typeof newSave.mods === "object" &&
-		newSave.mods !== null
+		newSave.mods !== null &&
+		assume<Record<string, unknown>>(newSave.mods)
 	)
 		for (const modName in newSave.mods)
 			virtualSave.mods[modName] = applyModSave(newSave.mods[modName])
@@ -441,7 +449,7 @@ export function importSave(data: string): void {
 		}
 
 	const computedSave = applySave(newSave)
-	for (const i in computedSave) save[i] = computedSave[i]
+	applyAllProps(save, computedSave)
 	loadAll()
 }
 

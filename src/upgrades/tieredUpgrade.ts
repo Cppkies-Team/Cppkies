@@ -32,8 +32,10 @@ export class TieredUpgrade<Tier extends string | number = string | number>
 			building.basePrice * Game.Tiers[tier].price,
 			Game.GetIcon(building.name, tier)
 		)
-
-		Game.SetTier(building.name, tier)
+		this.pool = ""
+		this.tier = tier
+		this.buildingTie = building
+		building.tieredUpgrades[tier] = this
 
 		this.buildingTie1 = building
 		if (isFortune(this)) {

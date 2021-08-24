@@ -22,6 +22,7 @@ export class MultiStateButton<T extends string[]> extends Button<string> {
 				onClick?.apply(this)
 			}
 		)
+		// @ts-expect-error No, load may or may not have triggered already
 		if (this.state === undefined) this.state = this.states[0]
 	}
 	save(): string {

@@ -77,9 +77,7 @@ function doSingleInject(source: string, config: InjectParams): string {
  * @helper
  */
 export function injectCode<
-	T extends
-		| ((...args: unknown[]) => unknown)
-		| (new (...args: unknown[]) => unknown)
+	T extends ((...args: any[]) => any) | (new (...args: any[]) => any)
 >(
 	func: T,
 	source: string | RegExp | null,
@@ -103,9 +101,7 @@ export function injectCode<
  * @helper
  */
 export function injectCodes<
-	T extends
-		| ((...args: unknown[]) => unknown)
-		| (new (...args: unknown[]) => unknown)
+	T extends ((...args: any[]) => any) | (new (...args: any[]) => any)
 >(func: T, injections: InjectParams[], context: object = {}): T {
 	let newStr = func.toString()
 	for (const injection of injections) newStr = doSingleInject(newStr, injection)
@@ -122,7 +118,7 @@ export function injectCodes<
  * @param srcObj The object which properties will be applied to the target object
  */
 
-export function applyAllProps(targObj: object, srcObj: object): void {
+export function applyAllProps(targObj: any, srcObj: any): void {
 	for (const i in srcObj) targObj[i] = srcObj[i]
 }
 

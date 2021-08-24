@@ -39,6 +39,7 @@ export class GrandmaSynergy extends Upgrade
 			[10, 9, ""],
 			Game.Objects.Grandma.redraw
 		)
+		this.pool = ""
 		building.grandma = this
 		this.buildingTie = building
 		this.order = 250 + this.id / 1000

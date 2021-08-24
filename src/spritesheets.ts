@@ -19,7 +19,7 @@ export function alias(oldName: string, aliasName: string): void {
  * @param name The name to remove an alias from
  */
 export function unalias(name: string): void {
-	delete alias[name]
+	delete aliases[name]
 }
 
 /**
@@ -54,7 +54,7 @@ function generateImageFromLink(link: string): Promise<HTMLImageElement> {
  */
 function toBlobURI(buf: CanvasRenderingContext2D): Promise<string> {
 	return new Promise(resolve => {
-		buf.canvas.toBlob((blob: Blob) => {
+		buf.canvas.toBlob((blob: Blob | null) => {
 			resolve(URL.createObjectURL(blob))
 		})
 	})

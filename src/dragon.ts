@@ -3,10 +3,13 @@ import { save, VANILLA_DRAGON_LEVEL_AMOUNT } from "./saves"
 import { resolveIcon } from "./spritesheets"
 import hooks from "./injects/basegame"
 import { shouldRunVersioned } from "./injects/generic"
+import { Mod, OwnershipUnit } from "./mods"
+import { setUnitOwner } from "./vars"
 
-export class DragonAura implements Game.DragonAura {
+export class DragonAura implements Game.DragonAura, OwnershipUnit {
 	pic: Game.Icon
 	isCppkies = true
+	owner?: Mod
 	/**
 	 * Creates a (non-building) dragon aura
 	 * @param name Name of the dragon aura (in HTML text)
@@ -26,6 +29,7 @@ export class DragonAura implements Game.DragonAura {
 		public desc: string,
 		buildingOrIcon: string | Game.Object | Game.Icon
 	) {
+		setUnitOwner(this)
 		if (typeof buildingOrIcon === "string")
 			buildingOrIcon = Game.Objects[buildingOrIcon]
 		if (buildingOrIcon instanceof Game.Object)
@@ -52,8 +56,9 @@ export class DragonAura implements Game.DragonAura {
 	}
 }
 
-export class DragonLevel implements Game.DragonLevel {
+export class DragonLevel implements Game.DragonLevel, OwnershipUnit {
 	isCppkies = true
+	owner?: Mod
 	/**
 	 * The X position of the dragon icon
 	 */
@@ -93,6 +98,7 @@ export class DragonLevel implements Game.DragonLevel {
 		icon?: Game.Icon | null, // `this.pic`, `this.picLink`, and `this.picY`
 		order: number = Game.dragonLevels.length - 3
 	) {
+		setUnitOwner(this)
 		const lastLevel = Game.dragonLevels[order - 1]
 		this.name = name ?? lastLevel.name
 		this.action = desc
@@ -136,18 +142,16 @@ export class DragonAuraLevel extends DragonLevel {
 		auraDesc: string,
 		building: string | Game.Object
 	) {
-		if (typeof building === "string") building = Game.Objects[building]
+		const buildingObject =
+			typeof building === "string" ? Game.Objects[building] : building
 
 		super(
 			null,
 			`Train ${auraName}<br/><small>Aura : ${auraDesc}</small>`,
-			`100 ${building.plural}`,
+			`100 ${buildingObject.plural}`,
 			// Grr typescript
-			() => (building as Game.Object).amount >= 100,
-			() =>
-				(building as Game.Object & {
-					sacrifice: (amount: number) => void // I made a typo, sorry
-				}).sacrifice(100)
+			() => buildingObject.amount >= 100,
+			() => buildingObject.sacrifice(100)
 		)
 	}
 }

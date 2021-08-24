@@ -33,7 +33,9 @@ export class HeavenlyUpgrade extends Upgrade implements Game.HeavenlyUpgrade {
 		this.posX = position[0]
 		this.posY = position[1]
 
-		this.parents = parents.map(id => Game.Upgrades[id] || Game.UpgradesById[id])
+		this.parents = parents.map(id =>
+			typeof id === "number" ? Game.UpgradesById[id] : Game.Upgrades[id]
+		)
 
 		Game.PrestigeUpgrades.push(this)
 		Game.UpgradePositions[this.id] = position

@@ -15,7 +15,180 @@ declare function patchIconsheet(link: string, replacements: [
 	Game.Icon
 ][], followAlias?: boolean): Promise<void>;
 declare function resolveIcon(icon: Game.Icon): Game.Icon;
-export declare class Achievement extends Game.Achievement {
+/**
+ * The common type for a value, can be either the value or a function that returns a value with the type.
+ */
+export declare type CommonValue<T> = T | (() => T);
+/**
+ * The parameters of an injection, in order: `source`, `target`, `where`
+ */
+export declare type InjectParams = [
+	string | RegExp | null,
+	string,
+	"before" | "replace" | "after"
+];
+/**
+ * A helper function which replaces(or appends) code in a function, returning the new function, and it's eval free!
+ * @param func The source function
+ * @param source What to replace, can be null for slicing
+ * @param target What to put instead of (or before/after) the source
+ * @param where Where to insert or replace your injection
+ * @param context The optional context to use
+ * @helper
+ */
+export declare function injectCode<T extends ((...args: any[]) => any) | (new (...args: any[]) => any)>(func: T, source: string | RegExp | null, target: string, where: "before" | "replace" | "after", context?: object): T;
+/**
+ * A helper function which replaces(or appends) code in a function, returning the new function, and it's eval free!
+ * @param func The source function
+ * @param injections The injections to apply, the parameters of an injection, in order: `source`, `target`, `where`
+ * @param context The optional context to use
+ * @helper
+ */
+export declare function injectCodes<T extends ((...args: any[]) => any) | (new (...args: any[]) => any)>(func: T, injections: InjectParams[], context?: object): T;
+export declare type FriendlyHtml = CommonValue<string | HTMLElement>;
+export declare function friendlyAppendHtml(value: FriendlyHtml, element: HTMLElement, containerName?: string | null): void;
+/**
+ * Creates a cookie clicker UI button
+ * @param name Text on the button
+ * @param description The grey label describing the effects of the button
+ * @param onClick Is called on click
+ * @param type The color type of the button
+ * @param off If it is true, the button is faded out
+ * @param additionalClasses Additional classes to add to the button
+ */
+export declare function ccButton(name: FriendlyHtml, description?: FriendlyHtml | null, onClick?: null | (() => void), type?: "normal" | "warning" | "neato" | null, off?: boolean | null, additionalClasses?: string[]): HTMLDivElement;
+/**
+ * Creates a section which can be collapsed by a button
+ * Note that you need to manually refresh the menu the section is in
+ * @param keyname The id name reference to track if the
+ * @param title The title of the section, which is never hidden
+ * @param body The collapsible part of the section
+ * @param onClick Called when the collapse button is clicked
+ */
+export declare function ccHideableSection(keyname: string, title: FriendlyHtml, body: FriendlyHtml, onClick?: (() => void) | null): HTMLDivElement;
+export declare function ccSlider(name: FriendlyHtml, valueFunc: (value: number) => FriendlyHtml, value: number, bounds: [
+	number,
+	number,
+	number?
+], onChange?: (newValue: number) => void): HTMLDivElement;
+export declare abstract class ToggleBase<C = unknown> {
+	keyname: string;
+	mod: Mod;
+	constructor(keyname: string);
+	abstract render(): HTMLElement;
+	save?(this: this): C;
+	load?(this: this, save: C): void;
+}
+export declare class Button<C = unknown> extends ToggleBase<C> {
+	name: FriendlyHtml;
+	description?: FriendlyHtml | undefined;
+	onClick?: ((this: Button) => void) | undefined;
+	type?: "normal" | "warning" | "neato" | null | undefined;
+	additionalClasses: string[];
+	off?: boolean;
+	constructor(keyname: string, name: FriendlyHtml, description?: FriendlyHtml | undefined, onClick?: ((this: Button) => void) | undefined, type?: "normal" | "warning" | "neato" | null | undefined);
+	render(): HTMLDivElement;
+}
+export declare class MultiStateButton<T extends string[]> extends Button<string> {
+	states: T;
+	description?: FriendlyHtml | undefined;
+	type?: "normal" | "warning" | "neato" | null | undefined;
+	state: T[number];
+	private stateFunc?;
+	constructor(keyname: string, name: FriendlyHtml | ((state: T[number]) => FriendlyHtml), states: T, description?: FriendlyHtml | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined);
+	save(): string;
+	load(save: string): void;
+	render(): HTMLDivElement;
+}
+export declare class Slider extends ToggleBase<number> {
+	name: FriendlyHtml;
+	bounds: [
+		number,
+		number,
+		number?
+	];
+	valueFunc: (value: number) => FriendlyHtml;
+	onChange?: ((this: Slider, value: number) => void) | undefined;
+	value: number;
+	constructor(keyname: string, name: FriendlyHtml, bounds: [
+		number,
+		number,
+		number?
+	], valueFunc: (value: number) => FriendlyHtml, defaultValue?: number, onChange?: ((this: Slider, value: number) => void) | undefined);
+	save(): number;
+	load(save: number): void;
+	render(): HTMLDivElement;
+}
+export declare class ToggleButton extends MultiStateButton<[
+	"ON",
+	"OFF"
+]> {
+	description?: CommonValue<string> | undefined;
+	type?: "normal" | "warning" | "neato" | null | undefined;
+	defaultState?: boolean | undefined;
+	constructor(keyname: string, name: FriendlyHtml | ((state: boolean) => FriendlyHtml), description?: CommonValue<string> | undefined, onClick?: (this: ToggleButton) => void, type?: "normal" | "warning" | "neato" | null | undefined, defaultState?: boolean | undefined);
+	render(): HTMLDivElement;
+}
+/**
+ * An object which mods can own
+ */
+export interface OwnershipUnit {
+	owner?: Mod;
+}
+export interface ModMetadata {
+	/**
+	 * The unique keyname of the mod, can consist of
+	 * A-Z a-z 0-9 - _ . ! ~ * ' ( )
+	 */
+	keyname: string;
+	/**
+	 * The shown name of the mod, doesn't contain any restrictions
+	 */
+	name?: string;
+	/**
+	 * The icon of the mod
+	 */
+	icon?: Game.Icon;
+	/**
+	 * The version of the mod, must be in semver
+	 */
+	version: string;
+}
+export declare class Mod<C extends object = any> implements ModMetadata {
+	modFunction?: ((this: Mod<C>) => void) | undefined;
+	/**
+	 * The unique keyname of the mod, can consist of
+	 * A-Z a-z 0-9 - _ . ! ~ * ' ( )
+	 */
+	keyname: string;
+	/**
+	 * The shown name of the mod, doesn't contain any restrictions
+	 */
+	name?: string;
+	/**
+	 * The icon of the mod
+	 */
+	icon?: Game.Icon;
+	/**
+	 * The version of the mod, must be in semver
+	 */
+	version: string;
+	/**
+	 * Custom additional data which mods can read/write to
+	 */
+	custom: C | null;
+	toggles: ToggleBase[];
+	ownedUnits: OwnershipUnit[];
+	/**
+	 * Creates a mod which can have a settings UI and is only launched on Cppkies load
+	 * @param metadata The metadata of the mod, it is strongly recommended to set a name
+	 * @param modFunction The function which is called when cppkies is loaded
+	 */
+	constructor(metadata: ModMetadata, modFunction?: ((this: Mod<C>) => void) | undefined);
+	render(): HTMLElement;
+}
+export declare class Achievement extends Game.Achievement implements OwnershipUnit {
+	owner?: Mod;
 	/**
 	 * Creates an achievement
 	 * @param name The name of the achievement
@@ -90,36 +263,6 @@ export declare class ProductionAchievement extends Achievement {
 	 */
 	constructor(name: string, building: string | Game.Object, tier: number, quote?: string | null, mult?: number | null);
 }
-/**
- * The common type for a value, can be either the value or a function that returns a value with the type.
- */
-export declare type CommonValue<T> = T | (() => T);
-/**
- * The parameters of an injection, in order: `source`, `target`, `where`
- */
-export declare type InjectParams = [
-	string | RegExp | null,
-	string,
-	"before" | "replace" | "after"
-];
-/**
- * A helper function which replaces(or appends) code in a function, returning the new function, and it's eval free!
- * @param func The source function
- * @param source What to replace, can be null for slicing
- * @param target What to put instead of (or before/after) the source
- * @param where Where to insert or replace your injection
- * @param context The optional context to use
- * @helper
- */
-export declare function injectCode<T extends ((...args: unknown[]) => unknown) | (new (...args: unknown[]) => unknown)>(func: T, source: string | RegExp | null, target: string, where: "before" | "replace" | "after", context?: object): T;
-/**
- * A helper function which replaces(or appends) code in a function, returning the new function, and it's eval free!
- * @param func The source function
- * @param injections The injections to apply, the parameters of an injection, in order: `source`, `target`, `where`
- * @param context The optional context to use
- * @helper
- */
-export declare function injectCodes<T extends ((...args: unknown[]) => unknown) | (new (...args: unknown[]) => unknown)>(func: T, injections: InjectParams[], context?: object): T;
 export declare class TieredUpgrade<Tier extends string | number = string | number> extends Upgrade implements Game.TieredUpgradeClass<Tier> {
 	buildingTie: Game.Object;
 	buildingTie1: Game.Object;
@@ -138,7 +281,8 @@ export declare function isFortune(upgrade: TieredUpgrade): upgrade is TieredUpgr
 /**
  * The class for upgrades
  */
-export declare class Upgrade extends Game.Upgrade {
+export declare class Upgrade extends Game.Upgrade implements OwnershipUnit {
+	owner?: Mod;
 	/**
 	 * Creates an upgrade
 	 * @param name The name of the upgrade
@@ -238,7 +382,7 @@ export declare class MouseUpgrade<Tier extends string | number> extends Upgrade 
 	constructor(name: string, quote: string, tier: Tier, power?: number);
 }
 export declare class CookieUpgrade extends Upgrade implements Game.CookieUpgrade {
-	power: CommonValue<number>;
+	power: Upgrade["power"];
 	pool: "cookie";
 	/**
 	 * Create an upgrade which multiplier cookie production
@@ -251,7 +395,7 @@ export declare class CookieUpgrade extends Upgrade implements Game.CookieUpgrade
 	 * (Note: All cookies which aren't locked *require* you to have 1/20 of it's cost to be unlocked)
 	 * @param order Position of the cookie in the list, Most cookies have 10020 by default, cookies from boxes and special cookies have different orders.
 	 */
-	constructor(name: string, quote: string, price: CommonValue<number>, icon: Game.Icon, power: CommonValue<number>, req?: {
+	constructor(name: string, quote: string, price: CommonValue<number>, icon: Game.Icon, power: Upgrade["power"], req?: {
 		require?: string;
 		season?: string;
 		locked?: boolean;
@@ -260,9 +404,10 @@ export declare class CookieUpgrade extends Upgrade implements Game.CookieUpgrade
 /**
  * The building class for creating new buildings
  */
-export declare class Building extends Game.Object {
+export declare class Building extends Game.Object implements OwnershipUnit {
 	iconLink: string;
 	buildingLink: string;
+	owner?: Mod;
 	/**
 	 * Creates a new building and creates the hooks for it
 	 * @param name The name of the building
@@ -276,7 +421,7 @@ export declare class Building extends Game.Object {
 	 * @param foolObject The fool building to display during business day
 	 * @param buildingSpecial The building special and building debuff
 	 */
-	constructor(name: string, commonName: string, desc: string, icon: Game.Icon, bigIcon: Game.Icon, art: Game.Art, cpsFunc: (me: Building) => number, buyFunction: (this: Building) => void, foolObject: Game.FoolBuilding, buildingSpecial: [
+	constructor(name: string, commonName: string, desc: string, icon: Game.Icon, bigIcon: Game.Icon, art: Game.Art, cpsFunc: (me: Game.Object) => number, buyFunction: (this: Game.Object) => void, foolObject: Game.FoolBuilding, buildingSpecial: [
 		string,
 		string
 	]);
@@ -290,152 +435,17 @@ export declare const DEFAULT_CPS: (me: Building) => number;
  * The reccomended function to pass in building BuyFunc
  */
 export declare const DEFAULT_ONBUY: (this: Building) => void;
-export declare type FriendlyHtml = CommonValue<string | HTMLElement>;
-export declare function friendlyAppendHtml(value: FriendlyHtml, element: HTMLElement, containerName?: string | null): void;
-/**
- * Creates a cookie clicker UI button
- * @param name Text on the button
- * @param description The grey label describing the effects of the button
- * @param onClick Is called on click
- * @param type The color type of the button
- * @param off If it is true, the button is faded out
- * @param additionalClasses Additional classes to add to the button
- */
-export declare function ccButton(name: FriendlyHtml, description?: FriendlyHtml | null, onClick?: null | (() => void), type?: "normal" | "warning" | "neato" | null, off?: boolean | null, additionalClasses?: string[]): HTMLDivElement;
-/**
- * Creates a section which can be collapsed by a button
- * Note that you need to manually refresh the menu the section is in
- * @param keyname The id name reference to track if the
- * @param title The title of the section, which is never hidden
- * @param body The collapsible part of the section
- * @param onClick Called when the collapse button is clicked
- */
-export declare function ccHideableSection(keyname: string, title: FriendlyHtml, body: FriendlyHtml, onClick?: (() => void) | null): HTMLDivElement;
-export declare function ccSlider(name: FriendlyHtml, valueFunc: (value: number) => FriendlyHtml, value: number, bounds: [
-	number,
-	number,
-	number?
-], onChange?: (newValue: number) => void): HTMLDivElement;
-export declare abstract class ToggleBase<C = unknown> {
-	keyname: string;
-	mod: Mod;
-	constructor(keyname: string);
-	abstract render(): HTMLElement;
-	save?(this: this): C;
-	load?(this: this, save: C): void;
-}
-export declare class Button<C = unknown> extends ToggleBase<C> {
-	name: FriendlyHtml;
-	description?: string | HTMLElement | (() => string | HTMLElement) | undefined;
-	onClick?: ((this: Button) => void) | undefined;
-	type?: "normal" | "warning" | "neato" | null | undefined;
-	additionalClasses: string[];
-	off?: boolean;
-	constructor(keyname: string, name: FriendlyHtml, description?: string | HTMLElement | (() => string | HTMLElement) | undefined, onClick?: ((this: Button) => void) | undefined, type?: "normal" | "warning" | "neato" | null | undefined);
-	render(): HTMLDivElement;
-}
-export declare class MultiStateButton<T extends string[]> extends Button<string> {
-	states: T;
-	description?: string | HTMLElement | (() => string | HTMLElement) | undefined;
-	type?: "normal" | "warning" | "neato" | null | undefined;
-	state: T[number];
-	private stateFunc?;
-	constructor(keyname: string, name: FriendlyHtml | ((state: T[number]) => FriendlyHtml), states: T, description?: string | HTMLElement | (() => string | HTMLElement) | undefined, onClick?: (this: Button) => void, type?: "normal" | "warning" | "neato" | null | undefined);
-	save(): string;
-	load(save: string): void;
-	render(): HTMLDivElement;
-}
-export declare class Slider extends ToggleBase<number> {
-	name: FriendlyHtml;
-	bounds: [
-		number,
-		number,
-		number?
-	];
-	valueFunc: (value: number) => FriendlyHtml;
-	onChange?: ((this: Slider, value: number) => void) | undefined;
-	value: number;
-	constructor(keyname: string, name: FriendlyHtml, bounds: [
-		number,
-		number,
-		number?
-	], valueFunc: (value: number) => FriendlyHtml, defaultValue?: number, onChange?: ((this: Slider, value: number) => void) | undefined);
-	save(): number;
-	load(save: number): void;
-	render(): HTMLDivElement;
-}
-export declare class ToggleButton extends MultiStateButton<[
-	"ON",
-	"OFF"
-]> {
-	description?: string | (() => string) | undefined;
-	type?: "normal" | "warning" | "neato" | null | undefined;
-	defaultState?: boolean | undefined;
-	constructor(keyname: string, name: FriendlyHtml | ((state: boolean) => FriendlyHtml), description?: string | (() => string) | undefined, onClick?: (this: ToggleButton) => void, type?: "normal" | "warning" | "neato" | null | undefined, defaultState?: boolean | undefined);
-	render(): HTMLDivElement;
-}
-export declare let currentMod: Mod | null;
-export interface ModMetadata {
-	/**
-	 * The unique keyname of the mod, can consist of
-	 * A-Z a-z 0-9 - _ . ! ~ * ' ( )
-	 */
-	keyname: string;
-	/**
-	 * The shown name of the mod, doesn't contain any restrictions
-	 */
-	name?: string;
-	/**
-	 * The icon of the mod
-	 */
-	icon?: Game.Icon;
-	/**
-	 * The version of the mod, must be in semver
-	 */
-	version: string;
-}
-export declare class Mod<C extends object = object> implements ModMetadata {
-	modFunction?: ((this: Mod<C>) => void) | undefined;
-	/**
-	 * The unique keyname of the mod, can consist of
-	 * A-Z a-z 0-9 - _ . ! ~ * ' ( )
-	 */
-	keyname: string;
-	/**
-	 * The shown name of the mod, doesn't contain any restrictions
-	 */
-	name?: string;
-	/**
-	 * The icon of the mod
-	 */
-	icon?: Game.Icon;
-	/**
-	 * The version of the mod, must be in semver
-	 */
-	version: string;
-	/**
-	 * Custom additional data which mods can read/write to
-	 */
-	custom: C | null;
-	toggles: ToggleBase[];
-	/**
-	 * Creates a mod which can have a settings UI and is only launched on Cppkies load
-	 * @param metadata The metadata of the mod, it is strongly recommended to set a name
-	 * @param modFunction The function which is called when cppkies is loaded
-	 */
-	constructor(metadata: ModMetadata, modFunction?: ((this: Mod<C>) => void) | undefined);
-	render(): HTMLElement;
-}
 export declare const miscValues: {
 	cookieOrder: number;
 	iconLink: string;
 	buildingLink: string;
 };
-export declare class DragonAura implements Game.DragonAura {
+export declare class DragonAura implements Game.DragonAura, OwnershipUnit {
 	name: string;
 	desc: string;
 	pic: Game.Icon;
 	isCppkies: boolean;
+	owner?: Mod;
 	/**
 	 * Creates a (non-building) dragon aura
 	 * @param name Name of the dragon aura (in HTML text)
@@ -451,9 +461,10 @@ export declare class DragonAura implements Game.DragonAura {
 	 */
 	constructor(name: string, desc: string, building: string | Game.Object);
 }
-export declare class DragonLevel implements Game.DragonLevel {
+export declare class DragonLevel implements Game.DragonLevel, OwnershipUnit {
 	buy: () => void;
 	isCppkies: boolean;
+	owner?: Mod;
 	/**
 	 * The X position of the dragon icon
 	 */
@@ -495,7 +506,7 @@ export declare class DragonAuraLevel extends DragonLevel {
 	constructor(auraName: string, auraDesc: string, building: string | Game.Object);
 }
 export declare type MilkClass = typeof Game.Milk & Game.ChoiceCosmetics;
-export declare class Milk implements MilkClass {
+export declare class Milk implements MilkClass, OwnershipUnit {
 	name: string;
 	pic: string;
 	special: boolean;
@@ -504,6 +515,7 @@ export declare class Milk implements MilkClass {
 		number
 	];
 	iconLink?: string;
+	owner?: Mod;
 	/**
 	 * Creates a new milk type
 	 * @param name The name of the milk

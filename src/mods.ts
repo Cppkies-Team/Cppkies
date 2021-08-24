@@ -1,10 +1,15 @@
-import { applyAllProps } from "./helpers"
-import { mods } from "./vars"
+import { applyAllProps, hasOwnProperty } from "./helpers"
+import { mods, setCurrentMod } from "./vars"
 import { ToggleBase } from "./modUI"
 import { applyModSave, loadMod } from "./saves"
 import { deffer } from "./onLoad"
 
-export let currentMod: Mod | null = null
+/**
+ * An object which mods can own
+ */
+export interface OwnershipUnit {
+	owner?: Mod
+}
 
 export interface ModMetadata {
 	/**
@@ -26,12 +31,12 @@ export interface ModMetadata {
 	version: string
 }
 
-export class Mod<C extends object = object> implements ModMetadata {
+export class Mod<C extends object = any> implements ModMetadata {
 	/**
 	 * The unique keyname of the mod, can consist of
 	 * A-Z a-z 0-9 - _ . ! ~ * ' ( )
 	 */
-	keyname: string
+	keyname = "never-should-happen"
 	/**
 	 * The shown name of the mod, doesn't contain any restrictions
 	 */
@@ -43,14 +48,14 @@ export class Mod<C extends object = object> implements ModMetadata {
 	/**
 	 * The version of the mod, must be in semver
 	 */
-	version: string
+	version = "1.0"
 	/**
 	 * Custom additional data which mods can read/write to
 	 */
 	custom: C | null = null
 
 	toggles: ToggleBase[] = []
-
+	ownedUnits: OwnershipUnit[] = []
 	/**
 	 * Creates a mod which can have a settings UI and is only launched on Cppkies load
 	 * @param metadata The metadata of the mod, it is strongly recommended to set a name
@@ -74,11 +79,11 @@ export class Mod<C extends object = object> implements ModMetadata {
 		mods.push(this)
 		applyModSave(this, loadMod(this))
 		deffer.then(() => {
-			currentMod = this
+			setCurrentMod(this)
 			modFunction?.apply(this)
 			// Update the menu, just in case
 			Game.UpdateMenu()
-			currentMod = null
+			setCurrentMod(null)
 		})
 	}
 

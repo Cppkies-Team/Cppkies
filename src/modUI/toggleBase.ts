@@ -1,9 +1,9 @@
 import { ccHideableSection } from "../ccUI"
 import hooks from "../injects/basegame"
 import { shouldRunVersioned } from "../injects/generic"
-import { currentMod, Mod } from "../mods"
+import { Mod } from "../mods"
 import { save } from "../saves"
-import { mods } from "../vars"
+import { mods, currentMod } from "../vars"
 
 export abstract class ToggleBase<C = unknown> {
 	mod: Mod
