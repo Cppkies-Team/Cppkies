@@ -1,28 +1,4 @@
-import {
-	alias,
-	aliases,
-	extraColumnIcons,
-	extraRowIcons,
-	patchIconsheet,
-	relinkColumn,
-	relinkRow,
-	resolveAlias,
-	resolveIcon,
-	unalias,
-} from "./spritesheets"
-const icons = {
-	alias,
-	aliases,
-	extraColumnIcons,
-	extraRowIcons,
-	patchIconsheet,
-	relinkColumn,
-	relinkRow,
-	resolveAlias,
-	resolveIcon,
-	unalias,
-}
-export { icons }
+export { iconsNamespace as icons } from "./spritesheets"
 export { miscValues } from "./vars"
 export { InjectParams, injectCode, injectCodes } from "./helpers"
 export * from "./upgrades"

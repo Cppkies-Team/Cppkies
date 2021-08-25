@@ -15,6 +15,24 @@ declare function patchIconsheet(link: string, replacements: [
 	Game.Icon
 ][], followAlias?: boolean): Promise<void>;
 declare function resolveIcon(icon: Game.Icon): Game.Icon;
+declare const iconsNamespace: {
+	alias: typeof alias;
+	aliases: Record<string, string>;
+	extraColumnIcons: Record<string, [
+		number,
+		number
+	]>;
+	extraRowIcons: Record<string, [
+		number,
+		number
+	]>;
+	patchIconsheet: typeof patchIconsheet;
+	relinkColumn: typeof relinkColumn;
+	relinkRow: typeof relinkRow;
+	resolveAlias: typeof resolveAlias;
+	resolveIcon: typeof resolveIcon;
+	unalias: typeof unalias;
+};
 /**
  * The common type for a value, can be either the value or a function that returns a value with the type.
  */
@@ -822,23 +840,9 @@ export declare const onLoad: Array<() => void>;
  * A promise which is resolved on Cppkies load
  */
 export declare const deffer: Promise<void>;
-export declare const icons: {
-	alias: typeof alias;
-	aliases: Record<string, string>;
-	extraColumnIcons: Record<string, [
-		number,
-		number
-	]>;
-	extraRowIcons: Record<string, [
-		number,
-		number
-	]>;
-	patchIconsheet: typeof patchIconsheet;
-	relinkColumn: typeof relinkColumn;
-	relinkRow: typeof relinkRow;
-	resolveAlias: typeof resolveAlias;
-	resolveIcon: typeof resolveIcon;
-	unalias: typeof unalias;
+
+export {
+	iconsNamespace as icons,
 };
 
 export {};

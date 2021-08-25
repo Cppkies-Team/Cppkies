@@ -347,3 +347,16 @@ export function resolveIcon(icon: Game.Icon): Game.Icon {
 	else icon[2] = resolveAlias(icon[2])
 	return icon
 }
+
+export const iconsNamespace = {
+	alias,
+	aliases,
+	extraColumnIcons,
+	extraRowIcons,
+	patchIconsheet,
+	relinkColumn,
+	relinkRow,
+	resolveAlias,
+	resolveIcon,
+	unalias,
+}
