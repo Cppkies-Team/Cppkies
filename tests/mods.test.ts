@@ -61,9 +61,6 @@ it("Should load data on reload", async () => {
 		testNumber
 	)
 
-	// Wait for save
-	await waitFor(1500)
-
 	await preparePage(page)
 
 	expect(
@@ -96,6 +93,33 @@ it("Should create ownership links for ownable units", async () => {
 								[0, 0]
 							)
 							res(upgrade.owner === this)
+						}
+					)
+				})
+		)
+	).toBe(true)
+})
+
+it("Should save units owned by mods to the mod's subsection of the save", async () => {
+	expect(
+		await page.evaluate(
+			() =>
+				new Promise<boolean>(res => {
+					new Cppkies.Mod(
+						{ keyname: "ownershipsavetest", version: "1.0.0" },
+						function() {
+							const upgrade = new Cppkies.Upgrade(
+								"Cppkies 0.4",
+								"I wonder if this will be a thing",
+								0,
+								[0, 0]
+							)
+							Game.Unlock(upgrade.name)
+							Game.WriteSave()
+							res(
+								Cppkies.save.mods.ownershipsavetest?.upgrades?.["Cppkies 0.4"]
+									.unlocked
+							)
 						}
 					)
 				})

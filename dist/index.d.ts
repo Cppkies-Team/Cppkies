@@ -154,8 +154,8 @@ export interface ModMetadata {
 	 */
 	version: string;
 }
-export declare class Mod<C extends object = any> implements ModMetadata {
-	modFunction?: ((this: Mod<C>) => void) | undefined;
+export declare class Mod<C extends object = object> implements ModMetadata {
+	modFunction?: (<T extends Mod<any> = Mod<C>>(this: T) => void) | undefined;
 	/**
 	 * The unique keyname of the mod, can consist of
 	 * A-Z a-z 0-9 - _ . ! ~ * ' ( )
@@ -184,7 +184,7 @@ export declare class Mod<C extends object = any> implements ModMetadata {
 	 * @param metadata The metadata of the mod, it is strongly recommended to set a name
 	 * @param modFunction The function which is called when cppkies is loaded
 	 */
-	constructor(metadata: ModMetadata, modFunction?: ((this: Mod<C>) => void) | undefined);
+	constructor(metadata: ModMetadata, modFunction?: (<T extends Mod<any> = Mod<C>>(this: T) => void) | undefined);
 	render(): HTMLElement;
 }
 export declare class Achievement extends Game.Achievement implements OwnershipUnit {
@@ -806,10 +806,10 @@ export interface DragonSave {
  * The save type for a mod
  */
 export interface ModSave {
-	buildings: Record<string, BuildingSave>;
-	upgrades: Record<string, UpgradeSave>;
-	achievements: Record<string, AchievementSave>;
-	ui: Record<string, unknown>;
+	buildings?: Record<string, BuildingSave>;
+	upgrades?: Record<string, UpgradeSave>;
+	achievements?: Record<string, AchievementSave>;
+	ui?: Record<string, unknown>;
 	custom: object | null;
 }
 /**

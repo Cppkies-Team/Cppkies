@@ -31,7 +31,7 @@ export interface ModMetadata {
 	version: string
 }
 
-export class Mod<C extends object = any> implements ModMetadata {
+export class Mod<C extends object = object> implements ModMetadata {
 	/**
 	 * The unique keyname of the mod, can consist of
 	 * A-Z a-z 0-9 - _ . ! ~ * ' ( )
@@ -63,7 +63,7 @@ export class Mod<C extends object = any> implements ModMetadata {
 	 */
 	constructor(
 		metadata: ModMetadata,
-		public modFunction?: (this: Mod<C>) => void
+		public modFunction?: <T extends Mod<any> = Mod<C>>(this: T) => void
 	) {
 		applyAllProps(this, metadata)
 		const ogMod = mods.find(val => val.keyname === metadata.keyname)

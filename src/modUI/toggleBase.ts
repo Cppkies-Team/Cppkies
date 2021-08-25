@@ -14,7 +14,10 @@ export abstract class ToggleBase<C = unknown> {
 			)
 		currentMod.toggles.push(this)
 		this.mod = currentMod
-		if (this.load && save.mods[this.mod.keyname].ui[this.keyname] !== undefined)
+		if (
+			this.load &&
+			save.mods[this.mod.keyname]?.ui?.[this.keyname] !== undefined
+		)
 			// @ts-expect-error We are trusting the save here
 			this.load(save.mods[this.mod.keyname].ui[this.keyname])
 	}
