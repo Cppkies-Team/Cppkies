@@ -17,3 +17,29 @@ export function shouldRunVersioned(hookVersion: number): boolean {
 		hookVersion > window.__INTERNAL_CPPKIES_HOOKS__.hooksVersion
 	)
 }
+
+let currentMinigame: Game.Minigame | undefined
+
+export function setMinigameInjection(mg?: Game.Minigame): void {
+	currentMinigame = mg
+}
+
+export class MinigameInjection extends Injection {
+	runHook(): void {
+		if (
+			currentMinigame &&
+			shouldRunVersionedMinigame(currentMinigame, this.hookVersion)
+		)
+			this.func?.()
+	}
+}
+
+export function shouldRunVersionedMinigame(
+	mg: Game.Minigame,
+	hookVersion: number
+): boolean {
+	return (
+		!window.__INTERNAL_CPPKIES_HOOKS__.injectedMinigames.has(mg.name) ||
+		hookVersion > window.__INTERNAL_CPPKIES_HOOKS__.hooksVersion
+	)
+}

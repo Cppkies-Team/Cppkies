@@ -83,7 +83,7 @@ export function injectCode<
 	source: string | RegExp | null,
 	target: string,
 	where: "before" | "replace" | "after",
-	context: object = {}
+	context: Record<string, any> = {}
 ): T {
 	const newFunc = Function(
 		...Object.keys(context),

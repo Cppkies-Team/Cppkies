@@ -2,7 +2,7 @@ import { applyAllProps, hasOwnProperty } from "./helpers"
 import { mods, setCurrentMod } from "./vars"
 import { ToggleBase } from "./modUI"
 import { applyModSave, loadMod } from "./saves"
-import { deffer } from "./onLoad"
+import { deffer } from "./loadValues"
 
 /**
  * An object which mods can own

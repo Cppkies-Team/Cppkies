@@ -54,7 +54,7 @@ export declare type InjectParams = [
  * @param context The optional context to use
  * @helper
  */
-export declare function injectCode<T extends ((...args: any[]) => any) | (new (...args: any[]) => any)>(func: T, source: string | RegExp | null, target: string, where: "before" | "replace" | "after", context?: object): T;
+export declare function injectCode<T extends ((...args: any[]) => any) | (new (...args: any[]) => any)>(func: T, source: string | RegExp | null, target: string, where: "before" | "replace" | "after", context?: Record<string, any>): T;
 /**
  * A helper function which replaces(or appends) code in a function, returning the new function, and it's eval free!
  * @param func The source function
@@ -830,16 +830,32 @@ export interface ModSave {
 	ui?: Record<string, unknown>;
 	custom: object | null;
 }
+export declare function setLoaded(): void;
 /**
  * An array of functions to call on Cppkies load
  * Functions pushed here after Cppkies has loaded are executed immediately
  * It is reccomended to use `Cppkies.deffer` instead
  */
 export declare const onLoad: Array<() => void>;
+export declare let defferResolve: (() => void) | undefined;
 /**
  * A promise which is resolved on Cppkies load
  */
 export declare const deffer: Promise<void>;
+export declare class Spirit implements Game.PantheonSpirit {
+	icon: Game.Icon;
+	quote: string;
+	activeDescFunc?: () => string;
+	desc1?: string;
+	desc2?: string;
+	desc3?: string;
+	descAfter?: string;
+	descBefore?: string;
+	id: number;
+	name: string;
+	slot: 0 | 2 | 1 | -1;
+	constructor(spiritName: string, spiritTitle: string, icon: Game.Icon, descriptions: Partial<Record<1 | 2 | 3 | "before" | "after", string> & Record<"active", () => string>>, quote: string, fullName?: string);
+}
 
 export {
 	iconsNamespace as icons,

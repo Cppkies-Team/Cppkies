@@ -104,6 +104,7 @@ declare global {
 			hiddenMilkMult: number
 			createBuildingHooks: typeof createBuildingHooks
 			hooksVersion: number
+			injectedMinigames: Set<string>
 		}
 	}
 }
@@ -112,7 +113,7 @@ declare global {
  * Creates the function hooks for base game
  * @returns A promise
  */
-export function main(): Promise<Hooks> {
+export function injectBasegame(): Promise<Hooks> {
 	return new Promise(resolve => {
 		if (window.__INTERNAL_CPPKIES_HOOKS__) {
 			// The hooks with the lower version target the greater ones, if this is the lower version hooks, just return the good one
@@ -411,6 +412,7 @@ __INTERNAL_CPPKIES_HOOKS__.createBuildingHooks(this);\n`,
 			hiddenMilkMult: 1,
 			createBuildingHooks,
 			hooksVersion: HOOKS_VERSION,
+			injectedMinigames: new Set(),
 		}
 		resolve(hooks)
 	})

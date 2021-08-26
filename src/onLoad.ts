@@ -1,31 +1,11 @@
-import { main } from "./injects/basegame"
+import { injectBasegame } from "./injects/basegame"
 import { prod } from "../isprod.json"
 import { exportSave, importSave } from "./saves"
 import { createBuildingHooks } from "./injects/buildings"
 
-let loaded = false
+import { defferResolve, setLoaded, onLoad } from "./loadValues"
 
 const isFirstCppkies = !window.__INTERNAL_CPPKIES_HOOKS__
-
-/**
- * An array of functions to call on Cppkies load
- * Functions pushed here after Cppkies has loaded are executed immediately
- * It is reccomended to use `Cppkies.deffer` instead
- */
-export const onLoad: Array<() => void> = new Proxy([], {
-	set: (target, key, value): boolean => {
-		if (typeof value === "function" && loaded) value()
-		else target[(key as unknown) as number] = value as never
-		return true
-	},
-})
-
-let defferResolve: (() => void) | undefined
-
-/**
- * A promise which is resolved on Cppkies load
- */
-export const deffer = new Promise<void>(res => (defferResolve = res))
 
 if (isFirstCppkies && Game.UpdateMenu.toString().includes("Cppkies")) {
 	Game.Prompt(
@@ -40,8 +20,8 @@ Sadly, due to internal changes, Cppkies 0.3 mods are incompatible with Cppkies 0
 	)
 } else {
 	for (const building of Game.ObjectsById) createBuildingHooks(building)
-	main().then(() => {
-		loaded = true
+	injectBasegame().then(() => {
+		setLoaded()
 		if (isFirstCppkies) {
 			Game.Notify("Cppkies loaded!", "", [32, prod ? 17 : 21], 1.5)
 
@@ -76,3 +56,5 @@ Sadly, due to internal changes, Cppkies 0.3 mods are incompatible with Cppkies 0
 		defferResolve?.()
 	})
 }
+
+import "./injects/pantheon"
