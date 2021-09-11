@@ -1,12 +1,16 @@
 import { CommonValue, toSentenseCase } from "../helpers"
 import hooks from "../injects/basegame"
 import { shouldRunVersionedMinigame } from "../injects/generic"
-import { save } from "../saves"
+import { Mod, OwnershipUnit } from "../mods"
+import { customLoad, save } from "../saves"
+import { setUnitOwner } from "../vars"
 import { minigamePromises } from "./minigamePromises"
 
 let mg: typeof Game.Objects.Temple.minigame | undefined
 
 minigamePromises.Temple.then(() => (mg = Game.Objects.Temple.minigame))
+
+export const customSpirits: Spirit[] = []
 
 /**
  * Same as mg.slotGod, but also changes the visual state
@@ -66,7 +70,7 @@ function attachTooltip(
 	element.addEventListener("mouseout", () => (Game.tooltip.shouldHide = 1))
 }
 
-export class Spirit implements Game.PantheonSpirit {
+export class Spirit implements Game.PantheonSpirit, OwnershipUnit {
 	activeDescFunc?: () => string
 	desc1?: string
 	desc2?: string
@@ -77,6 +81,7 @@ export class Spirit implements Game.PantheonSpirit {
 	name: string
 	slot: 0 | 2 | 1 | -1 = -1
 	quote: string
+	owner?: Mod
 	constructor(
 		spiritName: string,
 		spiritTitle: string,
@@ -89,6 +94,7 @@ export class Spirit implements Game.PantheonSpirit {
 		fullName?: string
 	) {
 		if (!mg) throw new Error("The pantheon minigame has not loaded yet!")
+		setUnitOwner(this)
 		if (quote) this.quote = quote
 		// @ts-expect-error I messed up the typings, here
 		else this.quote = undefined
@@ -185,5 +191,14 @@ if (shouldRunVersionedMinigame("Pantheon", 1)) {
 	hooks.on("reset", () => {
 		if (!save.minigames?.pantheon) return
 		save.minigames.pantheon.slots = []
+	})
+	customLoad.push(() => {
+		if (!mg || !save.minigames?.pantheon) return
+
+		for (const slot in mg.slotNames) {
+			const savedSlot = save.minigames.pantheon.slots[slot]
+			if (savedSlot !== "sync" && mg.godsById[savedSlot] instanceof Spirit)
+				slotGod(mg.godsById[savedSlot], parseInt(slot) as -1 | 0 | 1 | 2)
+		}
 	})
 }

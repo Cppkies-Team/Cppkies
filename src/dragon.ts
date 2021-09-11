@@ -1,5 +1,5 @@
 import { hasOwnProperty } from "./helpers"
-import { save, VANILLA_DRAGON_LEVEL_AMOUNT } from "./saves"
+import { customLoad, save, VANILLA_DRAGON_LEVEL_AMOUNT } from "./saves"
 import { resolveIcon } from "./spritesheets"
 import hooks from "./injects/basegame"
 import { shouldRunVersioned } from "./injects/generic"
@@ -217,5 +217,22 @@ if (shouldRunVersioned(1)) {
 		if (pic.tab === "dragon" && level instanceof DragonLevel)
 			pic.pic = level.picLink ?? pic.pic
 		return pic
+	})
+	customLoad.push(() => {
+		if (
+			save.dragon.level !== "sync" &&
+			save.dragon.level <= Game.dragonLevels.length - 1
+		)
+			Game.dragonLevel = save.dragon.level
+		if (
+			save.dragon.auras[0] !== "sync" &&
+			save.dragon.auras[0] <= Object.keys(Game.dragonAuras).length - 1
+		)
+			Game.dragonAura = save.dragon.auras[0]
+		if (
+			save.dragon.auras[1] !== "sync" &&
+			save.dragon.auras[1] <= Object.keys(Game.dragonAuras).length - 1
+		)
+			Game.dragonAura2 = save.dragon.auras[1]
 	})
 }

@@ -19,6 +19,11 @@ export const SAVE_VER = 3 as const
 export interface SpecififcMinigameSaves {}
 
 /**
+ * Called when loading a Cppkies save, used internally for treeshakable saving
+ */
+export const customLoad: (() => void)[] = []
+
+/**
  * The save type for Cppkies
  */
 export interface SaveType {
@@ -276,26 +281,6 @@ interface DragonSave {
 	auras: [number | "sync", number | "sync"]
 }
 
-// Dragon saving stuff is in dragon.ts
-
-export function loadDragon(): void {
-	if (
-		save.dragon.level !== "sync" &&
-		save.dragon.level <= Game.dragonLevels.length - 1
-	)
-		Game.dragonLevel = save.dragon.level
-	if (
-		save.dragon.auras[0] !== "sync" &&
-		save.dragon.auras[0] <= Object.keys(Game.dragonAuras).length - 1
-	)
-		Game.dragonAura = save.dragon.auras[0]
-	if (
-		save.dragon.auras[1] !== "sync" &&
-		save.dragon.auras[1] <= Object.keys(Game.dragonAuras).length - 1
-	)
-		Game.dragonAura2 = save.dragon.auras[1]
-}
-
 //#endregion
 
 // #region Mod
@@ -358,9 +343,9 @@ export function loadAll(): void {
 			Game.AchievementsOwned++
 	}
 
-	loadDragon()
-
 	for (const mod of mods) applyModSave(mod, loadMod(mod))
+
+	for (const customFunc of customLoad) customFunc()
 }
 /**
  * Saves everything

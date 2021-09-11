@@ -849,11 +849,12 @@ export declare const deffer: Promise<void>;
  * An object which has promises for when a building minigame loads
  */
 export declare const minigamePromises: Record<string, Promise<void>>;
+export declare const customSpirits: Spirit[];
 /**
  * Same as mg.slotGod, but also changes the visual state
  */
 export declare function slotGod(god: Spirit, slot: -1 | 0 | 1 | 2): void;
-export declare class Spirit implements Game.PantheonSpirit {
+export declare class Spirit implements Game.PantheonSpirit, OwnershipUnit {
 	icon: Game.Icon;
 	activeDescFunc?: () => string;
 	desc1?: string;
@@ -865,6 +866,7 @@ export declare class Spirit implements Game.PantheonSpirit {
 	name: string;
 	slot: 0 | 2 | 1 | -1;
 	quote: string;
+	owner?: Mod;
 	constructor(spiritName: string, spiritTitle: string, icon: Game.Icon, descriptions: Partial<Record<1 | 2 | 3 | "before" | "after", string> & Record<"active", () => string>>, quote?: string, fullName?: string);
 }
 export interface PantheonSave {
