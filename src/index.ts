@@ -22,6 +22,6 @@ declare global {
 }
 
 export * from "./loadValues"
-export * from "./minigames/pantheon"
+export * from "./minigames"
 
 import "./onLoad"

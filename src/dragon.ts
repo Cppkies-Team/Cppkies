@@ -149,7 +149,6 @@ export class DragonAuraLevel extends DragonLevel {
 			null,
 			`Train ${auraName}<br/><small>Aura : ${auraDesc}</small>`,
 			`100 ${buildingObject.plural}`,
-			// Grr typescript
 			() => buildingObject.amount >= 100,
 			() => buildingObject.sacrifice(100)
 		)

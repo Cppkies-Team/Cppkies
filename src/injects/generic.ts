@@ -35,11 +35,14 @@ export class MinigameInjection extends Injection {
 }
 
 export function shouldRunVersionedMinigame(
-	mg: Game.Minigame,
+	mg: Game.Minigame | string,
 	hookVersion: number
 ): boolean {
 	return (
-		!window.__INTERNAL_CPPKIES_HOOKS__.injectedMinigames.has(mg.name) ||
+		!window.__INTERNAL_CPPKIES_HOOKS__ ||
+		!window.__INTERNAL_CPPKIES_HOOKS__.injectedMinigames.has(
+			typeof mg === "object" ? mg.name : mg
+		) ||
 		hookVersion > window.__INTERNAL_CPPKIES_HOOKS__.hooksVersion
 	)
 }

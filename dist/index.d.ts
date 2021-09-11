@@ -775,6 +775,8 @@ export declare type Hooks = ReturnableEventEmitter<{
 }>;
 export declare const hooks: Hooks;
 declare const SAVE_VER: 3;
+export interface SpecififcMinigameSaves {
+}
 /**
  * The save type for Cppkies
  */
@@ -783,6 +785,7 @@ export interface SaveType {
 	mods: Record<string, ModSave>;
 	foreign: ModSave;
 	dragon: DragonSave;
+	minigames?: SpecififcMinigameSaves & Record<string, object>;
 }
 export declare const save: SaveType;
 /**
@@ -842,9 +845,16 @@ export declare let defferResolve: (() => void) | undefined;
  * A promise which is resolved on Cppkies load
  */
 export declare const deffer: Promise<void>;
+/**
+ * An object which has promises for when a building minigame loads
+ */
+export declare const minigamePromises: Record<string, Promise<void>>;
+/**
+ * Same as mg.slotGod, but also changes the visual state
+ */
+export declare function slotGod(god: Spirit, slot: -1 | 0 | 1 | 2): void;
 export declare class Spirit implements Game.PantheonSpirit {
 	icon: Game.Icon;
-	quote: string;
 	activeDescFunc?: () => string;
 	desc1?: string;
 	desc2?: string;
@@ -854,7 +864,14 @@ export declare class Spirit implements Game.PantheonSpirit {
 	id: number;
 	name: string;
 	slot: 0 | 2 | 1 | -1;
-	constructor(spiritName: string, spiritTitle: string, icon: Game.Icon, descriptions: Partial<Record<1 | 2 | 3 | "before" | "after", string> & Record<"active", () => string>>, quote: string, fullName?: string);
+	quote: string;
+	constructor(spiritName: string, spiritTitle: string, icon: Game.Icon, descriptions: Partial<Record<1 | 2 | 3 | "before" | "after", string> & Record<"active", () => string>>, quote?: string, fullName?: string);
+}
+export interface PantheonSave {
+	slots: (number | "sync")[];
+}
+export interface SpecififcMinigameSaves {
+	pantheon?: PantheonSave;
 }
 
 export {

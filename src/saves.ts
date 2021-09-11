@@ -14,6 +14,10 @@ import { compressToUTF16, decompressFromUTF16 } from "./lib/lz-string"
 export const VANILLA_DRAGON_LEVEL_AMOUNT = Game.dragonLevels.length + 0
 
 export const SAVE_VER = 3 as const
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface SpecififcMinigameSaves {}
+
 /**
  * The save type for Cppkies
  */
@@ -22,6 +26,7 @@ export interface SaveType {
 	mods: Record<string, ModSave>
 	foreign: ModSave
 	dragon: DragonSave
+	minigames?: SpecififcMinigameSaves & Record<string, object>
 }
 
 function createDefaultSaveFragment(name: "building"): BuildingSave
@@ -492,6 +497,19 @@ export function applySave(newSave: unknown): SaveType {
 				if (typeof aura === "number" || aura === "sync")
 					virtualSave.dragon.auras[i] = aura
 			}
+		}
+	}
+	if (
+		hasOwnProperty(newSave, "minigames") &&
+		typeof newSave.minigames === "object" &&
+		newSave.minigames !== null &&
+		assume<Record<string, unknown>>(newSave.minigames)
+	) {
+		virtualSave.minigames = {}
+		for (const minigameName in newSave.minigames) {
+			const minigame = newSave.minigames[minigameName]
+			if (typeof minigame === "object" && minigame !== null)
+				virtualSave.minigames[minigameName] = minigame
 		}
 	}
 	return virtualSave

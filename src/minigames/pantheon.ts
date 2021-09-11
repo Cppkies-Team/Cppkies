@@ -1,4 +1,57 @@
 import { CommonValue, toSentenseCase } from "../helpers"
+import hooks from "../injects/basegame"
+import { shouldRunVersionedMinigame } from "../injects/generic"
+import { save } from "../saves"
+import { minigamePromises } from "./minigamePromises"
+
+let mg: typeof Game.Objects.Temple.minigame | undefined
+
+minigamePromises.Temple.then(() => (mg = Game.Objects.Temple.minigame))
+
+/**
+ * Same as mg.slotGod, but also changes the visual state
+ */
+export function slotGod(god: Spirit, slot: -1 | 0 | 1 | 2): void {
+	if (!mg) throw new Error("The pantheon minigame has not loaded yet!")
+	const slottedGod = document.querySelector<HTMLElement>("#templeGod" + god.id)
+	if (!slottedGod) return
+	slottedGod.className = "ready templeGod titleFont"
+	slottedGod.style.transform = "none"
+	if (slot !== -1) {
+		const previousGod = mg.godsById[mg.slot[slot]],
+			templeSlot = document.querySelector("#templeSlot" + slot)
+		if (previousGod) {
+			const previousGodDiv = document.querySelector<HTMLElement>(
+				"#templeGod" + previousGod.id
+			)
+			if (!previousGodDiv) return
+			if (god.slot !== -1)
+				document
+					.querySelector("#templeSlot" + god.slot)
+					?.appendChild(previousGodDiv)
+			else {
+				const previousGodPlaceholder = document.querySelector(
+					"#templeGodPlaceholder" + previousGod.id
+				)
+				if (previousGodPlaceholder)
+					previousGodPlaceholder.parentNode?.insertBefore(
+						previousGodDiv,
+						previousGodPlaceholder
+					)
+			}
+		}
+		if (templeSlot) templeSlot.appendChild(slottedGod)
+	} else {
+		const godPlaceholder = document.querySelector<HTMLElement>(
+			"#templeGodPlaceholder" + god.id
+		)
+		if (godPlaceholder) {
+			godPlaceholder.parentNode?.insertBefore(slottedGod, godPlaceholder)
+			godPlaceholder.style.display = "none"
+		}
+	}
+	mg.slotGod(god, slot)
+}
 
 function attachTooltip(
 	element: HTMLElement,
@@ -23,6 +76,7 @@ export class Spirit implements Game.PantheonSpirit {
 	id: number
 	name: string
 	slot: 0 | 2 | 1 | -1 = -1
+	quote: string
 	constructor(
 		spiritName: string,
 		spiritTitle: string,
@@ -31,12 +85,13 @@ export class Spirit implements Game.PantheonSpirit {
 			Record<1 | 2 | 3 | "before" | "after", string> &
 				Record<"active", () => string>
 		>,
-		public quote: string,
+		quote?: string,
 		fullName?: string
 	) {
-		if (!Game.Objects.Temple.minigameLoaded)
-			throw new Error("The pantheon minigame has not loaded yet!")
-		const mg = Game.Objects.Temple.minigame
+		if (!mg) throw new Error("The pantheon minigame has not loaded yet!")
+		if (quote) this.quote = quote
+		// @ts-expect-error I messed up the typings, here
+		else this.quote = undefined
 		if (fullName) this.name = fullName
 		else
 			this.name = `${toSentenseCase(spiritName)}, Spirit of ${toSentenseCase(
@@ -72,10 +127,10 @@ export class Spirit implements Game.PantheonSpirit {
 		godDragDiv.classList.add("templeSlotDrag")
 		godDragDiv.id = "templeGodDrag" + this.id
 		godDragDiv.addEventListener("mousedown", ev => {
-			if (ev.button === 0) mg.dragGod(this)
+			if (ev.button === 0 && mg) mg.dragGod(this)
 		})
 		godDragDiv.addEventListener("mouseup", ev => {
-			if (ev.button === 0) mg.dropGod()
+			if (ev.button === 0 && mg) mg.dropGod()
 		})
 		godDiv.appendChild(godDragDiv)
 		const godPlaceholder = document.createElement("div")
@@ -86,5 +141,49 @@ export class Spirit implements Game.PantheonSpirit {
 			godsDiv.appendChild(godDiv)
 			godsDiv.appendChild(godPlaceholder)
 		}
+		if (save.minigames?.pantheon)
+			for (const slot in mg.slotNames)
+				if (save.minigames.pantheon.slots[slot] === this.id)
+					slotGod(this, parseInt(slot) as 0 | 1 | 2)
 	}
+}
+
+export interface PantheonSave {
+	slots: (number | "sync")[]
+}
+
+declare module "../saves" {
+	export interface SpecififcMinigameSaves {
+		pantheon?: PantheonSave
+	}
+}
+
+// This is like the same thing as dragon auras
+if (shouldRunVersionedMinigame("Pantheon", 1)) {
+	hooks.on("preSave", () => {
+		if (!mg) return
+		if (!save.minigames) save.minigames = {}
+		if (!save.minigames.pantheon) save.minigames.pantheon = { slots: [] }
+		for (const slot in mg.slotNames) {
+			if (mg.slot[slot] !== -1) save.minigames.pantheon.slots[slot] = "sync"
+			if (mg.godsById[mg.slot[slot]] instanceof Spirit) {
+				save.minigames.pantheon.slots[slot] = mg.slot[slot]
+				mg.slot[slot] = -1
+			}
+		}
+	})
+	hooks.on("postSave", () => {
+		if (!mg) return
+		if (!save.minigames?.pantheon) return
+		for (const slot in mg.slotNames) {
+			const slotSaved = save.minigames.pantheon.slots[slot]
+			if (slotSaved !== undefined && slotSaved !== "sync")
+				mg.slot[slot] = slotSaved
+		}
+	})
+
+	hooks.on("reset", () => {
+		if (!save.minigames?.pantheon) return
+		save.minigames.pantheon.slots = []
+	})
 }
