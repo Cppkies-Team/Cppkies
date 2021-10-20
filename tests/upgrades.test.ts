@@ -1,11 +1,9 @@
-import preparePage from "./setup-page"
-import { waitFor } from "./setup-page"
+import setupPage from "./setup-page"
+import { test, expect } from "@playwright/test"
 
-beforeAll(async () => {
-	await preparePage(page)
-})
+test.beforeEach(({ page }) => setupPage(page))
 
-it("Should be able to create upgrades", async () => {
+test("Should be able to create upgrades", async ({ page }) => {
 	expect(
 		await page.evaluate(
 			() =>
@@ -19,7 +17,7 @@ it("Should be able to create upgrades", async () => {
 	).toBeTruthy()
 })
 
-it("Should load upgrade data on reload", async () => {
+test("Should load upgrade data on reload", async ({ page }) => {
 	await page.evaluate(() => {
 		new Cppkies.Upgrade(
 			"Test save upgrade",
@@ -30,10 +28,7 @@ it("Should load upgrade data on reload", async () => {
 		Game.WriteSave()
 	})
 
-	// Wait for save
-	await waitFor(1000 * 1.5)
-
-	await preparePage(page)
+	await setupPage(page)
 
 	expect(
 		await page.evaluate(
@@ -48,7 +43,7 @@ it("Should load upgrade data on reload", async () => {
 	).toBeTruthy()
 })
 
-it("Should be able to convert string to building", async () => {
+test("Should be able to convert string to building", async ({ page }) => {
 	// Choose a random id between 0 and 10
 	const id = Math.floor(Math.random() * 10)
 	expect(
@@ -65,7 +60,9 @@ it("Should be able to convert string to building", async () => {
 	).toBe(id)
 })
 
-it("Should be able to correctly assign grandma upgrades to buildings", async () => {
+test("Should be able to correctly assign grandma upgrades to buildings", async ({
+	page,
+}) => {
 	expect(
 		await page.evaluate(() => {
 			new Cppkies.GrandmaSynergy("Tiered test", "Oh hi", "Grandma")

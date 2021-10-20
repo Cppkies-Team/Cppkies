@@ -1,12 +1,14 @@
 {
 	"compilerOptions": {
 		"module": "CommonJS",
-		"lib": ["DOM", "ES2015", "ES2015.Promise"],
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
 		"declaration": true,
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
-		"sourceMap": true
-	}
+		"sourceMap": true,
+		"incremental": true,
+		"strict": true
+	},
+	"include": [".", "../node_modules"]
 }

@@ -1,7 +1,8 @@
-import preparePage, { waitFor } from "./setup-page"
+import setupPage from "./setup-page"
+import { test, expect } from "@playwright/test"
 
-beforeAll(async () => {
-	await preparePage(page)
+test.beforeEach(async ({ page }) => {
+	await setupPage(page)
 	await page.evaluate(() => {
 		Game.RuinTheFun(false)
 		Game.Objects.Temple.buy(1)
@@ -10,7 +11,7 @@ beforeAll(async () => {
 	})
 })
 
-it("Should be able to create pantheon spirits", async () => {
+test("Should be able to create pantheon spirits", async ({ page }) => {
 	expect(
 		await page.evaluate(
 			() =>
@@ -24,9 +25,11 @@ it("Should be able to create pantheon spirits", async () => {
 	).toBeTruthy()
 })
 
-it("Should load spirit save data data on reload", async () => {
+// TODO Store pantheon names (and dragon auras (but not levels, it makes sense to linearly store them)) instead of in-game numeric IDs
+
+test("Should load spirit save data data on reload", async ({ page }) => {
 	// Reset the page to reset the ID
-	await preparePage(page)
+	await setupPage(page)
 	await page.evaluate(() => {
 		Game.RuinTheFun(false)
 		Game.Objects.Temple.buy(1)
@@ -45,10 +48,7 @@ it("Should load spirit save data data on reload", async () => {
 		Game.WriteSave()
 	})
 
-	// Wait for save
-	await waitFor(1500)
-
-	await preparePage(page)
+	await setupPage(page)
 
 	await page.evaluate(() => {
 		Game.LoadMinigames()

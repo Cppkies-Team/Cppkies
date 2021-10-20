@@ -1,10 +1,9 @@
-import preparePage, { waitFor } from "./setup-page"
+import setupPage from "./setup-page"
+import { test, expect } from "@playwright/test"
 
-beforeAll(async () => {
-	await preparePage(page)
-})
+test.beforeEach(async ({ page }) => setupPage(page))
 
-it("Should be able to create achievements", async () => {
+test("Should be able to create achievements", async ({ page }) => {
 	expect(
 		await page.evaluate(
 			() =>
@@ -17,7 +16,7 @@ it("Should be able to create achievements", async () => {
 	).toBeTruthy()
 })
 
-it("Should load achievement data on reload", async () => {
+test("Should load achievement data on reload", async ({ page }) => {
 	await page.evaluate(() => {
 		new Cppkies.Achievement(
 			"Test save achievement",
@@ -27,10 +26,7 @@ it("Should load achievement data on reload", async () => {
 		Game.WriteSave()
 	})
 
-	// Wait for save
-	await waitFor(1000 * 1.5)
-
-	await preparePage(page)
+	await setupPage(page)
 
 	expect(
 		await page.evaluate(
@@ -44,7 +40,7 @@ it("Should load achievement data on reload", async () => {
 	).toBeTruthy()
 })
 
-it("Should be able to create special tiered", async () => {
+test("Should be able to create special tiered", async ({ page }) => {
 	expect(
 		await page.evaluate(() => {
 			const achievement = new Cppkies.TieredAchievement(

@@ -1,10 +1,9 @@
-import preparePage, { waitFor } from "./setup-page"
+import setupPage from "./setup-page"
+import { test, expect } from "@playwright/test"
 
-beforeAll(async () => {
-	await preparePage(page)
-})
+test.beforeEach(({ page }) => setupPage(page))
 
-it("Should be able to create mods", async () => {
+test("Should be able to create mods", async ({ page }) => {
 	expect(
 		await page.evaluate(
 			() =>
@@ -14,7 +13,7 @@ it("Should be able to create mods", async () => {
 	).toBeTruthy()
 })
 
-it("Should be able to warn and error on duplicate mod", async () => {
+test("Should be able to warn and error on duplicate mod", async ({ page }) => {
 	// Override warns
 	expect(
 		(
@@ -38,13 +37,14 @@ it("Should be able to warn and error on duplicate mod", async () => {
 				new Cppkies.Mod({ keyname: "duplicate2", version: "1.2.3" })
 				new Cppkies.Mod({ keyname: "duplicate2", version: "1.2.4" })
 			} catch (err) {
-				return err.message
+				if (err instanceof Error) return err.message
 			}
+			return "Something really bad is happening here"
 		})
 	).toBe("You are trying to load multiple versions of the same mod")
 })
 
-it("Should load data on reload", async () => {
+test("Should load data on reload", async ({ page }) => {
 	const testNumber = Math.random()
 	await page.evaluate(
 		testNumber =>
@@ -61,7 +61,7 @@ it("Should load data on reload", async () => {
 		testNumber
 	)
 
-	await preparePage(page)
+	await setupPage(page)
 
 	expect(
 		await await page.evaluate(
@@ -78,7 +78,7 @@ it("Should load data on reload", async () => {
 	).toBe(testNumber)
 })
 
-it("Should create ownership links for ownable units", async () => {
+test("Should create ownership links for ownable units", async ({ page }) => {
 	expect(
 		await page.evaluate(
 			() =>
@@ -100,7 +100,9 @@ it("Should create ownership links for ownable units", async () => {
 	).toBe(true)
 })
 
-it("Should save units owned by mods to the mod's subsection of the save", async () => {
+test("Should save units owned by mods to the mod's subsection of the save", async ({
+	page,
+}) => {
 	expect(
 		await page.evaluate(
 			() =>
@@ -118,7 +120,7 @@ it("Should save units owned by mods to the mod's subsection of the save", async 
 							Game.WriteSave()
 							res(
 								Cppkies.save.mods.ownershipsavetest?.upgrades?.["Cppkies 0.4"]
-									.unlocked
+									.unlocked || false
 							)
 						}
 					)

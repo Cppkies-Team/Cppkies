@@ -1,10 +1,9 @@
-import preparePage, { waitFor } from "./setup-page"
+import setupPage from "./setup-page"
+import { test, expect } from "@playwright/test"
 
-beforeAll(async () => {
-	await preparePage(page)
-})
+test.beforeEach(({ page }) => setupPage(page))
 
-it("Should be able to create buildings", async () => {
+test("Should be able to create buildings", async ({ page }) => {
 	expect(
 		await page.evaluate(
 			() =>
@@ -31,7 +30,7 @@ it("Should be able to create buildings", async () => {
 	).toBeTruthy()
 })
 
-it("Should warn on invalid icon", async () => {
+test("Should warn on invalid icon", async ({ page }) => {
 	// Override warns
 
 	expect(
@@ -71,7 +70,7 @@ it("Should warn on invalid icon", async () => {
 	).toBe(true)
 })
 
-it("Should load data on reload", async () => {
+test("Should load data on reload", async ({ page }) => {
 	await page.evaluate(() => {
 		new Cppkies.Building(
 			"Save test building",
@@ -95,10 +94,7 @@ it("Should load data on reload", async () => {
 		Game.WriteSave()
 	})
 
-	// Wait for save
-	await waitFor(1500)
-
-	await preparePage(page)
+	await setupPage(page)
 
 	expect(
 		await page.evaluate(

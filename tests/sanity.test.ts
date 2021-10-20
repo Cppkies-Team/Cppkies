@@ -1,38 +1,22 @@
-beforeAll(async () => {
-	await page.goto("https://orteil.dashnet.org/cookieclicker")
-	await ((): Promise<void> => {
-		return new Promise(res => {
-			const timeoutId = setInterval(() => {
-				if (page.isClosed()) clearInterval(timeoutId)
-				if (page.evaluate(() => Game && Game.ready)) {
-					clearInterval(timeoutId)
-					res()
-				}
-			}, 100)
-		})
-	})()
-})
+import { setupCookieClickerPage } from "cookie-connoisseur"
+import { test, expect } from "@playwright/test"
 
-describe("Sanity checks", () => {
+test.beforeEach(({ page }) => setupCookieClickerPage(page))
+
+test.describe("Sanity checks", () => {
 	// Really unstable for some reason
 	/*it("Should reference dashnet", async () => {
 		await expect(page).toMatch(/dashnet/i)
 	})*/
 
-	it("Should be able to load mods", async () => {
+	test("Should be able to load mods", async ({ page }) => {
 		await page.evaluate(() =>
-			Game.LoadMod(
-				"data:text/plain;charset=utf-8;base64,Y29uc29sZS5sb2coIkhlbGxvIik="
-			)
+			Game.LoadMod("data:text/plain;charset=utf-8,console.log%28%22Hello%22%29")
 		)
 	})
-	it("Should be able to load Cppkies", async () => {
-		await page.evaluate(() => {
-			Game.LoadMod("http://localhost:5501/dist/index.js")
-			if (!globalThis.CPPKIES_ONLOAD) globalThis.CPPKIES_ONLOAD = []
-			return new Promise<void>(resolve => {
-				;(globalThis.CPPKIES_ONLOAD as (() => void)[]).push(resolve)
-			})
-		})
+	test("Should be able to load Cppkies", async ({ page }) => {
+		await page.evaluate(() => Game.LoadMod("https://cppkies.local/index.js"))
+		await page.waitForFunction(() => window.Cppkies !== undefined)
+		await page.evaluate(() => Cppkies.deffer)
 	})
 })
