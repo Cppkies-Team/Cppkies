@@ -1,1 +1,0 @@
-import"./tslib.es6-ac47674d.js";import{getValue as e}from"./helpers.js";function i(i,n,r){if(void 0===r&&(r="div"),"string"==typeof(i=e(i)))if(r){var t=document.createElement(r);t.innerHTML=i,n.appendChild(t)}else n.innerHTML=i;else n.appendChild(i)}export{i as friendlyAppendHtml};
