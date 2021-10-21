@@ -1,10 +1,13 @@
 import { CommonValue, toSentenseCase } from "../helpers"
 import hooks from "../injects/basegame"
-import { shouldRunVersionedMinigame } from "../injects/generic"
+import { shouldRunVersioned } from "../injects/generic"
 import { Mod, OwnershipUnit } from "../mods"
 import { customLoad, save } from "../saves"
 import { setUnitOwner } from "../vars"
 import { minigamePromises } from "./minigamePromises"
+import { requirePantheonInjects } from "../injects/pantheon"
+
+requirePantheonInjects()
 
 let mg: typeof Game.Objects.Temple.minigame | undefined
 
@@ -86,7 +89,7 @@ export class Spirit implements Game.PantheonSpirit, OwnershipUnit {
 		spiritName: string,
 		spiritTitle: string,
 		public icon: Game.Icon,
-		descriptions: Partial<
+		descriptions?: Partial<
 			Record<1 | 2 | 3 | "before" | "after", string> &
 				Record<"active", () => string>
 		>,
@@ -165,17 +168,18 @@ declare module "../saves" {
 }
 
 // This is like the same thing as dragon auras
-if (shouldRunVersionedMinigame("Pantheon", 1)) {
+if (shouldRunVersioned("pantheonSaving")) {
 	hooks.on("preSave", () => {
 		if (!mg) return
 		if (!save.minigames) save.minigames = {}
-		if (!save.minigames.pantheon) save.minigames.pantheon = { slots: [] }
+		if (!save.minigames.pantheon)
+			save.minigames.pantheon = { slots: ["sync", "sync", "sync"] }
 		for (const slot in mg.slotNames) {
-			if (mg.slot[slot] !== -1) save.minigames.pantheon.slots[slot] = "sync"
 			if (mg.godsById[mg.slot[slot]] instanceof Spirit) {
 				save.minigames.pantheon.slots[slot] = mg.slot[slot]
 				mg.slot[slot] = -1
-			}
+			} else if (mg.slot[slot] !== -1)
+				save.minigames.pantheon.slots[slot] = "sync"
 		}
 	})
 	hooks.on("postSave", () => {

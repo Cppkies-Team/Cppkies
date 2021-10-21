@@ -1,13 +1,14 @@
-import { Injection } from "./generic"
+import { BuildingInjection, Injection } from "./generic"
 import { injectCode } from "../helpers"
 import { ReturnableEventEmitter } from "../lib/eventemitter"
+import { todoBeforeLoad } from "../loadValues"
 
-export const buildingHooks: Record<
-	string,
-	BuildingHooks
-> = window.__INTERNAL_CPPKIES_HOOKS__
+export const buildingHooks: Record<string, BuildingHooks> = window
+	.__INTERNAL_CPPKIES_HOOKS__?.buildings
 	? window.__INTERNAL_CPPKIES_HOOKS__.buildings
 	: {}
+
+let injectionsTodo: Set<string> | undefined
 
 /**
  * Creates the hooks for a building
@@ -24,7 +25,7 @@ export type BuildingHooks = ReturnableEventEmitter<{
 export function createBuildingHooks(building: Game.Object): void {
 	const emitter: BuildingHooks = new ReturnableEventEmitter()
 	const injections = [
-		new Injection("tooltip", 1, () => {
+		new BuildingInjection("tooltip", () => {
 			building.tooltip = injectCode(
 				injectCode(building.tooltip, "return", "let tempRet = ", "replace"),
 				null,
@@ -33,7 +34,7 @@ export function createBuildingHooks(building: Game.Object): void {
 				"after"
 			)
 		}),
-		new Injection("buy", 1, () => {
+		new BuildingInjection("buy", () => {
 			building.buy = injectCode(
 				building.buy,
 				null,
@@ -44,7 +45,7 @@ export function createBuildingHooks(building: Game.Object): void {
 				"after"
 			)
 		}),
-		new Injection("levelUp", 1, () => {
+		new BuildingInjection("levelUp", () => {
 			building.levelUp = injectCode(
 				building.levelUp,
 				"me.level+=1;",
@@ -55,6 +56,27 @@ __INTERNAL_CPPKIES_HOOKS__.buildings[me.name].emit("levelUp")`,
 			)
 		}),
 	]
-	injections.forEach(inject => inject.runHook())
+
+	injections.forEach(inject => {
+		inject.runHook(building)
+	})
 	buildingHooks[building.name] = emitter
 }
+
+todoBeforeLoad.push(() => {
+	if (!window.__INTERNAL_CPPKIES_HOOKS__.buildings)
+		window.__INTERNAL_CPPKIES_HOOKS__.buildings = buildingHooks
+	window.__INTERNAL_CPPKIES_HOOKS__.createBuildingHooks = createBuildingHooks
+
+	for (const building of Game.ObjectsById) createBuildingHooks(building)
+	new Injection("buildingAutoHook", () => {
+		Game.Object = injectCode(
+			Game.Object,
+			"Game.ObjectsN++",
+			`
+// Cppkies injection
+__INTERNAL_CPPKIES_HOOKS__.createBuildingHooks(this);\n`,
+			"after"
+		)
+	}).runHook()
+})

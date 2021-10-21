@@ -60,9 +60,6 @@
 		"typescript": "^4.3.5"
 	},
 	"sideEffects": [
-		"./dist/esm/onLoad.js",
-		"./dist/esm/injects/basegame.js",
-		"./dist/esm/injects/buildings.js",
-		"./dist/esm/injects/pantheon.js"
+		"./dist/esm/index.js"
 	]
 }

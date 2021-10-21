@@ -28,7 +28,8 @@ Game.LoadMinigames = injectCode(
 export const minigamePromises = new Proxy(actualMinigamePromises, {
 	get(target, p): Promise<void> {
 		if (typeof p === "symbol") throw new Error(`No such building as [symbol]!`)
-		if (target[p]) return target[p]
+		const resolvedValue = target[p]
+		if (resolvedValue) return resolvedValue
 		const building = Game.Objects[p]
 		if (!building) throw new Error(`No such building as ${p}!`)
 		if (building.minigameLoaded) {

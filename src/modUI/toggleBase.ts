@@ -26,7 +26,7 @@ export abstract class ToggleBase<C = unknown> {
 	load?(this: this, save: C): void
 }
 
-if (shouldRunVersioned(1))
+if (shouldRunVersioned("modUIInject"))
 	hooks.on("optionsMenu", () => {
 		const menuDiv = document.querySelector("#menu")
 		if (!menuDiv || mods.length === 0) return

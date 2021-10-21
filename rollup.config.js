@@ -15,7 +15,6 @@ const plugins = [
 	commonjs(),
 	typescript({
 		tsconfig: production ? "./tsconfig.json" : "./tsconfig.dev.json",
-		objectHashIgnoreUnknownHack: true,
 	}),
 	json(),
 	analyze({
@@ -59,8 +58,11 @@ export default [
 					output: {
 						dir: "./dist/esm",
 						format: "esm",
+						preserveModules: true,
+						preserveModulesRoot: "src",
 					},
 					plugins,
+					treeshake: false,
 				},
 		  ]
 		: []),

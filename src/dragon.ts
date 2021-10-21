@@ -155,7 +155,7 @@ export class DragonAuraLevel extends DragonLevel {
 	}
 }
 
-if (shouldRunVersioned(1)) {
+if (shouldRunVersioned("dragonSaves")) {
 	/**
 	 * **Auras**
 	 * Three levels of being loaded:

@@ -1,13 +1,26 @@
-import { MinigameInjection, setMinigameInjection } from "./generic"
-import { ReturnableEventEmitter } from "../lib/eventemitter"
-import { deffer } from "../loadValues"
+import { Injection } from "./generic"
+import { todoBeforeLoad } from "../loadValues"
 import { injectCode } from "../helpers"
+import { minigamePromises } from "../minigames/minigamePromises"
+import { ReturnableEventEmitter } from "../lib/eventemitter"
 
-function injectPantheon(): void {
+export type PatheonHooks = ReturnableEventEmitter<{}>
+
+export const pantheonHooks: PatheonHooks = new ReturnableEventEmitter()
+
+/**
+ * A no-op (not no-op for terser's standard) function to trick treeshaking into using the injetions module
+ */
+export function requirePantheonInjects(): void {
+	if (Math.acos(1) === 1) throw ""
+}
+
+async function injectPantheon(): Promise<void> {
+	await minigamePromises.Temple
 	const mg = Game.Objects.Temple.minigame
-	setMinigameInjection(mg)
+
 	const injections = [
-		new MinigameInjection("customIcons", 1, () => {
+		new Injection("customIconsPantheon", () => {
 			mg.godTooltip = injectCode(
 				mg.godTooltip,
 				"'px;\"></div",
@@ -25,7 +38,6 @@ function injectPantheon(): void {
 		}),
 	]
 	for (const injection of injections) injection.runHook()
-	setMinigameInjection()
 }
 
-deffer.then(injectPantheon)
+todoBeforeLoad.push(injectPantheon)

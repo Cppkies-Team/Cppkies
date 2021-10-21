@@ -507,7 +507,8 @@ export function importSave(data: string): void {
 		try {
 			let decompressedData = decompressFromUTF16(data)
 			// If it's invalid LZ-string, try raw string
-			if (!decompressedData) decompressedData = data
+			if (!decompressedData || decompressedData.length < 10)
+				decompressedData = data
 			newSave = JSON.parse(decompressedData)
 		} catch (err) {
 			console.warn("CPPKIES: Found invalid save, creating new one...")

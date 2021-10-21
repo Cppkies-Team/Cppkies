@@ -23,3 +23,5 @@ export let defferResolve: (() => void) | undefined
  * A promise which is resolved on Cppkies load
  */
 export const deffer = new Promise<void>(res => (defferResolve = res))
+
+export const todoBeforeLoad: (() => Promise<unknown> | void)[] = []

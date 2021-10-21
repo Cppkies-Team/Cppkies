@@ -166,12 +166,12 @@ export class Building extends Game.Object implements OwnershipUnit {
  * The recommended function to pass in building CpsFunc
  * @param me Itself
  */
-export const DEFAULT_CPS = (me: Game.Object): number =>
+export const DEFAULT_CPS = (me: Building): number =>
 	Game.GetTieredCpsMult(me) * Game.magicCpS(me.name) * me.baseCps
 /**
  * The reccomended function to pass in building BuyFunc
  */
-export const DEFAULT_ONBUY = function(this: Game.Object): void {
+export const DEFAULT_ONBUY = function(this: Building): void {
 	Game.UnlockTiered(this)
 	if (
 		this.amount >= Game.SpecialGrandmaUnlock &&
@@ -181,7 +181,7 @@ export const DEFAULT_ONBUY = function(this: Game.Object): void {
 		Game.Unlock(this.grandma.name)
 }
 
-if (shouldRunVersioned(1))
+if (shouldRunVersioned("customBuildingIcons"))
 	hooks.on("getIcon", ({ icon, type, tier }) => {
 		customBuildings.forEach(val => {
 			if (val.name === type && val.iconLink) icon[2] = val.iconLink
