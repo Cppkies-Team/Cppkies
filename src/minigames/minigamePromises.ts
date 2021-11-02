@@ -5,11 +5,11 @@ const waitingForLoadResolves: Record<string, () => void> = {}
 
 declare global {
 	interface Window {
-		__CPPKIES_MINIGAME_PROMISES_MARK__: (name: string) => void
+		__INTERNAL_CPPKIES_MG_PROMISES_MARK__: (name: string) => void
 	}
 }
 
-window.__CPPKIES_MINIGAME_PROMISES_MARK__ = name => {
+window.__INTERNAL_CPPKIES_MG_PROMISES_MARK__ = name => {
 	if (waitingForLoadResolves[name]) {
 		waitingForLoadResolves[name]()
 		delete waitingForLoadResolves[name]
@@ -18,7 +18,7 @@ window.__CPPKIES_MINIGAME_PROMISES_MARK__ = name => {
 Game.LoadMinigames = injectCode(
 	Game.LoadMinigames,
 	"document.head.appendChild(script);",
-	"\n__CPPKIES_MINIGAME_PROMISES_MARK__(me.name);",
+	"\n__INTERNAL_CPPKIES_MG_PROMISES_MARK__(me.name);",
 	"after"
 )
 
