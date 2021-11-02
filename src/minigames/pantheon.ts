@@ -87,7 +87,7 @@ export class Spirit implements Game.PantheonSpirit, OwnershipUnit {
 	owner?: Mod
 	constructor(
 		spiritName: string,
-		spiritTitle: string,
+		public spiritTitle: string,
 		public icon: Game.Icon,
 		descriptions?: Partial<
 			Record<1 | 2 | 3 | "before" | "after", string> &
@@ -152,13 +152,13 @@ export class Spirit implements Game.PantheonSpirit, OwnershipUnit {
 		}
 		if (save.minigames?.pantheon)
 			for (const slot in mg.slotNames)
-				if (save.minigames.pantheon.slots[slot] === this.id)
+				if (save.minigames.pantheon.slots[slot] === spiritTitle)
 					slotGod(this, parseInt(slot) as 0 | 1 | 2)
 	}
 }
 
 export interface PantheonSave {
-	slots: (number | "sync")[]
+	slots: (string | null)[]
 }
 
 declare module "../saves" {
@@ -173,36 +173,37 @@ if (shouldRunVersioned("pantheonSaving")) {
 		if (!mg) return
 		if (!save.minigames) save.minigames = {}
 		if (!save.minigames.pantheon)
-			save.minigames.pantheon = { slots: ["sync", "sync", "sync"] }
+			save.minigames.pantheon = { slots: [null, null, null] }
 		for (const slot in mg.slotNames) {
-			if (mg.godsById[mg.slot[slot]] instanceof Spirit) {
-				save.minigames.pantheon.slots[slot] = mg.slot[slot]
+			const god = mg.godsById[mg.slot[slot]]
+			if (god instanceof Spirit) {
+				save.minigames.pantheon.slots[slot] = god.spiritTitle
 				mg.slot[slot] = -1
 			} else if (mg.slot[slot] !== -1)
-				save.minigames.pantheon.slots[slot] = "sync"
+				save.minigames.pantheon.slots[slot] = null
 		}
 	})
 	hooks.on("postSave", () => {
 		if (!mg) return
 		if (!save.minigames?.pantheon) return
 		for (const slot in mg.slotNames) {
-			const slotSaved = save.minigames.pantheon.slots[slot]
-			if (slotSaved !== undefined && slotSaved !== "sync")
-				mg.slot[slot] = slotSaved
+			const savedSlot = save.minigames.pantheon.slots[slot]
+			if (savedSlot !== null && mg.gods[savedSlot])
+				mg.slot[slot] = mg.gods[savedSlot].id
 		}
 	})
 
 	hooks.on("reset", () => {
 		if (!save.minigames?.pantheon) return
-		save.minigames.pantheon.slots = []
+		save.minigames.pantheon.slots = [null, null, null]
 	})
 	customLoad.push(() => {
 		if (!mg || !save.minigames?.pantheon) return
 
 		for (const slot in mg.slotNames) {
 			const savedSlot = save.minigames.pantheon.slots[slot]
-			if (savedSlot !== "sync" && mg.godsById[savedSlot] instanceof Spirit)
-				slotGod(mg.godsById[savedSlot], parseInt(slot) as -1 | 0 | 1 | 2)
+			if (savedSlot !== null && mg.gods[savedSlot])
+				mg.slot[slot] = mg.gods[savedSlot].id
 		}
 	})
 }
