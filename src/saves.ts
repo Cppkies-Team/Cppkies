@@ -11,7 +11,7 @@ import {
 import { Mod } from "./mods"
 import { compressToUTF16, decompressFromUTF16 } from "./lib/lz-string"
 
-export const VANILLA_DRAGON_LEVEL_AMOUNT = Game.dragonLevels.length + 0
+export const VANILLA_DRAGON_LEVEL_AMOUNT = Game.dragonLevels.length
 
 export const SAVE_VER = 3 as const
 
@@ -277,8 +277,8 @@ export function loadAchievement(upgrade: Achievement): AchievementSave {
  * The save type for Krumblor
  */
 interface DragonSave {
-	level: number | "sync"
-	auras: [number | "sync", number | "sync"]
+	level: number | null
+	auras: [string | null, string | null]
 }
 
 //#endregion
@@ -470,7 +470,7 @@ export function applySave(newSave: unknown): SaveType {
 		if (
 			hasOwnProperty(newSave.dragon, "level") &&
 			(typeof newSave.dragon.level === "number" ||
-				newSave.dragon.level === "sync")
+				newSave.dragon.level === null)
 		)
 			virtualSave.dragon.level = newSave.dragon.level
 		if (
@@ -479,7 +479,11 @@ export function applySave(newSave: unknown): SaveType {
 		) {
 			for (const i in newSave.dragon.auras) {
 				const aura = newSave.dragon.auras[i]
-				if (typeof aura === "number" || aura === "sync")
+				if (
+					typeof aura === "number" ||
+					typeof aura === "string" ||
+					aura === null
+				)
 					virtualSave.dragon.auras[i] = aura
 			}
 		}
