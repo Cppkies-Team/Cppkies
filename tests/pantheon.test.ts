@@ -25,17 +25,7 @@ test("Should be able to create pantheon spirits", async ({ page }) => {
 	).toBeTruthy()
 })
 
-// TODO Store pantheon names (and dragon auras (but not levels, it makes sense to linearly store them)) instead of in-game numeric IDs
-
 test("Should load spirit save data data on reload", async ({ page }) => {
-	// Reset the page to reset the ID
-	await setupPage(page)
-	await page.evaluate(() => {
-		Game.RuinTheFun(false)
-		Game.Objects.Temple.buy(1)
-		Game.LoadMinigames()
-		return Cppkies.minigamePromises.Temple
-	})
 	await page.evaluate(() => {
 		const savingGod = new Cppkies.Spirit("Cppkies saves", "saving", [0, 0], {
 			1: '<span class="green">You save stuff.</span>',

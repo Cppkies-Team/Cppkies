@@ -351,26 +351,17 @@ frame = override.frame;\n`,
 					"replace",
 				],
 				[
-					">=25",
+					/>=\d{2}/g,
 					'>=Game.dragonLevels.findIndex(val => val.action === "Train secondary aura<br><small>Lets you use two dragon auras simultaneously</small>") + 1',
 					"replace",
 				],
 			])
 		}),
 		new Injection("loaderFreedom", () => {
-			Game.Loader.Load = injectCode(
-				Game.Loader.Load,
-				"img.src=this.domain",
-				`
-			// Cppkies injection
-			img.src = (assets[i].indexOf('http') !== -1 ? "" : this.domain)
-`,
-				"replace"
-			)
 			Game.UpdateMenu = injectCodes(Game.UpdateMenu, [
 				[
-					"url(img/'+milk.pic+'.png)",
-					"url(' + (milk.pic.indexOf('http') >= 0 ? milk.pic : 'img/'+milk.pic) + '.png)",
+					"url(img/'+milk.pic+')",
+					"url(' + (milk.pic.indexOf('/') >= 0 ? milk.pic : 'img/' + milk.pic) + ')",
 					"replace",
 				],
 				[

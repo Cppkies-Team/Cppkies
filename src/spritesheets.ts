@@ -55,7 +55,7 @@ function generateImageFromLink(link: string): Promise<HTMLImageElement> {
 function toBlobURI(buf: CanvasRenderingContext2D): Promise<string> {
 	return new Promise(resolve => {
 		buf.canvas.toBlob((blob: Blob | null) => {
-			resolve(URL.createObjectURL(blob))
+			resolve(URL.createObjectURL(blob as Blob))
 		})
 	})
 }

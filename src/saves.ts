@@ -47,8 +47,8 @@ function createDefaultSaveFragment(name: string): unknown {
 			}
 		case "dragon":
 			return {
-				level: "sync",
-				auras: ["sync", "sync"],
+				level: null,
+				auras: [null, null],
 			}
 		case "achievement":
 			return { won: false }

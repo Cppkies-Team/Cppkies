@@ -64,6 +64,7 @@ if (isFirstCppkies) {
 	Game.registerMod("cppkies", {
 		save: exportSave,
 		load: importSave,
+		init: () => {},
 	})
 }
 //Run all onLoad events

@@ -109,3 +109,5 @@ localtestsetc/
 dist/
 
 .cookie-connoisseur
+
+isprod.json

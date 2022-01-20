@@ -72,40 +72,65 @@ export class DragonLevel implements Game.DragonLevel, OwnershipUnit {
 
 	// Description of effects of leveling up
 	action: string
+	buy: () => void
 	/**
 	 * Creates a new dragon level
-	 * @param name Name of the dragon at this level, null for last name
+	 * @param name Name of the dragon at this level, `null` for the name of the dragon level before it (default)
 	 * @param desc A string describing the effects of leveling up
 	 * @param costDescription A string (or a function) describing the resources required to be able to buy the level
 	 * @param canBuy A function which determines if it is possible to buy the level
 	 * @param buy A function which spends the required resources
-	 * @param icon  Icon of the dragon at this level, null for last icon, note that the icon is 96x96, not 48x48
+	 * @param icon  Icon of the dragon at this level, non-icon modes: `null` - Uses the icon of the dragon level before it (default), `"final"` - Uses the icon of final last dragon level
+	 * @param order Position of the dragon level, non-number modes: `"final"` - Uses the icon of final last dragon level (default), `"aura-level"` - Sets the position to be right after the aura levels of the dragon
 	 */
 	constructor(
 		name: string | null,
 		desc: string, // `this.action`
 		costDescription: string | (() => string), // `this.costStr`
 		canBuy: () => boolean, // `this.cost`
-		public buy: () => void,
-		icon?: Game.Icon | null, // `this.pic`, `this.picLink`, and `this.picY`
-		order: number = Game.dragonLevels.length - 3
+		buy: () => void,
+		icon: Game.Icon | null | "final" = null, // `this.pic`, `this.picLink`, and `this.picY`
+		order: number | "aura-level" | "final" = "final"
 	) {
 		setUnitOwner(this)
+		if (order === "aura-level")
+			order =
+				Game.dragonLevels.findIndex(
+					val =>
+						val.action === "Bake dragon cookie<br><small>Delicious!</small>"
+				) - 1
+		else if (order === "final") order = Game.dragonLevels.length
 		const lastLevel = Game.dragonLevels[order - 1]
 		this.name = name ?? lastLevel.name
-		this.action = desc
-		this.costStr =
+
+		// Get the `action`, `costStr`, and `cost` of the last level
+		this.action = lastLevel.action
+		this.costStr = lastLevel.costStr
+		this.cost = lastLevel.cost
+		this.buy = lastLevel.buy
+		// Give the last level the costs for this level
+		lastLevel.action = desc
+		lastLevel.costStr =
 			typeof costDescription === "string"
 				? () => costDescription
 				: costDescription
-		this.cost = canBuy
-		if (icon) {
+		lastLevel.cost = canBuy
+		lastLevel.buy = buy
+
+		if (typeof icon === "object" && icon !== null) {
 			this.pic = icon[0]
 			this.picY = icon[1]
 			// TODO: Implement pic Y in specials
 			if (this.picY !== 0)
 				console.warn("For now, all dragon levels must not use pic Y, sorry.")
 			this.picLink = icon[2]
+		} else if (icon === "final") {
+			const finalLevel = Game.dragonLevels[Game.dragonLevels.length - 1]
+			this.pic = finalLevel.pic
+			if (finalLevel instanceof DragonLevel) {
+				this.picY = finalLevel.picY
+				this.picLink = finalLevel.picLink
+			}
 		} else {
 			this.pic = lastLevel.pic
 			if (lastLevel instanceof DragonLevel) {
@@ -142,7 +167,9 @@ export class DragonAuraLevel extends DragonLevel {
 			`Train ${auraName}<br/><small>Aura : ${auraDesc}</small>`,
 			`100 ${buildingObject.plural}`,
 			() => buildingObject.amount >= 100,
-			() => buildingObject.sacrifice(100)
+			() => buildingObject.sacrifice(100),
+			undefined,
+			"aura-level"
 		)
 	}
 }
