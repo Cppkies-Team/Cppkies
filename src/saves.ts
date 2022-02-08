@@ -23,6 +23,8 @@ export interface SpecififcMinigameSaves {}
  */
 export const customLoad: (() => void)[] = []
 
+export const customSave: (() => void)[] = []
+
 /**
  * The save type for Cppkies
  */
@@ -355,7 +357,7 @@ export function saveAll(): void {
 	for (const building of customBuildings) saveBuilding(building)
 	for (const upgrade of customUpgrades) saveUpgrade(upgrade)
 	for (const achievement of customAchievements) saveAchievement(achievement)
-	// Saving the dragon is in dragon.ts
+	for (const customFunc of customSave) customFunc()
 }
 
 function assume<T>(val: unknown): val is T {
@@ -391,9 +393,8 @@ export function applySave(newSave: unknown): SaveType {
 			for (const buildingName in modSave.buildings) {
 				const building = modSave.buildings[buildingName] as object
 				if (typeof building !== "object" || building === null) continue
-				virtualModSave.buildings[buildingName] = createDefaultSaveFragment(
-					"building"
-				)
+				virtualModSave.buildings[buildingName] =
+					createDefaultSaveFragment("building")
 				applyAllProps(virtualModSave.buildings[buildingName], building)
 			}
 		}
@@ -408,9 +409,8 @@ export function applySave(newSave: unknown): SaveType {
 			for (const upgradeName in modSave.upgrades) {
 				const upgrade = modSave.upgrades[upgradeName]
 				if (typeof upgrade !== "object" || upgrade === null) continue
-				virtualModSave.upgrades[upgradeName] = createDefaultSaveFragment(
-					"upgrade"
-				)
+				virtualModSave.upgrades[upgradeName] =
+					createDefaultSaveFragment("upgrade")
 				applyAllProps(virtualModSave.upgrades[upgradeName], upgrade)
 			}
 		}
@@ -424,9 +424,8 @@ export function applySave(newSave: unknown): SaveType {
 			for (const achievementName in modSave.achievements) {
 				const achievement = modSave.achievements[achievementName]
 				if (typeof achievement !== "object" || achievement === null) continue
-				virtualModSave.achievements[
-					achievementName
-				] = createDefaultSaveFragment("achievement")
+				virtualModSave.achievements[achievementName] =
+					createDefaultSaveFragment("achievement")
 				applyAllProps(virtualModSave.achievements[achievementName], achievement)
 			}
 		}

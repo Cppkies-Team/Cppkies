@@ -101,6 +101,15 @@ async function injectGarden(): Promise<void> {
 				{ M: mg }
 			)
 		}),
+		new Injection("gardenCppkiesSeeds", () => {
+			mg.save = injectCode(
+				mg.save,
+				"str+=''+(M.plants[i].unlocked?'1':'0')",
+				"if (!M.plants[i].isCppkies);\n",
+				"before",
+				{ M: mg }
+			)
+		}),
 	]
 	for (const injection of injections) injection.runHook()
 	window.__INTERNAL_CPPKIES_HOOKS__.minigames.garden = gardenHooks

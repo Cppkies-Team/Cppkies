@@ -3,7 +3,7 @@ import { Mod, OwnershipUnit } from "../mods"
 import hooks from "../injects/basegame"
 import { gardenHooks, requireGardenInjects } from "../injects/garden"
 import { shouldRunVersioned } from "../injects/generic"
-import { save, customLoad } from "../saves"
+import { save, customLoad, customSave } from "../saves"
 import { resolveAlias } from "../spritesheets"
 import { setUnitOwner } from "../vars"
 
@@ -13,8 +13,24 @@ let mg: Game.GardenMinigame | undefined
 
 minigamePromises["Farm"].then(() => (mg = Game.Objects["Farm"].minigame))
 
+function loadPlant(plant: Plant): void {
+	if (!mg) return
+	if (!save.minigames?.garden || !save.minigames.garden.plot) return
+	const plot = save.minigames.garden.plot
+	for (let y = 0; y < mg.plot.length; y++)
+		for (let x = 0; x < mg.plot[y].length; x++) {
+			if (plot[y][x]?.[0] !== plant.key) continue
+			const [, age] = plot[y][x] as [string, number]
+			mg.plot[y][x][0] = plant.id + 1
+			mg.plot[y][x][1] = age
+		}
+}
+
+export const customPlants: Plant[] = []
+
 export class Plant implements Game.GardenPlant, OwnershipUnit {
 	children: string[] = []
+	isCppkies = true as const
 	contam?: number
 	detailsStr?: string
 	owner?: Mod
@@ -63,7 +79,10 @@ export class Plant implements Game.GardenPlant, OwnershipUnit {
 		this.id = mg.plantsById.push(this) - 1
 		mg.plants[key] = this
 		mg.plantsN++
+		customPlants.push(this)
 		loadPlant(this)
+		if (save.minigames?.garden?.seeds?.includes(this.key)) this.unlocked = true
+		mg.getUnlockedN()
 		mg.buildPanel()
 		mg.buildPlot()
 	}
@@ -185,10 +204,25 @@ if (shouldRunVersioned("plantMutations"))
 
 type CppkiesPlot = ([string, number] | null)[][]
 
-export interface GardenSave {
+interface SeedGardenSave {
+	seeds: string[]
+	plot: undefined
+	nextStep?: undefined
+}
+
+interface PlotGardenSave {
 	plot: CppkiesPlot
 	nextStep: number
+	seeds?: undefined
 }
+
+interface FullGardenSave {
+	plot: CppkiesPlot
+	nextStep: number
+	seeds: string[]
+}
+
+export type GardenSave = PlotGardenSave | SeedGardenSave | FullGardenSave
 
 declare module "../saves" {
 	export interface SpecififcMinigameSaves {
@@ -219,12 +253,23 @@ if (shouldRunVersioned("plantSaving")) {
 				spot[0] = spot[1] = 0
 				hasAnything = true
 			}
-		if (hasAnything) save.minigames.garden = { plot, nextStep: mg.nextStep }
-		else delete save.minigames.garden
+
+		if (hasAnything) {
+			if (save.minigames.garden) {
+				save.minigames.garden.plot = plot
+				save.minigames.garden.nextStep = mg.nextStep
+			} else save.minigames.garden = { plot, nextStep: mg.nextStep }
+		} else {
+			if (save.minigames.garden) {
+				delete save.minigames.garden.nextStep
+				delete save.minigames.garden.plot
+				if (!save.minigames.garden.seeds) delete save.minigames.garden
+			}
+		}
 	})
 	hooks.on("postSave", () => {
 		if (!mg) return
-		if (!save.minigames?.garden) return
+		if (!save.minigames?.garden || !save.minigames.garden.plot) return
 		const plot = save.minigames.garden.plot
 		for (let y = 0; y < mg.plot.length; y++)
 			for (let x = 0; x < mg.plot[y].length; x++) {
@@ -236,7 +281,7 @@ if (shouldRunVersioned("plantSaving")) {
 	})
 	customLoad.push(() => {
 		if (!mg) return
-		if (!save.minigames?.garden) return
+		if (!save.minigames?.garden || !save.minigames.garden.plot) return
 		if (window.__INTERNAL_CPPKIES_HOOKS__.isFirstLoad) {
 			// We only load plants if only one tick (the offline tick) has passed
 			if (mg.nextStep - save.minigames.garden.nextStep !== mg.stepT * 1000)
@@ -266,15 +311,26 @@ if (shouldRunVersioned("plantSaving")) {
 	})
 }
 
-function loadPlant(plant: Plant): void {
-	if (!mg) return
-	if (!save.minigames?.garden) return
-	const plot = save.minigames.garden.plot
-	for (let y = 0; y < mg.plot.length; y++)
-		for (let x = 0; x < mg.plot[y].length; x++) {
-			if (plot[y][x]?.[0] !== plant.key) continue
-			const [, age] = plot[y][x] as [string, number]
-			mg.plot[y][x][0] = plant.id + 1
-			mg.plot[y][x][1] = age
+if (shouldRunVersioned("seedSaving")) {
+	customSave.push(() => {
+		if (!mg) return
+		if (!save.minigames?.garden) return
+		const seeds: string[] = save.minigames.garden.seeds || []
+		//@ts-expect-error Typescript is really failing, here
+		if (!save.minigames.garden.seeds) save.minigames.garden.seeds = seeds
+		for (const plant of customPlants) {
+			const savePlantUnlocked = seeds.includes(plant.key)
+			if (plant.unlocked && !savePlantUnlocked) seeds.push(plant.key)
+			else if (!plant.unlocked && savePlantUnlocked)
+				seeds.splice(seeds.indexOf(plant.key), 1)
 		}
+	})
+	customLoad.push(() => {
+		if (!mg) return
+		if (!save.minigames?.garden?.seeds) return
+		for (const plantName of save.minigames.garden.seeds) {
+			if (!mg.plants[plantName]) continue
+			mg.plants[plantName].unlocked = true
+		}
+	})
 }
