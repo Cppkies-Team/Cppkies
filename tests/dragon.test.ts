@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test"
 test.beforeEach(async ({ page }) => {
 	await setupPage(page)
 	await page.evaluate(() => {
-		Game.RuinTheFun(false)
+		Game.RuinTheFun()
 		Game.dragonLevel = 0
 	})
 })

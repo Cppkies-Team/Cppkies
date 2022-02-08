@@ -30,9 +30,10 @@ if (shouldRunVersioned("modUIInject"))
 	hooks.on("optionsMenu", () => {
 		const menuDiv = document.querySelector("#menu")
 		if (!menuDiv || mods.length === 0) return
-		const menuSubsection = menuDiv.children[menuDiv.children.length - 1]
+
+		const menuSubsection = menuDiv.children[3].children[0].children[0]
 		const menuListing =
-			menuSubsection.children[menuSubsection.children.length - 2]
+			menuSubsection.children[menuSubsection.children.length - 1]
 
 		for (const mod of mods)
 			menuListing.appendChild(

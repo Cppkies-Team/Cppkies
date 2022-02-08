@@ -10,6 +10,7 @@ export class DragonAura implements Game.DragonAura, OwnershipUnit {
 	pic: Game.Icon
 	id: number
 	owner?: Mod
+	dname: string
 	/**
 	 * Creates a (non-building) dragon aura
 	 * @param name Name of the dragon aura (in HTML text)
@@ -44,6 +45,7 @@ export class DragonAura implements Game.DragonAura, OwnershipUnit {
 		else this.pic = buildingOrIcon
 		this.id = Object.keys(Game.dragonAuras).length
 		Game.dragonAuras[this.id] = this
+		this.dname = loc(this.name)
 		if (this.name === save.dragon.auras[0]) Game.dragonAura = this.id
 		if (this.name === save.dragon.auras[1]) Game.dragonAura2 = this.id
 	}

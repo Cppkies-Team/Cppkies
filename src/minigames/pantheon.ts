@@ -1,4 +1,4 @@
-import { CommonValue, toSentenseCase } from "../helpers"
+import { attachTooltip, CommonValue, toSentenseCase } from "../helpers"
 import hooks from "../injects/basegame"
 import { shouldRunVersioned } from "../injects/generic"
 import { Mod, OwnershipUnit } from "../mods"
@@ -60,19 +60,6 @@ export function slotGod(god: Spirit, slot: -1 | 0 | 1 | 2): void {
 	mg.slotGod(god, slot)
 }
 
-function attachTooltip(
-	element: HTMLElement,
-	text: CommonValue<string>,
-	origin?: Game.TooltipOrigins
-): void {
-	element.addEventListener("mouseover", () => {
-		Game.tooltip.dynamic = typeof text === "function" ? 1 : 0
-		Game.tooltip.draw(element, text, origin)
-		Game.tooltip.wobble()
-	})
-	element.addEventListener("mouseout", () => (Game.tooltip.shouldHide = 1))
-}
-
 export class Spirit implements Game.PantheonSpirit, OwnershipUnit {
 	activeDescFunc?: () => string
 	desc1?: string
@@ -83,7 +70,7 @@ export class Spirit implements Game.PantheonSpirit, OwnershipUnit {
 	id: number
 	name: string
 	slot: 0 | 2 | 1 | -1 = -1
-	quote: string
+	quote?: string
 	owner?: Mod
 	constructor(
 		spiritName: string,
@@ -99,7 +86,6 @@ export class Spirit implements Game.PantheonSpirit, OwnershipUnit {
 		if (!mg) throw new Error("The pantheon minigame has not loaded yet!")
 		setUnitOwner(this)
 		if (quote) this.quote = quote
-		// @ts-expect-error I messed up the typings, here
 		else this.quote = undefined
 		if (fullName) this.name = fullName
 		else
@@ -128,17 +114,18 @@ export class Spirit implements Game.PantheonSpirit, OwnershipUnit {
 		attachTooltip(godDiv, mg.godTooltip(this.id), "this")
 		const godIconDiv = document.createElement("div")
 		godIconDiv.classList.add("usesIcon", "shadowFilter", "templeIcon")
-		godIconDiv.style.backgroundPosition = `${-icon[0] * 48}px ${-icon[1] *
-			48}px`
+		godIconDiv.style.backgroundPosition = `${-icon[0] * 48}px ${
+			-icon[1] * 48
+		}px`
 		if (icon[2]) godIconDiv.style.backgroundImage = `url(${icon[2]})`
 		godDiv.appendChild(godIconDiv)
 		const godDragDiv = document.createElement("div")
 		godDragDiv.classList.add("templeSlotDrag")
 		godDragDiv.id = "templeGodDrag" + this.id
-		godDragDiv.addEventListener("mousedown", ev => {
+		godDragDiv.addEventListener("mousedown", (ev) => {
 			if (ev.button === 0 && mg) mg.dragGod(this)
 		})
-		godDragDiv.addEventListener("mouseup", ev => {
+		godDragDiv.addEventListener("mouseup", (ev) => {
 			if (ev.button === 0 && mg) mg.dropGod()
 		})
 		godDiv.appendChild(godDragDiv)

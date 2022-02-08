@@ -68,7 +68,8 @@ todoBeforeLoad.push(() => {
 		window.__INTERNAL_CPPKIES_HOOKS__.buildings = buildingHooks
 	window.__INTERNAL_CPPKIES_HOOKS__.createBuildingHooks = createBuildingHooks
 
-	for (const building of Game.ObjectsById) createBuildingHooks(building)
+	for (const building of Object.values(Game.ObjectsById))
+		createBuildingHooks(building)
 	new Injection("buildingAutoHook", () => {
 		Game.Object = injectCode(
 			Game.Object,

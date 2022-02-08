@@ -2,7 +2,10 @@ import { injectCode, injectCodes } from "../helpers"
 import { ReturnableEventEmitter } from "../lib/eventemitter"
 import { todoBeforeLoad } from "../loadValues"
 import { buildingHooks, createBuildingHooks } from "./buildings"
+import { GardenHooks } from "./garden"
 import { Injection } from "./generic"
+import { GrimoireHooks } from "./grimoire"
+import { PatheonHooks } from "./pantheon"
 
 export type Hooks = ReturnableEventEmitter<{
 	//! Custom menus
@@ -38,6 +41,11 @@ export type Hooks = ReturnableEventEmitter<{
 	reset: [boolean, void]
 
 	reincarnate: [void, void]
+	preLoad: [void, void]
+	minigameSave: [
+		{ building: Game.Object; save: string },
+		{ building: Game.Object; save: string }
+	]
 	//! Tiers
 
 	getIcon: [
@@ -100,7 +108,13 @@ export default hooks
 declare global {
 	interface Window {
 		__INTERNAL_CPPKIES_HOOKS__: {
+			isFirstLoad: boolean
 			basegame?: Hooks
+			minigames?: {
+				garden?: GardenHooks
+				grimoire?: GrimoireHooks
+				pantheon?: PatheonHooks
+			}
 			buildings?: typeof buildingHooks
 			hiddenMilkMult: number
 			createBuildingHooks?: typeof createBuildingHooks
@@ -196,6 +210,14 @@ export function injectBasegame(): void {
 		new Injection("reincarnate", () => {
 			Game.registerHook("reincarnate", () => hooks.emit("reincarnate"))
 		}),
+		new Injection("preLoad", () => {
+			Game.LoadSave = injectCode(
+				Game.LoadSave,
+				null,
+				'__INTERNAL_CPPKIES_HOOKS.isFirstLoad = false;\n__INTERNAL_CPPKIES_HOOKS__.basegame.emit("preLoad");\n',
+				"before"
+			)
+		}),
 		//// -- Tiers -- ////
 		/**
 				"customGetIcon"
@@ -264,7 +286,7 @@ export function injectBasegame(): void {
 					"before",
 				],
 			])
-			Game.registerHook("cps", cps => hooks.emit("cps", cps))
+			Game.registerHook("cps", (cps) => hooks.emit("cps", cps))
 		}),
 		new Injection("cursorFingerMult", () => {
 			Game.Objects.Cursor.cps = injectCode(
@@ -291,7 +313,7 @@ add = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("cursorFingerMult", add);\n`,
 				],
 			])
 
-			Game.registerHook("cookiesPerClick", cpc => hooks.emit("cpc", cpc))
+			Game.registerHook("cookiesPerClick", (cpc) => hooks.emit("cpc", cpc))
 		}),
 		// !!!INTERNAL DO NOT USE!!! Use buildingHooks' "cps" instead
 		new Injection("buildingCps", () => {
@@ -380,8 +402,16 @@ frame = override.frame;\n`,
 				"before"
 			)
 		}),
+		new Injection("overrideMinigameSave", () => {
+			Game.LoadSave = injectCode(
+				Game.LoadSave,
+				"if (me.minigame",
+				`if (mestr[4]) mestr[4] = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("minigameSave", { building: me, save: mestr[4] }).save;`,
+				"before"
+			)
+		}),
 	]
-	injections.forEach(inject => inject.runHook())
+	injections.forEach((inject) => inject.runHook())
 	window.__INTERNAL_CPPKIES_HOOKS__.basegame = hooks
 }
 

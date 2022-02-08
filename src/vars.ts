@@ -3,6 +3,7 @@ import Tier from "./tiers"
 import { Upgrade } from "./upgrades"
 import { Building } from "./buildings"
 import { Mod, OwnershipUnit } from "./mods"
+import { PlantMutation } from "."
 
 export const miscValues = {
 	cookieOrder: 121212,

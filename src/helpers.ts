@@ -172,3 +172,16 @@ export function toRomanNumeral(num: number): string {
 	}
 	return roman
 }
+
+export function attachTooltip(
+	element: HTMLElement,
+	text: CommonValue<string>,
+	origin?: Game.TooltipOrigins
+): void {
+	element.addEventListener("mouseover", () => {
+		Game.tooltip.dynamic = typeof text === "function" ? 1 : 0
+		Game.tooltip.draw(element, text, origin)
+		Game.tooltip.wobble()
+	})
+	element.addEventListener("mouseout", () => (Game.tooltip.shouldHide = 1))
+}

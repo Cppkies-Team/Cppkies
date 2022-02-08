@@ -3,12 +3,14 @@ import { Mod, OwnershipUnit } from "./mods"
 import { resolveIcon } from "./spritesheets"
 import { setUnitOwner } from "./vars"
 
-type MilkClass = typeof Game.Milk & Game.ChoiceCosmetics
+type MilkClass = typeof Game.Milk
 
 export class Milk implements MilkClass, OwnershipUnit {
 	icon: [number, number]
 	iconLink?: string
 	owner?: Mod
+	bname: string
+	type = 0 as const
 	/**
 	 * Creates a new milk type
 	 * @param name The name of the milk
@@ -23,6 +25,7 @@ export class Milk implements MilkClass, OwnershipUnit {
 		public special = false
 	) {
 		setUnitOwner(this)
+		this.bname = loc(name)
 		if (!pic.endsWith(".png"))
 			throw new Error(
 				`Can't create milk with the milk URL "${pic}", the URL must end with .png!`
@@ -34,8 +37,7 @@ export class Milk implements MilkClass, OwnershipUnit {
 		this.icon = [icon[0], icon[1]]
 		this.iconLink = icon[2]
 		// TODO: Special milks
-		if (special)
-			Game.MilksByChoice[Object.keys(Game.MilksByChoice).length] = this
+		if (special) Game.Milks[Object.keys(Game.Milks).length] = this
 		else Game.Milks.push(this)
 	}
 }

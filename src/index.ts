@@ -46,10 +46,12 @@ Sadly, due to internal changes, Cppkies 0.3 mods are incompatible with Cppkies 0
 if (isFirstCppkies)
 	window.__INTERNAL_CPPKIES_HOOKS__ = {
 		hiddenMilkMult: 1,
+		minigames: {},
 		injectedHooks: new Set(),
 		injectedBuildingHooks: {},
+		isFirstLoad: true,
 	}
-todoBeforeLoad.map(val => val())
+todoBeforeLoad.map((val) => val())
 
 setLoaded()
 if (isFirstCppkies) {
@@ -68,13 +70,13 @@ if (isFirstCppkies) {
 	})
 }
 //Run all onLoad events
-onLoad.forEach(val => val())
+onLoad.forEach((val) => val())
 //Force all new onLoad events to run
 if (isFirstCppkies) {
 	//Do the same for CPPKIES_ONLOAD
 	if (!window.CPPKIES_ONLOAD) window.CPPKIES_ONLOAD = []
 	//Run all onLoad events
-	window.CPPKIES_ONLOAD.forEach(val => val())
+	window.CPPKIES_ONLOAD.forEach((val) => val())
 	//Force all new onLoad events to run
 	window.CPPKIES_ONLOAD = new Proxy([], {
 		set: (_target, key, value): boolean => {
