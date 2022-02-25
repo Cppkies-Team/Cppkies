@@ -23,7 +23,7 @@ export interface SpecififcMinigameSaves {}
  */
 export const customLoad: (() => void)[] = []
 
-export const customSave: (() => void)[] = []
+export const saveFunctions: (() => void)[] = []
 
 /**
  * The save type for Cppkies
@@ -357,150 +357,7 @@ export function saveAll(): void {
 	for (const building of customBuildings) saveBuilding(building)
 	for (const upgrade of customUpgrades) saveUpgrade(upgrade)
 	for (const achievement of customAchievements) saveAchievement(achievement)
-	for (const customFunc of customSave) customFunc()
-}
-
-function assume<T>(val: unknown): val is T {
-	return true
-}
-
-export function applySave(newSave: unknown): SaveType {
-	const virtualSave = createDefaultSave()
-	// Assert type
-	if (typeof newSave !== "object" || newSave === null) return virtualSave
-	// Assert save version
-	if (
-		!hasOwnProperty(newSave, "saveVer") ||
-		typeof newSave.saveVer !== "number" ||
-		newSave.saveVer > SAVE_VER
-	)
-		return virtualSave
-
-	// Create mods
-	function applyModSave(modSave: unknown): ModSave {
-		const virtualModSave = createDefaultSaveFragment("mod")
-
-		// Assert type
-		if (typeof modSave !== "object" || modSave === null) return virtualModSave
-		// Assert buildings
-		if (
-			hasOwnProperty(modSave, "buildings") &&
-			typeof modSave.buildings === "object" &&
-			modSave.buildings !== null &&
-			assume<Record<string, unknown>>(modSave.buildings)
-		) {
-			virtualModSave.buildings = {}
-			for (const buildingName in modSave.buildings) {
-				const building = modSave.buildings[buildingName] as object
-				if (typeof building !== "object" || building === null) continue
-				virtualModSave.buildings[buildingName] =
-					createDefaultSaveFragment("building")
-				applyAllProps(virtualModSave.buildings[buildingName], building)
-			}
-		}
-		// Assert upgrades and achievements
-		if (
-			hasOwnProperty(modSave, "upgrades") &&
-			typeof modSave.upgrades === "object" &&
-			modSave.upgrades !== null &&
-			assume<Record<string, unknown>>(modSave.upgrades)
-		) {
-			virtualModSave.upgrades = {}
-			for (const upgradeName in modSave.upgrades) {
-				const upgrade = modSave.upgrades[upgradeName]
-				if (typeof upgrade !== "object" || upgrade === null) continue
-				virtualModSave.upgrades[upgradeName] =
-					createDefaultSaveFragment("upgrade")
-				applyAllProps(virtualModSave.upgrades[upgradeName], upgrade)
-			}
-		}
-		if (
-			hasOwnProperty(modSave, "achievements") &&
-			typeof modSave.achievements === "object" &&
-			modSave.achievements !== null &&
-			assume<Record<string, unknown>>(modSave.achievements)
-		) {
-			virtualModSave.achievements = {}
-			for (const achievementName in modSave.achievements) {
-				const achievement = modSave.achievements[achievementName]
-				if (typeof achievement !== "object" || achievement === null) continue
-				virtualModSave.achievements[achievementName] =
-					createDefaultSaveFragment("achievement")
-				applyAllProps(virtualModSave.achievements[achievementName], achievement)
-			}
-		}
-
-		if (
-			hasOwnProperty(modSave, "ui") &&
-			typeof modSave.ui === "object" &&
-			modSave.ui !== null &&
-			assume<Record<string, unknown>>(modSave.ui)
-		) {
-			virtualModSave.ui = {}
-			for (const uiName in modSave.ui)
-				virtualModSave.ui[uiName] = modSave.ui[uiName]
-		}
-
-		if (hasOwnProperty(modSave, "custom") && typeof modSave.custom === "object")
-			virtualModSave.custom = modSave.custom
-
-		return virtualModSave
-	}
-
-	// `foreign` check
-	if (!hasOwnProperty(newSave, "foreign"))
-		virtualSave.foreign = createDefaultSaveFragment("mod")
-	else virtualSave.foreign = applyModSave(newSave.foreign)
-	if (
-		hasOwnProperty(newSave, "mods") &&
-		typeof newSave.mods === "object" &&
-		newSave.mods !== null &&
-		assume<Record<string, unknown>>(newSave.mods)
-	)
-		for (const modName in newSave.mods)
-			virtualSave.mods[modName] = applyModSave(newSave.mods[modName])
-
-	// Dragon
-	if (
-		hasOwnProperty(newSave, "dragon") &&
-		typeof newSave.dragon === "object" &&
-		newSave.dragon !== null
-	) {
-		if (
-			hasOwnProperty(newSave.dragon, "level") &&
-			(typeof newSave.dragon.level === "number" ||
-				newSave.dragon.level === null)
-		)
-			virtualSave.dragon.level = newSave.dragon.level
-		if (
-			hasOwnProperty(newSave.dragon, "auras") &&
-			newSave.dragon.auras instanceof Array
-		) {
-			for (const i in newSave.dragon.auras) {
-				const aura = newSave.dragon.auras[i]
-				if (
-					typeof aura === "number" ||
-					typeof aura === "string" ||
-					aura === null
-				)
-					virtualSave.dragon.auras[i] = aura
-			}
-		}
-	}
-	if (
-		hasOwnProperty(newSave, "minigames") &&
-		typeof newSave.minigames === "object" &&
-		newSave.minigames !== null &&
-		assume<Record<string, unknown>>(newSave.minigames)
-	) {
-		virtualSave.minigames = {}
-		for (const minigameName in newSave.minigames) {
-			const minigame = newSave.minigames[minigameName]
-			if (typeof minigame === "object" && minigame !== null)
-				virtualSave.minigames[minigameName] = minigame
-		}
-	}
-	return virtualSave
+	for (const customFunc of saveFunctions) customFunc()
 }
 
 export function importSave(data: string): void {
@@ -513,15 +370,13 @@ export function importSave(data: string): void {
 			if (!decompressedData || decompressedData.length < 10)
 				decompressedData = data
 			newSave = JSON.parse(decompressedData)
+			applyAllProps(save, newSave)
+			loadAll()
 		} catch (err) {
 			console.warn("CPPKIES: Found invalid save, creating new one...")
 			console.error(err)
 			initSave()
 		}
-
-	const computedSave = applySave(newSave)
-	applyAllProps(save, computedSave)
-	loadAll()
 }
 
 export function exportSave(): string {

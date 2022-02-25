@@ -3,7 +3,7 @@ import { Mod, OwnershipUnit } from "../mods"
 import hooks from "../injects/basegame"
 import { gardenHooks, requireGardenInjects } from "../injects/garden"
 import { shouldRunVersioned } from "../injects/generic"
-import { save, customLoad, customSave } from "../saves"
+import { save, customLoad, saveFunctions } from "../saves"
 import { resolveAlias } from "../spritesheets"
 import { setUnitOwner } from "../vars"
 
@@ -312,7 +312,7 @@ if (shouldRunVersioned("plantSaving")) {
 }
 
 if (shouldRunVersioned("seedSaving")) {
-	customSave.push(() => {
+	saveFunctions.push(() => {
 		if (!mg) return
 		if (!save.minigames?.garden) return
 		const seeds: string[] = save.minigames.garden.seeds || []
