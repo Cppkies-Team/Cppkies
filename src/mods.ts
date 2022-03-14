@@ -1,8 +1,22 @@
 import { applyAllProps, hasOwnProperty } from "./helpers"
 import { mods, setCurrentMod } from "./vars"
 import { ToggleBase } from "./modUI"
-import { applyModSave, loadMod } from "./saves"
 import { deffer } from "./loadValues"
+import { ModSavePartition, save } from "./saves"
+
+new ModSavePartition(
+	"custom",
+	1,
+	"never",
+	(save, mod) => {
+		if (!mod) return
+		save.custom = mod.custom
+	},
+	(save, mod) => {
+		if (!mod) return
+		mod.custom = save.custom
+	}
+)
 
 /**
  * An object which mods can own
@@ -77,7 +91,7 @@ export class Mod<C extends object = object> implements ModMetadata {
 				return
 			}
 		mods.push(this)
-		applyModSave(this, loadMod(this))
+		this.custom = (save.mods[this.keyname]?.custom as C) ?? null
 		deffer.then(() => {
 			setCurrentMod(this)
 			modFunction?.apply(this)

@@ -9,7 +9,7 @@
 		"test": "npx playwright test",
 		"code-test": "npm run prodBuild && npm run eslint",
 		"build": "npx rollup -c",
-		"prodBuild": "rm dist -rf && echo {\\\"prod\\\":true} > isprod.json && export NODE_ENV=\"production\" && npm run build && npm run build-dts",
+		"prodBuild": "rm -rf dist && echo {\\\"prod\\\":true} > isprod.json && export NODE_ENV=\"production\" && npm run build && npm run build-dts",
 		"watch": "echo {\\\"prod\\\":false} > isprod.json && export NODE_ENV=\"development\"&&npm run build -- --watch",
 		"eslint": "npx eslint ./src/**/*.ts ./src/*.ts ./*.js",
 		"eslint:fix": "npm run eslint -- --fix",

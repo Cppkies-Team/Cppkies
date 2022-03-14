@@ -1,8 +1,9 @@
 import { FriendlyHtml } from "../ccUI"
 import { CommonValue } from "../helpers"
 import { MultiStateButton } from "./multiStateButton"
+import { TOGGLE_UI_RESET } from "./toggleBase"
 
-export class ToggleButton extends MultiStateButton<["ON", "OFF"]> {
+export class ToggleButton extends MultiStateButton<["OFF", "ON"]> {
 	constructor(
 		keyname: string,
 		name: FriendlyHtml | ((state: boolean) => FriendlyHtml),
@@ -16,25 +17,18 @@ export class ToggleButton extends MultiStateButton<["ON", "OFF"]> {
 			typeof name === "function"
 				? (state: "ON" | "OFF") => name(state === "ON")
 				: () => `${name} ${this.state}`,
-			["ON", "OFF"],
+			["OFF", "ON"],
 			description,
-			() => {
-				if (this.state === "ON")
-					this.additionalClasses.splice(
-						this.additionalClasses.indexOf("off"),
-						1
-					)
-				else this.additionalClasses.push("off")
-				onClick?.apply(this)
-			}
+			() => onClick?.apply(this)
 		)
-		if (this.state === undefined)
-			this.state =
-				this.defaultState || this.defaultState === undefined ? "ON" : "OFF"
-		if (this.state === "OFF") this.additionalClasses.push("off")
+		if (this.state === undefined && this.defaultState) this.state = "ON"
 	}
 	render(): HTMLDivElement {
 		this.off = this.state === "OFF"
 		return super.render()
+	}
+	load(save: string | typeof TOGGLE_UI_RESET): void {
+		if (save === TOGGLE_UI_RESET) this.state = this.defaultState ? "ON" : "OFF"
+		else super.load(save)
 	}
 }

@@ -105,32 +105,13 @@ const hooks: Hooks = new ReturnableEventEmitter()
 
 export default hooks
 
-declare global {
-	interface Window {
-		__INTERNAL_CPPKIES_HOOKS__: {
-			isFirstLoad: boolean
-			basegame?: Hooks
-			minigames?: {
-				garden?: GardenHooks
-				grimoire?: GrimoireHooks
-				pantheon?: PatheonHooks
-			}
-			buildings?: typeof buildingHooks
-			hiddenMilkMult: number
-			createBuildingHooks?: typeof createBuildingHooks
-			injectedHooks: Set<string>
-			injectedBuildingHooks: Record<string, Set<string>>
-		}
-	}
-}
-
 /**
  * Creates the function hooks for base game
  * @returns A promise
  */
 export function injectBasegame(): void {
-	if (window.__INTERNAL_CPPKIES_HOOKS__.basegame)
-		window.__INTERNAL_CPPKIES_HOOKS__.basegame.setForwardTarget(hooks)
+	if (__INTERNAL_CPPKIES__.basegame)
+		__INTERNAL_CPPKIES__.basegame.setForwardTarget(hooks)
 
 	const injections: Array<Injection> = [
 		//// -- Custom menus -- ////
@@ -157,16 +138,16 @@ export function injectBasegame(): void {
 					// Cppkies injection
 					switch (Game.onMenu) {
 						case "prefs":
-							__INTERNAL_CPPKIES_HOOKS__.basegame.emit("optionsMenu")
+							__INTERNAL_CPPKIES__.basegame.emit("optionsMenu")
 							break
 						case "stats":
-							__INTERNAL_CPPKIES_HOOKS__.basegame.emit("statsMenu")
+							__INTERNAL_CPPKIES__.basegame.emit("statsMenu")
 							break
 						case "log":
-							__INTERNAL_CPPKIES_HOOKS__.basegame.emit("logMenu")
+							__INTERNAL_CPPKIES__.basegame.emit("logMenu")
 							break
 					}
-					__INTERNAL_CPPKIES_HOOKS__.basegame.emit("menu")
+					__INTERNAL_CPPKIES__.basegame.emit("menu")
 					`,
 				"after"
 			)
@@ -179,7 +160,7 @@ export function injectBasegame(): void {
 				null,
 				`
 					// Cppkies injection
-					__INTERNAL_CPPKIES_HOOKS__.basegame.emit("preSave")
+					__INTERNAL_CPPKIES__.basegame.emit("preSave")
 					`,
 				"before"
 			)
@@ -190,7 +171,7 @@ export function injectBasegame(): void {
 				"if (type==2 || type==3)",
 				`
 					// Cppkies injection
-					__INTERNAL_CPPKIES_HOOKS__.basegame.emit("postSave")
+					__INTERNAL_CPPKIES__.basegame.emit("postSave")
 					`,
 				"before"
 			)
@@ -202,7 +183,7 @@ export function injectBasegame(): void {
 				null,
 				`
 					// Cppkies injection
-					__INTERNAL_CPPKIES_HOOKS__.basegame.constEmit("reset", hard)
+					__INTERNAL_CPPKIES__.basegame.constEmit("reset", hard)
 					`,
 				"before"
 			)
@@ -214,7 +195,7 @@ export function injectBasegame(): void {
 			Game.LoadSave = injectCode(
 				Game.LoadSave,
 				null,
-				'__INTERNAL_CPPKIES_HOOKS.isFirstLoad = false;\n__INTERNAL_CPPKIES_HOOKS__.basegame.emit("preLoad");\n',
+				'__INTERNAL_CPPKIES_HOOKS.isFirstLoad = false;\n__INTERNAL_CPPKIES__.basegame.emit("preLoad");\n',
 				"before"
 			)
 		}),
@@ -231,7 +212,7 @@ export function injectBasegame(): void {
 				[
 					"return [col,Game.Tiers[tier].iconRow];",
 					`// Cppkies Injection
-					return __INTERNAL_CPPKIES_HOOKS__.basegame.emit("getIcon", { icon: [col, Game.Tiers[tier].iconRow], tier: tier, type: type }).icon`,
+					return __INTERNAL_CPPKIES__.basegame.emit("getIcon", { icon: [col, Game.Tiers[tier].iconRow], tier: tier, type: type }).icon`,
 					"replace",
 				],
 				["col=18;", 'else if (type === "Mouse") col = 11;', "after"],
@@ -252,7 +233,7 @@ export function injectBasegame(): void {
 			Game.BuildStore = injectCode(
 				Game.BuildStore,
 				null,
-				`;\n__INTERNAL_CPPKIES_HOOKS__.basegame.emit("buildStore")`,
+				`;\n__INTERNAL_CPPKIES__.basegame.emit("buildStore")`,
 				"after"
 			)
 		}),
@@ -264,7 +245,7 @@ export function injectBasegame(): void {
 				) => string,
 				"return choose(list)+'.png'",
 				`// Cppkies injection
-					list = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("grandmaPic", list)
+					list = __INTERNAL_CPPKIES__.basegame.emit("grandmaPic", list)
 					`,
 				"before"
 			)
@@ -275,14 +256,14 @@ export function injectBasegame(): void {
 				[
 					"var rawCookiesPs=Game.cookiesPs*mult;",
 					`// Cppkies injection
-					Game.cookiesPs = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("rawCps", Game.cookiesPs);
-					mult = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("rawCpsMult", mult);\n`,
+					Game.cookiesPs = __INTERNAL_CPPKIES__.basegame.emit("rawCps", Game.cookiesPs);
+					mult = __INTERNAL_CPPKIES__.basegame.emit("rawCpsMult", mult);\n`,
 					"before",
 				],
 				[
 					"Game.cookiesPs=Game.runModHookOnValue('cps',Game.cookiesPs);",
 					`// Cppkies injection
-						mult = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("cpsMult", mult);\n`,
+						mult = __INTERNAL_CPPKIES__.basegame.emit("cpsMult", mult);\n`,
 					"before",
 				],
 			])
@@ -293,7 +274,7 @@ export function injectBasegame(): void {
 				Game.Objects.Cursor.cps,
 				`var mult=1;`,
 				`// Cppkies injection
-add = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("cursorFingerMult", add);\n`,
+add = __INTERNAL_CPPKIES__.basegame.emit("cursorFingerMult", add);\n`,
 				"before"
 			)
 		}),
@@ -302,13 +283,13 @@ add = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("cursorFingerMult", add);\n`,
 				[
 					`var num=0;`,
 					`// Cppkies injection
-						add = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("cursorFingerMult", add);\n`,
+						add = __INTERNAL_CPPKIES__.basegame.emit("cursorFingerMult", add);\n`,
 					"before",
 				],
 				[
 					`var out`,
 					`// Cppkies injection
-						add = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("cpcAdd", add);\n`,
+						add = __INTERNAL_CPPKIES__.basegame.emit("cpcAdd", add);\n`,
 					"before",
 				],
 			])
@@ -321,7 +302,7 @@ add = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("cursorFingerMult", add);\n`,
 				Game.CalculateGains,
 				"me.storedTotalCps=me.amount*me.storedCps;",
 				`// Cppkies injection (internal, do not use)
-me.storedCps = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("buildingCps", { building: i, cps: me.storedCps }).cps;\n`,
+me.storedCps = __INTERNAL_CPPKIES__.basegame.emit("buildingCps", { building: i, cps: me.storedCps }).cps;\n`,
 				"before"
 			)
 		}),
@@ -340,7 +321,7 @@ me.storedCps = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("buildingCps", { buildin
 				Game.getNewTicker,
 				"Game.TickerAge=Game.fps*10;",
 				`// Cppkies injection
-list = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("ticker", list);\n`,
+list = __INTERNAL_CPPKIES__.basegame.emit("ticker", list);\n`,
 				"before"
 			)
 		}),
@@ -350,7 +331,7 @@ list = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("ticker", list);\n`,
 				Game.DrawSpecial,
 				"if (hovered || selected)",
 				`// Cppkies injection
-const override = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("specialPic", {tab: Game.specialTabs[i], frame: frame, pic: pic})
+const override = __INTERNAL_CPPKIES__.basegame.emit("specialPic", {tab: Game.specialTabs[i], frame: frame, pic: pic})
 pic = override.pic
 frame = override.frame;\n`,
 				"before"
@@ -359,7 +340,7 @@ frame = override.frame;\n`,
 				Game.ToggleSpecialMenu,
 				"else {pic='dragon.png?v='+Game.version;frame=4;}",
 				`// Cppkies injection
-const override = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("specialPic", {tab: Game.specialTab, frame: frame, pic: pic})
+const override = __INTERNAL_CPPKIES__.basegame.emit("specialPic", {tab: Game.specialTab, frame: frame, pic: pic})
 pic = override.pic
 frame = override.frame;\n`,
 				"after"
@@ -398,7 +379,7 @@ frame = override.frame;\n`,
 				Game.CalculateGains,
 				"var catMult=1;",
 				`// Cppkies injection
-			__INTERNAL_CPPKIES_HOOKS__.hiddenMilkMult = milkMult;\n`,
+			__INTERNAL_CPPKIES__.hiddenMilkMult = milkMult;\n`,
 				"before"
 			)
 		}),
@@ -406,13 +387,13 @@ frame = override.frame;\n`,
 			Game.LoadSave = injectCode(
 				Game.LoadSave,
 				"if (me.minigame",
-				`if (mestr[4]) mestr[4] = __INTERNAL_CPPKIES_HOOKS__.basegame.emit("minigameSave", { building: me, save: mestr[4] }).save;`,
+				`if (mestr[4]) mestr[4] = __INTERNAL_CPPKIES__.basegame.emit("minigameSave", { building: me, save: mestr[4] }).save;`,
 				"before"
 			)
 		}),
 	]
 	injections.forEach((inject) => inject.runHook())
-	window.__INTERNAL_CPPKIES_HOOKS__.basegame = hooks
+	__INTERNAL_CPPKIES__.basegame = hooks
 }
 
 todoBeforeLoad.push(injectBasegame)

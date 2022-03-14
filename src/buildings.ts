@@ -1,10 +1,90 @@
-import { BuildingSave, loadBuilding } from "./saves"
 import { resolveAlias } from "./spritesheets"
 import hooks from "./injects/basegame"
 import { buildingHooks, createBuildingHooks } from "./injects/buildings"
 import { miscValues, customBuildings, setUnitOwner } from "./vars"
 import { shouldRunVersioned } from "./injects/generic"
 import { Mod, OwnershipUnit } from "./mods"
+import { ModSave, ModSavePartition, save } from "./saves"
+
+/**
+ * The save type for a building
+ */
+export interface BuildingSave {
+	amount: number
+	bought: number
+	free: number
+	totalCookies: number
+	level: number
+	muted: number
+	minigameSave: string
+}
+
+declare module "./saves" {
+	export interface ModSave {
+		buildings?: Record<string, BuildingSave>
+	}
+}
+
+function loadBuilding(save: ModSave, building: Building): void {
+	const buildingSave = save.buildings?.[building.name] || {
+		amount: 0,
+		bought: 0,
+		free: 0,
+		level: 0,
+		minigameSave: "",
+		muted: 0,
+		totalCookies: 0,
+	}
+
+	building.amount = buildingSave.amount
+	building.bought = buildingSave.bought
+	building.free = buildingSave.free
+	building.level = buildingSave.level
+	building.minigameSave = buildingSave.minigameSave
+	building.muted = buildingSave.muted
+	building.totalCookies = buildingSave.totalCookies
+}
+
+new ModSavePartition(
+	"buildings",
+	1,
+	"mixed",
+	(save, mod) => {
+		for (const building of customBuildings) {
+			if (building.owner !== mod) continue
+			if (!save.buildings) save.buildings = {}
+			save.buildings[building.name] = {
+				amount: building.amount,
+				bought: building.bought,
+				free: building.free,
+				level: building.level,
+				minigameSave: building.minigameSave,
+				muted: building.muted,
+				totalCookies: building.totalCookies,
+			}
+		}
+	},
+	(save, mod) => {
+		if (!save.buildings) return
+		for (const building of customBuildings) {
+			if (building.owner !== mod) continue
+			loadBuilding(save, building)
+		}
+	},
+	(save, resetType) => {
+		if (resetType === "hard") {
+			delete save.buildings
+			return
+		}
+		if (!save.buildings) return
+		for (const building of Object.values(save.buildings)) {
+			building.amount = 0
+			building.bought = 0
+			building.free = 0
+			building.totalCookies = 0
+		}
+	}
+)
 
 /**
  * The building class for creating new buildings
@@ -156,9 +236,8 @@ export class Building extends Game.Object implements OwnershipUnit {
 		const muteElement = document.getElementById("buildingsMute")
 		if (muteElement) muteElement.appendChild(muteDiv)
 		// Load the save stuff
-		const loadProps = loadBuilding(this)
-		// @ts-expect-error Typescript is kinda dumb here
-		for (const i in loadProps) this[i] = loadProps[i]
+		loadBuilding(this.owner || save.foreign, this)
+
 		Game.recalculateGains = 1
 	}
 }
@@ -171,7 +250,7 @@ export const DEFAULT_CPS = (me: Building): number =>
 /**
  * The reccomended function to pass in building BuyFunc
  */
-export const DEFAULT_ONBUY = function(this: Building): void {
+export const DEFAULT_ONBUY = function (this: Building): void {
 	Game.UnlockTiered(this)
 	if (
 		this.amount >= Game.SpecialGrandmaUnlock &&

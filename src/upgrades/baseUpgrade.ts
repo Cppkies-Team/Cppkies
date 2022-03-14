@@ -1,9 +1,58 @@
-import { loadUpgrade } from "../saves"
+import { ModSave, ModSavePartition, save } from "../saves"
 import { applyAllProps, CommonValue } from "../helpers"
 import { resolveIcon } from "../spritesheets"
 import { customUpgrades, setUnitOwner } from "../vars"
 import { TieredUpgrade } from "./tieredUpgrade"
 import { Mod, OwnershipUnit } from "../mods"
+
+/**
+ * The save type for an upgrade
+ */
+export interface UpgradeSave {
+	unlocked: boolean
+	bought: boolean
+}
+
+declare module "../saves" {
+	export interface ModSave {
+		upgrades?: Record<string, UpgradeSave>
+	}
+}
+
+function loadUpgrade(save: ModSave, upgrade: Upgrade): void {
+	const upgradeSave = save.upgrades?.[upgrade.name] || {
+		bought: false,
+		unlocked: false,
+	}
+
+	upgrade.unlocked = upgradeSave.unlocked ? 1 : 0
+	upgrade.bought = upgradeSave.bought ? 1 : 0
+	if (upgrade.bought && Game.CountsAsUpgradeOwned(upgrade.pool))
+		Game.UpgradesOwned++
+}
+
+new ModSavePartition(
+	"upgrades",
+	1,
+	"soft",
+	(save, mod) => {
+		for (const upgrade of customUpgrades) {
+			if (upgrade.owner !== mod) continue
+			if (!save.upgrades) save.upgrades = {}
+			save.upgrades[upgrade.name] = {
+				bought: !!upgrade.bought,
+				unlocked: !!upgrade.unlock,
+			}
+		}
+	},
+	(save, mod) => {
+		if (!save.upgrades) return
+		for (const upgrade of customUpgrades) {
+			if (upgrade.owner !== mod) continue
+			loadUpgrade(save, upgrade)
+		}
+	}
+)
 
 // This file splitting is for the ebic treeshaking
 
@@ -47,10 +96,8 @@ export class Upgrade extends Game.Upgrade implements OwnershipUnit {
 		if (typeof icon === "function")
 			this.iconFunction = () => resolveIcon(icon())
 		customUpgrades.push(this)
-		const loadProps = loadUpgrade(this)
-		applyAllProps(this, loadProps)
+		loadUpgrade(this.owner || save.foreign, this)
+
 		Game.upgradesToRebuild = 1
-		if (this.bought && Game.CountsAsUpgradeOwned(this.pool))
-			Game.UpgradesOwned++
 	}
 }

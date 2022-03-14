@@ -1,5 +1,6 @@
 import { FriendlyHtml } from "../ccUI"
 import { Button } from "./button"
+import { TOGGLE_UI_RESET } from "./toggleBase"
 
 export class MultiStateButton<T extends string[]> extends Button<string> {
 	state: T[number]
@@ -28,8 +29,9 @@ export class MultiStateButton<T extends string[]> extends Button<string> {
 	save(): string {
 		return this.state
 	}
-	load(save: string): void {
-		this.state = save
+	load(save: string | typeof TOGGLE_UI_RESET): void {
+		if (save === TOGGLE_UI_RESET) this.state = this.states[0]
+		else this.state = save
 	}
 	render(): HTMLDivElement {
 		if (this.stateFunc) this.name = this.stateFunc(this.state)

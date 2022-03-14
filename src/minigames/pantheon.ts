@@ -2,7 +2,7 @@ import { attachTooltip, CommonValue, toSentenseCase } from "../helpers"
 import hooks from "../injects/basegame"
 import { shouldRunVersioned } from "../injects/generic"
 import { Mod, OwnershipUnit } from "../mods"
-import { customLoad, save } from "../saves"
+import { MinigameSavePartition, save } from "../saves"
 import { setUnitOwner } from "../vars"
 import { minigamePromises } from "./minigamePromises"
 import { requirePantheonInjects } from "../injects/pantheon"
@@ -11,7 +11,10 @@ requirePantheonInjects()
 
 let mg: typeof Game.Objects.Temple.minigame | undefined
 
-minigamePromises.Temple.then(() => (mg = Game.Objects.Temple.minigame))
+minigamePromises.Temple.then(() => {
+	mg = Game.Objects.Temple.minigame
+	savePartition.loadAll(save)
+})
 
 export const customSpirits: Spirit[] = []
 
@@ -122,10 +125,10 @@ export class Spirit implements Game.PantheonSpirit, OwnershipUnit {
 		const godDragDiv = document.createElement("div")
 		godDragDiv.classList.add("templeSlotDrag")
 		godDragDiv.id = "templeGodDrag" + this.id
-		godDragDiv.addEventListener("mousedown", (ev) => {
+		godDragDiv.addEventListener("mousedown", ev => {
 			if (ev.button === 0 && mg) mg.dragGod(this)
 		})
-		godDragDiv.addEventListener("mouseup", (ev) => {
+		godDragDiv.addEventListener("mouseup", ev => {
 			if (ev.button === 0 && mg) mg.dropGod()
 		})
 		godDiv.appendChild(godDragDiv)
@@ -154,39 +157,42 @@ declare module "../saves" {
 	}
 }
 
+const savePartition = new MinigameSavePartition(
+	"pantheon",
+	1,
+	"soft",
+	() => {},
+	save => {
+		if (!mg) return
+		for (const slot in mg.slotNames) {
+			const savedSlot = save.pantheon?.slots[slot]
+			if (savedSlot && mg.gods[savedSlot]) mg.slot[slot] = mg.gods[savedSlot].id
+		}
+	}
+)
+
 // This is like the same thing as dragon auras
-if (shouldRunVersioned("pantheonSaving")) {
+if (savePartition.active) {
 	hooks.on("preSave", () => {
 		if (!mg) return
-		if (!save.minigames) save.minigames = {}
-		if (!save.minigames.pantheon)
-			save.minigames.pantheon = { slots: [null, null, null] }
+		if (!savePartition.active) return
+		const slots: PantheonSave["slots"] = [null, null, null]
 		for (const slot in mg.slotNames) {
+			if (mg.slot[slot] !== -1) {
+				slots[slot] = null
+			}
+
 			const god = mg.godsById[mg.slot[slot]]
 			if (god instanceof Spirit) {
-				save.minigames.pantheon.slots[slot] = god.spiritTitle
+				slots[slot] = god.spiritTitle
 				mg.slot[slot] = -1
-			} else if (mg.slot[slot] !== -1)
-				save.minigames.pantheon.slots[slot] = null
+			}
 		}
 	})
 	hooks.on("postSave", () => {
 		if (!mg) return
 		if (!save.minigames?.pantheon) return
-		for (const slot in mg.slotNames) {
-			const savedSlot = save.minigames.pantheon.slots[slot]
-			if (savedSlot !== null && mg.gods[savedSlot])
-				mg.slot[slot] = mg.gods[savedSlot].id
-		}
-	})
-
-	hooks.on("reset", () => {
-		if (!save.minigames?.pantheon) return
-		save.minigames.pantheon.slots = [null, null, null]
-	})
-	customLoad.push(() => {
-		if (!mg || !save.minigames?.pantheon) return
-
+		if (!savePartition.active) return
 		for (const slot in mg.slotNames) {
 			const savedSlot = save.minigames.pantheon.slots[slot]
 			if (savedSlot !== null && mg.gods[savedSlot])

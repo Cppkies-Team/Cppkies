@@ -28,23 +28,13 @@ function computeKittenCost(tier: number): number {
  * (Loops if tier is beyond length)
  */
 const kittenPowerPattern = [
-	0.1,
-	0.125,
-	0.15,
-	0.175,
-	0.2,
-	0.2,
-	0.2,
-	0.2,
-	0.2,
-	0.175,
-	0.15,
-	0.125,
-	0.115,
+	0.1, 0.125, 0.15, 0.175, 0.2, 0.2, 0.2, 0.2, 0.2, 0.175, 0.15, 0.125, 0.115,
 ]
 
-export class KittenUpgrade<Tier extends string | number> extends Upgrade
-	implements Game.KittenUpgrade<Tier> {
+export class KittenUpgrade<Tier extends string | number>
+	extends Upgrade
+	implements Game.KittenUpgrade<Tier>
+{
 	kitten = true as const
 	pool = "" as const
 	/**
@@ -101,10 +91,7 @@ export class KittenUpgrade<Tier extends string | number> extends Upgrade
 		if (power !== null)
 			hooks.on("rawCpsMult", mult => {
 				const addMult = this.bought
-					? 1 +
-					  Game.milkProgress *
-							power *
-							window.__INTERNAL_CPPKIES_HOOKS__.hiddenMilkMult
+					? 1 + Game.milkProgress * power * __INTERNAL_CPPKIES__.hiddenMilkMult
 					: 1
 				Game.cookiesMultByType["kittens"] *= addMult
 

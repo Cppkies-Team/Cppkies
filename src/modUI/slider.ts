@@ -1,5 +1,5 @@
 import { ccSlider, FriendlyHtml } from "../ccUI"
-import { ToggleBase } from "./toggleBase"
+import { ToggleBase, TOGGLE_UI_RESET } from "./toggleBase"
 
 export class Slider extends ToggleBase<number> {
 	value: number
@@ -8,7 +8,7 @@ export class Slider extends ToggleBase<number> {
 		public name: FriendlyHtml,
 		public bounds: [number, number, number?],
 		public valueFunc: (value: number) => FriendlyHtml,
-		defaultValue = bounds[0],
+		public defaultValue = bounds[0],
 		public onChange?: (this: Slider, value: number) => void
 	) {
 		super(keyname)
@@ -18,8 +18,9 @@ export class Slider extends ToggleBase<number> {
 	save(): number {
 		return this.value
 	}
-	load(save: number): void {
-		this.value = save
+	load(save: number | typeof TOGGLE_UI_RESET): void {
+		if (save === TOGGLE_UI_RESET) this.value = this.defaultValue
+		else this.value = save
 	}
 	render(): HTMLDivElement {
 		return ccSlider(

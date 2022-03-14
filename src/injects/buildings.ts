@@ -3,10 +3,8 @@ import { injectCode } from "../helpers"
 import { ReturnableEventEmitter } from "../lib/eventemitter"
 import { todoBeforeLoad } from "../loadValues"
 
-export const buildingHooks: Record<string, BuildingHooks> = window
-	.__INTERNAL_CPPKIES_HOOKS__?.buildings
-	? window.__INTERNAL_CPPKIES_HOOKS__.buildings
-	: {}
+export const buildingHooks: Record<string, BuildingHooks> =
+	window.__INTERNAL_CPPKIES__?.buildings || {}
 
 let injectionsTodo: Set<string> | undefined
 
@@ -30,7 +28,7 @@ export function createBuildingHooks(building: Game.Object): void {
 				injectCode(building.tooltip, "return", "let tempRet = ", "replace"),
 				null,
 				`\n//Cppkies injection
-				return __INTERNAL_CPPKIES_HOOKS__.buildings[this.name].emit("tooltip", tempRet)`,
+				return __INTERNAL_CPPKIES__.buildings[this.name].emit("tooltip", tempRet)`,
 				"after"
 			)
 		}),
@@ -40,7 +38,7 @@ export function createBuildingHooks(building: Game.Object): void {
 				null,
 				`\n//Cppkies injection
 				if(success) {
-					__INTERNAL_CPPKIES_HOOKS__.buildings[this.name].emit("buy")
+					__INTERNAL_CPPKIES__.buildings[this.name].emit("buy")
 				}`,
 				"after"
 			)
@@ -50,7 +48,7 @@ export function createBuildingHooks(building: Game.Object): void {
 				building.levelUp,
 				"me.level+=1;",
 				`\n// Cppkies injection
-__INTERNAL_CPPKIES_HOOKS__.buildings[me.name].emit("levelUp")`,
+__INTERNAL_CPPKIES__.buildings[me.name].emit("levelUp")`,
 				"after",
 				{ me: building }
 			)
@@ -64,9 +62,9 @@ __INTERNAL_CPPKIES_HOOKS__.buildings[me.name].emit("levelUp")`,
 }
 
 todoBeforeLoad.push(() => {
-	if (!window.__INTERNAL_CPPKIES_HOOKS__.buildings)
-		window.__INTERNAL_CPPKIES_HOOKS__.buildings = buildingHooks
-	window.__INTERNAL_CPPKIES_HOOKS__.createBuildingHooks = createBuildingHooks
+	if (!__INTERNAL_CPPKIES__.buildings)
+		__INTERNAL_CPPKIES__.buildings = buildingHooks
+	__INTERNAL_CPPKIES__.createBuildingHooks = createBuildingHooks
 
 	for (const building of Object.values(Game.ObjectsById))
 		createBuildingHooks(building)
@@ -76,7 +74,7 @@ todoBeforeLoad.push(() => {
 			"Game.ObjectsN++",
 			`
 // Cppkies injection
-__INTERNAL_CPPKIES_HOOKS__.createBuildingHooks(this);\n`,
+__INTERNAL_CPPKIES__.createBuildingHooks(this);\n`,
 			"after"
 		)
 	}).runHook()

@@ -2,8 +2,39 @@ import { ccHideableSection } from "../ccUI"
 import hooks from "../injects/basegame"
 import { shouldRunVersioned } from "../injects/generic"
 import { Mod } from "../mods"
-import { save } from "../saves"
+import { ModSavePartition, save } from "../saves"
 import { mods, currentMod } from "../vars"
+
+declare module "../saves" {
+	export interface ModSave {
+		ui?: Record<string, unknown>
+	}
+}
+
+new ModSavePartition(
+	"ui",
+	1,
+	"never",
+	(save, mod) => {
+		if (!mod) return
+
+		for (const toggle of mod.toggles) {
+			if (!toggle.save) continue
+			if (!save.ui) save.ui = {}
+			save.ui[toggle.keyname] = toggle.save()
+		}
+	},
+	(save, mod) => {
+		if (!mod || !save.ui) return
+
+		for (const toggle of mod.toggles) {
+			if (!toggle.load || !save.ui[toggle.keyname]) continue
+			toggle.load(save.ui[toggle.keyname])
+		}
+	}
+)
+
+export const TOGGLE_UI_RESET = Symbol()
 
 export abstract class ToggleBase<C = unknown> {
 	mod: Mod
@@ -23,7 +54,7 @@ export abstract class ToggleBase<C = unknown> {
 	}
 	abstract render(): HTMLElement
 	save?(this: this): C
-	load?(this: this, save: C): void
+	load?(this: this, save: C | typeof TOGGLE_UI_RESET): void
 }
 
 if (shouldRunVersioned("modUIInject"))

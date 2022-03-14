@@ -26,12 +26,9 @@ export function requireGardenInjects(): void {
 async function injectGarden(): Promise<void> {
 	await minigamePromises["Farm"]
 	const mg = Game.Objects["Farm"].minigame
-	if (!window.__INTERNAL_CPPKIES_HOOKS__.minigames)
-		window.__INTERNAL_CPPKIES_HOOKS__.minigames = {}
-	if (window.__INTERNAL_CPPKIES_HOOKS__.minigames.garden)
-		window.__INTERNAL_CPPKIES_HOOKS__.minigames.garden.setForwardTarget(
-			gardenHooks
-		)
+	if (!__INTERNAL_CPPKIES__.minigames) __INTERNAL_CPPKIES__.minigames = {}
+	if (__INTERNAL_CPPKIES__.minigames.garden)
+		__INTERNAL_CPPKIES__.minigames.garden.setForwardTarget(gardenHooks)
 	const injections = [
 		new Injection("customIconsGarden", () => {
 			mg.getPlantDesc = injectCode(
@@ -96,7 +93,7 @@ async function injectGarden(): Promise<void> {
 			mg.getMuts = injectCode(
 				mg.getMuts,
 				"return muts;",
-				'return __INTERNAL_CPPKIES_HOOKS__.minigames.garden.emit("mutations", { muts, neighs, neighsM }).muts;',
+				'return __INTERNAL_CPPKIES__.minigames.garden.emit("mutations", { muts, neighs, neighsM }).muts;',
 				"replace",
 				{ M: mg }
 			)
@@ -112,7 +109,7 @@ async function injectGarden(): Promise<void> {
 		}),
 	]
 	for (const injection of injections) injection.runHook()
-	window.__INTERNAL_CPPKIES_HOOKS__.minigames.garden = gardenHooks
+	__INTERNAL_CPPKIES__.minigames.garden = gardenHooks
 }
 
 todoBeforeLoad.push(injectGarden)

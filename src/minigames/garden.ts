@@ -3,7 +3,7 @@ import { Mod, OwnershipUnit } from "../mods"
 import hooks from "../injects/basegame"
 import { gardenHooks, requireGardenInjects } from "../injects/garden"
 import { shouldRunVersioned } from "../injects/generic"
-import { save, customLoad, saveFunctions } from "../saves"
+import { MinigameSavePartition, save } from "../saves"
 import { resolveAlias } from "../spritesheets"
 import { setUnitOwner } from "../vars"
 
@@ -11,7 +11,10 @@ requireGardenInjects()
 
 let mg: Game.GardenMinigame | undefined
 
-minigamePromises["Farm"].then(() => (mg = Game.Objects["Farm"].minigame))
+minigamePromises["Farm"].then(() => {
+	mg = Game.Objects["Farm"].minigame
+	savePartition.loadAll(save)
+})
 
 function loadPlant(plant: Plant): void {
 	if (!mg) return
@@ -206,7 +209,7 @@ type CppkiesPlot = ([string, number] | null)[][]
 
 interface SeedGardenSave {
 	seeds: string[]
-	plot: undefined
+	plot?: undefined
 	nextStep?: undefined
 }
 
@@ -236,10 +239,85 @@ function createEmptyPlot(plot: Game.GardenMinigame["plot"]): CppkiesPlot {
 		.map((_, i) => Array(plot[i].length).fill(null))
 }
 
-if (shouldRunVersioned("plantSaving")) {
-	hooks.on("preSave", () => {
+const savePartition = new MinigameSavePartition(
+	"garden",
+	1,
+	"mixed",
+	save => {
+		const seeds: string[] = save.garden?.seeds || []
+
+		for (const plant of customPlants) {
+			const savePlantUnlocked = seeds.includes(plant.key)
+			if (plant.unlocked && !savePlantUnlocked) seeds.push(plant.key)
+			else if (!plant.unlocked && savePlantUnlocked)
+				seeds.splice(seeds.indexOf(plant.key), 1)
+		}
+		if (seeds.length === 0) {
+			delete save.garden?.seeds
+			if (!save.garden?.plot) delete save.garden
+		} else {
+			if (!save.garden) save.garden = { seeds }
+			else save.garden.seeds = seeds
+		}
+	},
+	save => {
 		if (!mg) return
-		if (!save.minigames) save.minigames = {}
+		if (!save?.garden) return
+		if (save.garden.plot) {
+			if (
+				__INTERNAL_CPPKIES__.isFirstLoad &&
+				mg.nextStep - save.garden.nextStep === mg.stepT * 1000
+			) {
+				// We only load plants if only one tick (the offline tick) has passed
+				const plot = save.garden.plot
+				for (let y = 0; y < mg.plot.length; y++)
+					for (let x = 0; x < mg.plot[y].length; x++) {
+						if (plot[y][x] === null) {
+							mg.plot[y][x] = [0, 0]
+							continue
+						}
+						const [plantName, age] = plot[y][x] as [string, number]
+						mg.plot[y][x][0] = mg.plants[plantName].id + 1
+						mg.plot[y][x][1] = age
+					}
+				mg.nextStep = save.garden.nextStep
+				mg.logic?.()
+			} else if (mg.nextStep - save.garden.nextStep === 0) {
+				const plot = save.garden.plot
+				for (let y = 0; y < mg.plot.length; y++)
+					for (let x = 0; x < mg.plot[y].length; x++) {
+						if (plot[y][x] === null) {
+							mg.plot[y][x] = [0, 0]
+							continue
+						}
+						const [plantName, age] = plot[y][x] as [string, number]
+						if (mg.plants[plantName] === undefined) continue
+						mg.plot[y][x][0] = mg.plants[plantName].id + 1
+						mg.plot[y][x][1] = age
+					}
+			}
+		}
+		if (save.garden.seeds) {
+			for (const plantName of save.garden.seeds) {
+				if (!mg.plants[plantName]) continue
+				mg.plants[plantName].unlocked = true
+			}
+		}
+	},
+	(save, resetType) => {
+		if (resetType === "hard") {
+			delete save.garden
+		} else {
+			delete save.garden?.nextStep
+			delete save.garden?.plot
+			if (!save.garden?.seeds) delete save.garden
+		}
+	}
+)
+
+if (savePartition.active) {
+	hooks.on("preSave", () => {
+		if (!mg || !savePartition.active) return
 
 		const plot = createEmptyPlot(mg.plot)
 		let hasAnything = false
@@ -255,21 +333,19 @@ if (shouldRunVersioned("plantSaving")) {
 			}
 
 		if (hasAnything) {
+			if (!save.minigames) save.minigames = {}
 			if (save.minigames.garden) {
 				save.minigames.garden.plot = plot
 				save.minigames.garden.nextStep = mg.nextStep
 			} else save.minigames.garden = { plot, nextStep: mg.nextStep }
-		} else {
-			if (save.minigames.garden) {
-				delete save.minigames.garden.nextStep
-				delete save.minigames.garden.plot
-				if (!save.minigames.garden.seeds) delete save.minigames.garden
-			}
+		} else if (save.minigames?.garden) {
+			delete save.minigames.garden.nextStep
+			delete save.minigames.garden.plot
 		}
 	})
 	hooks.on("postSave", () => {
-		if (!mg) return
-		if (!save.minigames?.garden || !save.minigames.garden.plot) return
+		if (!mg || !savePartition.active) return
+		if (!save.minigames?.garden?.plot) return
 		const plot = save.minigames.garden.plot
 		for (let y = 0; y < mg.plot.length; y++)
 			for (let x = 0; x < mg.plot[y].length; x++) {
@@ -278,59 +354,5 @@ if (shouldRunVersioned("plantSaving")) {
 				mg.plot[y][x][0] = mg.plants[plantName].id + 1
 				mg.plot[y][x][1] = age
 			}
-	})
-	customLoad.push(() => {
-		if (!mg) return
-		if (!save.minigames?.garden || !save.minigames.garden.plot) return
-		if (window.__INTERNAL_CPPKIES_HOOKS__.isFirstLoad) {
-			// We only load plants if only one tick (the offline tick) has passed
-			if (mg.nextStep - save.minigames.garden.nextStep !== mg.stepT * 1000)
-				return
-			const plot = save.minigames.garden.plot
-			for (let y = 0; y < mg.plot.length; y++)
-				for (let x = 0; x < mg.plot[y].length; x++) {
-					if (plot[y][x] === null) continue
-					const [plantName, age] = plot[y][x] as [string, number]
-					mg.plot[y][x][0] = mg.plants[plantName].id + 1
-					mg.plot[y][x][1] = age
-				}
-			mg.nextStep = save.minigames.garden.nextStep
-			mg.logic?.()
-		} else {
-			if (mg.nextStep - save.minigames.garden.nextStep !== 0) return
-			const plot = save.minigames.garden.plot
-			for (let y = 0; y < mg.plot.length; y++)
-				for (let x = 0; x < mg.plot[y].length; x++) {
-					if (plot[y][x] === null) continue
-					const [plantName, age] = plot[y][x] as [string, number]
-					if (mg.plants[plantName] === undefined) continue
-					mg.plot[y][x][0] = mg.plants[plantName].id + 1
-					mg.plot[y][x][1] = age
-				}
-		}
-	})
-}
-
-if (shouldRunVersioned("seedSaving")) {
-	saveFunctions.push(() => {
-		if (!mg) return
-		if (!save.minigames?.garden) return
-		const seeds: string[] = save.minigames.garden.seeds || []
-		//@ts-expect-error Typescript is really failing, here
-		if (!save.minigames.garden.seeds) save.minigames.garden.seeds = seeds
-		for (const plant of customPlants) {
-			const savePlantUnlocked = seeds.includes(plant.key)
-			if (plant.unlocked && !savePlantUnlocked) seeds.push(plant.key)
-			else if (!plant.unlocked && savePlantUnlocked)
-				seeds.splice(seeds.indexOf(plant.key), 1)
-		}
-	})
-	customLoad.push(() => {
-		if (!mg) return
-		if (!save.minigames?.garden?.seeds) return
-		for (const plantName of save.minigames.garden.seeds) {
-			if (!mg.plants[plantName]) continue
-			mg.plants[plantName].unlocked = true
-		}
 	})
 }

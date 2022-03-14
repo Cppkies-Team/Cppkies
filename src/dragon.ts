@@ -1,10 +1,24 @@
 import { hasOwnProperty } from "./helpers"
-import { customLoad, save, VANILLA_DRAGON_LEVEL_AMOUNT } from "./saves"
+import { GlobalSavePartition, save, VANILLA_DRAGON_LEVEL_AMOUNT } from "./saves"
 import { resolveIcon } from "./spritesheets"
 import hooks from "./injects/basegame"
 import { shouldRunVersioned } from "./injects/generic"
 import { Mod, OwnershipUnit } from "./mods"
 import { setUnitOwner } from "./vars"
+
+/**
+ * The save type for Krumblor
+ */
+interface DragonSave {
+	level: number | null
+	auras: [string | null, string | null]
+}
+
+declare module "./saves" {
+	export interface SaveType {
+		dragon?: DragonSave
+	}
+}
 
 export class DragonAura implements Game.DragonAura, OwnershipUnit {
 	pic: Game.Icon
@@ -46,8 +60,10 @@ export class DragonAura implements Game.DragonAura, OwnershipUnit {
 		this.id = Object.keys(Game.dragonAuras).length
 		Game.dragonAuras[this.id] = this
 		this.dname = loc(this.name)
-		if (this.name === save.dragon.auras[0]) Game.dragonAura = this.id
-		if (this.name === save.dragon.auras[1]) Game.dragonAura2 = this.id
+		if (save.dragon) {
+			if (this.name === save.dragon.auras[0]) Game.dragonAura = this.id
+			if (this.name === save.dragon.auras[1]) Game.dragonAura2 = this.id
+		}
 	}
 }
 
@@ -141,11 +157,12 @@ export class DragonLevel implements Game.DragonLevel, OwnershipUnit {
 			}
 		}
 		Game.dragonLevels.splice(order, 0, this)
-		if (
-			save.dragon.level !== null &&
-			Game.dragonLevels.length >= save.dragon.level
-		)
-			Game.dragonLevel = save.dragon.level
+		if (save.dragon)
+			if (
+				save.dragon.level !== null &&
+				Game.dragonLevels.length >= save.dragon.level
+			)
+				Game.dragonLevel = save.dragon.level
 	}
 }
 
@@ -176,7 +193,34 @@ export class DragonAuraLevel extends DragonLevel {
 	}
 }
 
-if (shouldRunVersioned("dragonSaves")) {
+const savePartition = new GlobalSavePartition(
+	"dragon",
+	1,
+	"soft",
+	() => {},
+	() => {
+		if (!save.dragon) return
+		if (
+			save.dragon.level !== null &&
+			save.dragon.level <= Game.dragonLevels.length - 1
+		)
+			Game.dragonLevel = save.dragon.level
+		const customAura1 = Object.keys(Game.dragonAuras).find(
+			val =>
+				//@ts-expect-error
+				Game.dragonAuras[val as unknown as number].name === save.dragon.auras[0]
+		)
+		const customAura2 = Object.keys(Game.dragonAuras).find(
+			val =>
+				//@ts-expect-error
+				Game.dragonAuras[val as unknown as number].name === save.dragon.auras[1]
+		)
+		if (customAura1) Game.dragonAura = parseInt(customAura1)
+		if (customAura2) Game.dragonAura2 = parseInt(customAura2)
+	}
+)
+
+if (savePartition.active) {
 	/**
 	 * **Auras**
 	 * Three levels of being loaded:
@@ -190,27 +234,36 @@ if (shouldRunVersioned("dragonSaves")) {
 	 * On aura creation, if aura id exists now, set the normal aura to the custom aura
 	 */
 	hooks.on("preSave", () => {
+		if (!savePartition.active) return
+		const aura1 = Game.dragonAuras[Game.dragonAura]
+		const aura2 = Game.dragonAuras[Game.dragonAura2]
+		const hasCustomLevel =
+			Game.dragonLevels[Game.dragonLevel] instanceof DragonLevel ||
+			Game.dragonLevel >= VANILLA_DRAGON_LEVEL_AMOUNT
+		if (
+			!(
+				hasCustomLevel ||
+				aura1 instanceof DragonAura ||
+				aura2 instanceof DragonAura
+			) &&
+			!save.dragon
+		)
+			return
+		if (!save.dragon) save.dragon = { auras: [null, null], level: null }
 		if (Game.dragonAura !== 0) save.dragon.auras[0] = null
 		if (Game.dragonAura2 !== 0) save.dragon.auras[1] = null
-
-		const aura1 = Game.dragonAuras[Game.dragonAura]
 
 		if (aura1 instanceof DragonAura) {
 			save.dragon.auras[0] = aura1.name
 			Game.dragonAura = 0
 		}
 
-		const aura2 = Game.dragonAuras[Game.dragonAura2]
-
 		if (aura2 instanceof DragonAura) {
 			save.dragon.auras[1] = aura2.name
 			Game.dragonAura2 = 0
 		}
 
-		if (
-			Game.dragonLevels[Game.dragonLevel] instanceof DragonLevel ||
-			Game.dragonLevel >= VANILLA_DRAGON_LEVEL_AMOUNT
-		) {
+		if (hasCustomLevel) {
 			save.dragon.level = Game.dragonLevel
 			while (
 				Game.dragonLevels[Game.dragonLevel] instanceof DragonLevel ||
@@ -220,15 +273,16 @@ if (shouldRunVersioned("dragonSaves")) {
 		} // else save.dragon.level = "sync"
 	})
 	hooks.on("postSave", () => {
+		if (!savePartition.active || !save.dragon) return
 		const customAura1 = Object.keys(Game.dragonAuras).find(
 			val =>
-				Game.dragonAuras[(val as unknown) as number].name ===
-				save.dragon.auras[0]
+				//@ts-expect-error TS is wrong
+				Game.dragonAuras[val as unknown as number].name === save.dragon.auras[0]
 		)
 		const customAura2 = Object.keys(Game.dragonAuras).find(
 			val =>
-				Game.dragonAuras[(val as unknown) as number].name ===
-				save.dragon.auras[1]
+				//@ts-expect-error TS is wrong
+				Game.dragonAuras[val as unknown as number].name === save.dragon.auras[1]
 		)
 		if (customAura1) Game.dragonAura = parseInt(customAura1)
 		if (customAura2) Game.dragonAura2 = parseInt(customAura2)
@@ -236,34 +290,10 @@ if (shouldRunVersioned("dragonSaves")) {
 			Game.dragonLevel = save.dragon.level
 	})
 
-	hooks.on("reset", () => {
-		save.dragon.auras = [null, null]
-		save.dragon.level = null
-	})
-
 	hooks.on("specialPic", pic => {
 		const level = Game.dragonLevels[Game.dragonLevel]
 		if (pic.tab === "dragon" && level instanceof DragonLevel)
 			pic.pic = level.picLink ?? pic.pic
 		return pic
-	})
-	customLoad.push(() => {
-		if (
-			save.dragon.level !== null &&
-			save.dragon.level <= Game.dragonLevels.length - 1
-		)
-			Game.dragonLevel = save.dragon.level
-		const customAura1 = Object.keys(Game.dragonAuras).find(
-			val =>
-				Game.dragonAuras[(val as unknown) as number].name ===
-				save.dragon.auras[0]
-		)
-		const customAura2 = Object.keys(Game.dragonAuras).find(
-			val =>
-				Game.dragonAuras[(val as unknown) as number].name ===
-				save.dragon.auras[1]
-		)
-		if (customAura1) Game.dragonAura = parseInt(customAura1)
-		if (customAura2) Game.dragonAura2 = parseInt(customAura2)
 	})
 }
