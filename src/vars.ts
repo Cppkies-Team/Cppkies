@@ -1,9 +1,8 @@
-import { Achievement } from "./achievements"
-import Tier from "./tiers"
-import { Upgrade } from "./upgrades"
-import { Building } from "./buildings"
-import { Mod, OwnershipUnit } from "./mods"
-import { PlantMutation } from "."
+import { type Achievement } from "./achievements"
+import type Tier from "./tiers"
+import { type Upgrade } from "./upgrades"
+import { type Building } from "./buildings"
+import { type Mod, OwnershipUnit } from "./mods"
 
 export const miscValues = {
 	cookieOrder: 121212,
@@ -32,4 +31,34 @@ export function setUnitOwner(unit: OwnershipUnit): void {
 		unit.owner = currentMod
 		currentMod.ownedUnits.push(unit)
 	}
+}
+
+import { Hooks } from "./injects/basegame"
+import {
+	type buildingHooks,
+	type createBuildingHooks,
+} from "./injects/buildings"
+import { GardenHooks } from "./injects/garden"
+import { GrimoireHooks } from "./injects/grimoire"
+import { PatheonHooks } from "./injects/pantheon"
+import { type SavePartition } from "./saves"
+
+interface CppkiesInternals {
+	isFirstLoad: boolean
+	basegame?: Hooks
+	minigames?: {
+		garden?: GardenHooks
+		grimoire?: GrimoireHooks
+		pantheon?: PatheonHooks
+	}
+	buildings?: typeof buildingHooks
+	hiddenMilkMult: number
+	createBuildingHooks?: typeof createBuildingHooks
+	injectedHooks: Set<string>
+	injectedBuildingHooks: Record<string, Set<string>>
+	savePartitions: Partial<Record<string, SavePartition>>
+}
+
+declare global {
+	var __INTERNAL_CPPKIES__: CppkiesInternals
 }

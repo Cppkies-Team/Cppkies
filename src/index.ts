@@ -24,7 +24,14 @@ declare global {
 export { deffer, onLoad } from "./loadValues"
 export * from "./minigames"
 
-import { prod } from "../isprod.json"
+let prod: boolean
+
+//#if _PRODUCTION
+prod = true
+//#else
+prod = false
+//#endif
+
 import { exportSave, importSave } from "./saves"
 
 import { defferResolve, setLoaded, onLoad, todoBeforeLoad } from "./loadValues"

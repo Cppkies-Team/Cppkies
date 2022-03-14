@@ -1,9 +1,9 @@
-import analyze from "rollup-plugin-analyzer"
 import { terser } from "rollup-plugin-terser"
 import typescript from "rollup-plugin-typescript2"
 import resolve from "@rollup/plugin-node-resolve"
 import commonjs from "@rollup/plugin-commonjs"
-import json from "@rollup/plugin-json"
+import dts from "rollup-plugin-dts"
+import jscc from "rollup-plugin-jscc"
 import path from "path"
 import fs from "fs"
 
@@ -16,10 +16,7 @@ const plugins = [
 	typescript({
 		tsconfig: production ? "./tsconfig.json" : "./tsconfig.dev.json",
 	}),
-	json(),
-	analyze({
-		summaryOnly: true,
-	}),
+	jscc({ values: { _PRODUCTION: production } }),
 	production ? terser() : undefined,
 ]
 
@@ -63,6 +60,15 @@ export default [
 					},
 					plugins,
 					treeshake: false,
+				},
+		  ]
+		: []),
+	...(production
+		? [
+				{
+					input: "./src/index.ts",
+					output: { file: "./dist/index.d.ts" },
+					plugins: [dts({ compilerOptions: { incremental: false } })],
 				},
 		  ]
 		: []),
