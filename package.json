@@ -6,22 +6,22 @@
 	"module": "./dist/esm/index.js",
 	"typings": "./dist/index.d.ts",
 	"scripts": {
-		"test": "npx playwright test",
-		"code-test": "npm run prodBuild && npm run eslint",
-		"build": "npx rollup -c",
-		"prodBuild": "rm -rf dist && export NODE_ENV=\"production\" && npm run build",
-		"watch": "export NODE_ENV=\"development\"&&npm run build -- --watch",
-		"eslint": "npx eslint ./src/**/*.ts ./src/*.ts ./*.js",
-		"eslint:fix": "npm run eslint -- --fix",
-		"build-dts": "npx dts-bundle-generator src/index.ts -o dist/index.d.ts",
-		"watch-esm": "export NODE_ENV=\"development\" CPPKIES_ESM_DEBUGGING=\"yes\" && npm run build -- --watch",
-		"prepare": "npx cookie-connoisseur fetch",
-		"prepublishOnly": "npm run prodBuild && npm test"
+		"test": "playwright test",
+		"code-test": "yarn prodBuild && yarn eslint",
+		"build": "rollup -c",
+		"prodBuild": "rm -rf dist && export NODE_ENV=\"production\" && yarn build",
+		"watch": "export NODE_ENV=\"development\"&& yarn build -- --watch",
+		"eslint": "eslint ./src/**/*.ts ./src/*.ts ./*.js",
+		"eslint:fix": "yarn eslint -- --fix",
+		"build-dts": "dts-bundle-generator src/index.ts -o dist/index.d.ts",
+		"watch-esm": "export NODE_ENV=\"development\" CPPKIES_ESM_DEBUGGING=\"yes\" && yarn build -- --watch",
+		"prepare": "cookie-connoisseur fetch",
+		"prepublishOnly": "yarn prodBuild && npm test"
 	},
 	"husky": {
 		"hooks": {
-			"pre-commit": "npm run code-test && git add dist",
-			"pre-push": "npm run test"
+			"pre-commit": "yarn code-test",
+			"pre-push": "yarn test"
 		}
 	},
 	"repository": {
@@ -44,6 +44,7 @@
 		"@typescript-eslint/eslint-plugin": "^5.1.0",
 		"@typescript-eslint/parser": "^5.1.0",
 		"cookie-connoisseur": "0.2.0",
+		"dts-bundle-generator": "^6.5.0",
 		"eslint": "^8.0.1",
 		"eslint-config-prettier": "^6.15.0",
 		"eslint-plugin-prettier": "^3.1.4",
@@ -51,7 +52,6 @@
 		"playwright": "^1.15.2",
 		"prettier": "^2.5.1",
 		"rollup": "^2.58.0",
-		"rollup-plugin-dts": "^4.2.0",
 		"rollup-plugin-jscc": "^2.0.0",
 		"rollup-plugin-terser": "^7.0.2",
 		"rollup-plugin-typescript2": "^0.31.1",

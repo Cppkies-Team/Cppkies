@@ -2,7 +2,6 @@ import { terser } from "rollup-plugin-terser"
 import typescript from "rollup-plugin-typescript2"
 import resolve from "@rollup/plugin-node-resolve"
 import commonjs from "@rollup/plugin-commonjs"
-import dts from "rollup-plugin-dts"
 import jscc from "rollup-plugin-jscc"
 import path from "path"
 import fs from "fs"
@@ -60,15 +59,6 @@ export default [
 					},
 					plugins,
 					treeshake: false,
-				},
-		  ]
-		: []),
-	...(production
-		? [
-				{
-					input: "./src/index.ts",
-					output: { file: "./dist/index.d.ts" },
-					plugins: [dts({ compilerOptions: { incremental: false } })],
 				},
 		  ]
 		: []),
