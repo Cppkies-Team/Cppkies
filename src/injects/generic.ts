@@ -1,6 +1,7 @@
 export class Injection {
 	constructor(public hookName: string, public func?: () => void) {}
-	runHook(...bonusArgs: unknown[]): void {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	runHook(..._bonusArgs: unknown[]): void {
 		if (shouldRunVersioned(this.hookName)) {
 			this.func?.()
 			__INTERNAL_CPPKIES__.injectedHooks.add(this.hookName)

@@ -51,7 +51,7 @@ test("Should load data on reload", async ({ page }) => {
 			new Promise<void>(res => {
 				new Cppkies.Mod<{ test: number }>(
 					{ keyname: "loadingtest", version: "1.2.3" },
-					function() {
+					function () {
 						this.custom = { test: testNumber }
 						Game.WriteSave()
 						res()
@@ -69,7 +69,7 @@ test("Should load data on reload", async ({ page }) => {
 				new Promise(res => {
 					new Cppkies.Mod<{ test: number }>(
 						{ keyname: "loadingtest", version: "1.2.3" },
-						function() {
+						function () {
 							res(this.custom.test)
 						}
 					)
@@ -85,7 +85,7 @@ test("Should create ownership links for ownable units", async ({ page }) => {
 				new Promise<boolean>(res => {
 					new Cppkies.Mod(
 						{ keyname: "ownershiptest", version: "1.0.0" },
-						function() {
+						function () {
 							const upgrade = new Cppkies.Upgrade(
 								"Cppkies 0.3",
 								"Power up you CC modding with Cppkies!",
@@ -109,7 +109,7 @@ test("Should save units owned by mods to the mod's subsection of the save", asyn
 				new Promise<boolean>(res => {
 					new Cppkies.Mod(
 						{ keyname: "ownershipsavetest", version: "1.0.0" },
-						function() {
+						function () {
 							const upgrade = new Cppkies.Upgrade(
 								"Cppkies 0.4",
 								"I wonder if this will be a thing",

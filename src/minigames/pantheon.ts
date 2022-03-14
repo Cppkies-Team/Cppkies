@@ -1,6 +1,5 @@
-import { attachTooltip, CommonValue, toSentenseCase } from "../helpers"
+import { attachTooltip, toSentenseCase } from "../helpers"
 import hooks from "../injects/basegame"
-import { shouldRunVersioned } from "../injects/generic"
 import { Mod, OwnershipUnit } from "../mods"
 import { MinigameSavePartition, save } from "../saves"
 import { setUnitOwner } from "../vars"

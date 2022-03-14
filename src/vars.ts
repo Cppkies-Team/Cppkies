@@ -60,5 +60,18 @@ interface CppkiesInternals {
 }
 
 declare global {
+	// eslint-disable-next-line no-var
 	var __INTERNAL_CPPKIES__: CppkiesInternals
 }
+
+export const isFirstCppkies = !window.__INTERNAL_CPPKIES__
+
+if (isFirstCppkies)
+	window.__INTERNAL_CPPKIES__ = {
+		hiddenMilkMult: 1,
+		minigames: {},
+		injectedHooks: new Set(),
+		injectedBuildingHooks: {},
+		isFirstLoad: true,
+		savePartitions: {},
+	}

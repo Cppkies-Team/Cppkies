@@ -1,8 +1,10 @@
 import { Achievement } from "./baseAchievement"
 import { buildingHooks } from "../injects/buildings"
 
-export class TieredAchievement<Tier extends string | number> extends Achievement
-	implements Game.TieredAchievementClass<Tier> {
+export class TieredAchievement<Tier extends string | number>
+	extends Achievement
+	implements Game.TieredAchievementClass<Tier>
+{
 	buildingTie: Game.Object
 	pool: "normal"
 	tier: Tier

@@ -12,7 +12,7 @@ export function setLoaded(): void {
 export const onLoad: Array<() => void> = new Proxy([], {
 	set: (target, key, value): boolean => {
 		if (typeof value === "function" && loaded) value()
-		else target[(key as unknown) as number] = value as never
+		else target[key as unknown as number] = value as never
 		return true
 	},
 })

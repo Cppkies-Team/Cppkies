@@ -1,5 +1,5 @@
 import { ModSave, ModSavePartition, save } from "../saves"
-import { applyAllProps, CommonValue } from "../helpers"
+import { CommonValue } from "../helpers"
 import { resolveIcon } from "../spritesheets"
 import { customUpgrades, setUnitOwner } from "../vars"
 import { TieredUpgrade } from "./tieredUpgrade"
@@ -41,7 +41,7 @@ new ModSavePartition(
 			if (!save.upgrades) save.upgrades = {}
 			save.upgrades[upgrade.name] = {
 				bought: !!upgrade.bought,
-				unlocked: !!upgrade.unlock,
+				unlocked: !!upgrade.unlocked,
 			}
 		}
 	},

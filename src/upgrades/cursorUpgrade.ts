@@ -6,8 +6,10 @@ import { buildingHooks } from "../injects/buildings"
  */
 const cursorEarlyLogs = [5, 7, 8, 9, 10]
 
-export class CursorUpgrade<Tier extends string | number> extends Upgrade
-	implements Game.GenericTieredUpgrade<Tier> {
+export class CursorUpgrade<Tier extends string | number>
+	extends Upgrade
+	implements Game.GenericTieredUpgrade<Tier>
+{
 	pool: ""
 	tier: Tier
 	/**

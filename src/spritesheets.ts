@@ -168,9 +168,8 @@ export async function relinkColumn(
 	}
 	// Automatically generate normal tiers
 	for (const i in Game.Tiers)
-		columnIcons[Game.Tiers[i].name.toLowerCase()] = columnIcons[
-			i.toString()
-		] = [offset, Game.Tiers[i].iconRow]
+		columnIcons[Game.Tiers[i].name.toLowerCase()] = columnIcons[i.toString()] =
+			[offset, Game.Tiers[i].iconRow]
 	alias(
 		link,
 		await relink(

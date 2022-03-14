@@ -2,7 +2,6 @@ import { hasOwnProperty } from "./helpers"
 import { GlobalSavePartition, save, VANILLA_DRAGON_LEVEL_AMOUNT } from "./saves"
 import { resolveIcon } from "./spritesheets"
 import hooks from "./injects/basegame"
-import { shouldRunVersioned } from "./injects/generic"
 import { Mod, OwnershipUnit } from "./mods"
 import { setUnitOwner } from "./vars"
 
@@ -207,12 +206,13 @@ const savePartition = new GlobalSavePartition(
 			Game.dragonLevel = save.dragon.level
 		const customAura1 = Object.keys(Game.dragonAuras).find(
 			val =>
-				//@ts-expect-error
+				//@ts-expect-error We already checked save.dragon's existence
 				Game.dragonAuras[val as unknown as number].name === save.dragon.auras[0]
 		)
 		const customAura2 = Object.keys(Game.dragonAuras).find(
 			val =>
-				//@ts-expect-error
+				//@ts-expect-error We already checked save.dragon's existence
+
 				Game.dragonAuras[val as unknown as number].name === save.dragon.auras[1]
 		)
 		if (customAura1) Game.dragonAura = parseInt(customAura1)

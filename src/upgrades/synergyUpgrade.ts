@@ -1,7 +1,9 @@
 import { toSentenseCase } from "../helpers"
 import { Upgrade } from "./baseUpgrade"
-export class SynergyUpgrade<Tier extends string> extends Upgrade
-	implements Game.SynergyUpgradeClass<Tier> {
+export class SynergyUpgrade<Tier extends string>
+	extends Upgrade
+	implements Game.SynergyUpgradeClass<Tier>
+{
 	buildingTie1: Game.Object
 	buildingTie2: Game.Object
 	tier: Tier

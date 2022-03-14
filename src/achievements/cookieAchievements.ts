@@ -1,7 +1,9 @@
 import { Achievement } from "./baseAchievement"
 
-export class BankAchievement extends Achievement
-	implements Game.BankAchievementClass {
+export class BankAchievement
+	extends Achievement
+	implements Game.BankAchievementClass
+{
 	treshold: number
 	/**
 	 * Creates an achievement which is automatically unlocked on CBTA amount
@@ -29,8 +31,10 @@ export class BankAchievement extends Achievement
 	}
 }
 
-export class CpsAchievement extends Achievement
-	implements Game.CpsAchievementClass {
+export class CpsAchievement
+	extends Achievement
+	implements Game.CpsAchievementClass
+{
 	treshold: number
 	/**
 	 * Creates an achievement which is automatically unlocked on CpS amount

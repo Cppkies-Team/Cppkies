@@ -11,34 +11,21 @@ export * from "./mods"
 export * from "./modUI"
 export { default as hooks } from "./injects/basegame"
 export { buildingHooks } from "./injects/buildings"
-export { save } from "./saves"
+export {
+	save,
+	SaveType,
+	ModSave,
+	GlobalSavePartition,
+	MinigameSavePartition,
+	SavePartition,
+	ModSavePartition,
+} from "./saves"
 export * from "./ccUI"
-
-declare global {
-	interface Window {
-		CPPKIES_ONLOAD: (() => void)[] | undefined
-		Cppkies: unknown
-	}
-}
-
+import { exportSave, importSave } from "./saves"
+import { defferResolve, setLoaded, onLoad, todoBeforeLoad } from "./loadValues"
+import { isFirstCppkies } from "./vars"
 export { deffer, onLoad } from "./loadValues"
 export * from "./minigames"
-
-let prod: boolean
-
-//#if _PRODUCTION
-prod = true
-//#else
-prod = false
-//#endif
-
-import { exportSave, importSave } from "./saves"
-
-import { defferResolve, setLoaded, onLoad, todoBeforeLoad } from "./loadValues"
-
-/// <reference path="./cppkiesInternal.d.ts"/>
-
-const isFirstCppkies = !window.__INTERNAL_CPPKIES__
 
 if (isFirstCppkies && Game.UpdateMenu.toString().includes("Cppkies")) {
 	Game.Prompt(
@@ -52,15 +39,22 @@ Sadly, due to internal changes, Cppkies 0.3 mods are incompatible with Cppkies 0
 		[[`Ok${Math.random() < 0.01 ? " boomer" : ""}`, "Game.ClosePrompt()"]]
 	)
 }
-if (isFirstCppkies)
-	__INTERNAL_CPPKIES__ = {
-		hiddenMilkMult: 1,
-		minigames: {},
-		injectedHooks: new Set(),
-		injectedBuildingHooks: {},
-		isFirstLoad: true,
-		savePartitions: {},
+
+declare global {
+	interface Window {
+		CPPKIES_ONLOAD: (() => void)[] | undefined
+		Cppkies: unknown
 	}
+}
+
+let prod: boolean
+
+//#if _PRODUCTION
+prod = true
+//#else
+prod = false
+//#endif
+
 todoBeforeLoad.map(val => val())
 
 setLoaded()

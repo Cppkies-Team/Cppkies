@@ -4,7 +4,8 @@ import { isFortune } from "./baseUpgrade"
 
 export class TieredUpgrade<Tier extends string | number = string | number>
 	extends Upgrade
-	implements Game.TieredUpgradeClass<Tier> {
+	implements Game.TieredUpgradeClass<Tier>
+{
 	buildingTie: Game.Object
 	buildingTie1: Game.Object
 	tier: Tier

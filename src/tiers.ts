@@ -7,9 +7,7 @@ export default class Tier implements Game.Tier, OwnershipUnit {
 	achievUnlock = 0
 	iconRow: number
 	iconLink?: string
-	owner?: Mod<
-		object
-	> /**
+	owner?: Mod<object> /**
 		Indicates if the tier shouldn't be accounted for tiered upgrades
 	*/
 	special: boolean

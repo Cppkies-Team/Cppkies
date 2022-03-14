@@ -1,4 +1,4 @@
-import { applyAllProps, hasOwnProperty } from "./helpers"
+import { applyAllProps } from "./helpers"
 import { mods, setCurrentMod } from "./vars"
 import { ToggleBase } from "./modUI"
 import { deffer } from "./loadValues"
@@ -77,7 +77,7 @@ export class Mod<C extends object = object> implements ModMetadata {
 	 */
 	constructor(
 		metadata: ModMetadata,
-		public modFunction?: <T extends Mod<any> = Mod<C>>(this: T) => void
+		public modFunction?: <T extends Mod<object> = Mod<C>>(this: T) => void
 	) {
 		applyAllProps(this, metadata)
 		const ogMod = mods.find(val => val.keyname === metadata.keyname)

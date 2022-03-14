@@ -1,11 +1,7 @@
 import { injectCode, injectCodes } from "../helpers"
 import { ReturnableEventEmitter } from "../lib/eventemitter"
 import { todoBeforeLoad } from "../loadValues"
-import { buildingHooks, createBuildingHooks } from "./buildings"
-import { GardenHooks } from "./garden"
 import { Injection } from "./generic"
-import { GrimoireHooks } from "./grimoire"
-import { PatheonHooks } from "./pantheon"
 
 export type Hooks = ReturnableEventEmitter<{
 	//! Custom menus
@@ -267,7 +263,7 @@ export function injectBasegame(): void {
 					"before",
 				],
 			])
-			Game.registerHook("cps", (cps) => hooks.emit("cps", cps))
+			Game.registerHook("cps", cps => hooks.emit("cps", cps))
 		}),
 		new Injection("cursorFingerMult", () => {
 			Game.Objects.Cursor.cps = injectCode(
@@ -294,7 +290,7 @@ add = __INTERNAL_CPPKIES__.basegame.emit("cursorFingerMult", add);\n`,
 				],
 			])
 
-			Game.registerHook("cookiesPerClick", (cpc) => hooks.emit("cpc", cpc))
+			Game.registerHook("cookiesPerClick", cpc => hooks.emit("cpc", cpc))
 		}),
 		// !!!INTERNAL DO NOT USE!!! Use buildingHooks' "cps" instead
 		new Injection("buildingCps", () => {
@@ -392,7 +388,7 @@ frame = override.frame;\n`,
 			)
 		}),
 	]
-	injections.forEach((inject) => inject.runHook())
+	injections.forEach(inject => inject.runHook())
 	__INTERNAL_CPPKIES__.basegame = hooks
 }
 

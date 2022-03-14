@@ -97,8 +97,9 @@ export class Spell implements Game.GrimoireSpell, OwnershipUnit {
 		spellDiv.addEventListener("click", () => mg && mg.castSpell(this))
 		const grimoireIconDiv = document.createElement("div")
 		grimoireIconDiv.classList.add("usesIcon", "shadowFilter", "grimoireIcon")
-		grimoireIconDiv.style.backgroundPosition = `${-icon[0] * 48}px ${-icon[1] *
-			48}px`
+		grimoireIconDiv.style.backgroundPosition = `${-icon[0] * 48}px ${
+			-icon[1] * 48
+		}px`
 		if (icon[2]) grimoireIconDiv.style.backgroundImage = `url(${icon[2]})`
 		spellDiv.appendChild(grimoireIconDiv)
 		const grimoirePriceDiv = document.createElement("div")

@@ -71,7 +71,7 @@ export class GlobalSavePartition extends SavePartition {
 			this.reset?.(save, resetType)
 			return
 		}
-		//@ts-expect-error
+		//@ts-expect-error `name` is more specific than `string`, but TS doesn't know that
 		if (this.resetOn === "soft" || resetType === "hard") delete save[this.name]
 	}
 }
@@ -120,7 +120,7 @@ export class ModSavePartition extends SavePartition {
 			this.reset?.(save, resetType, mod)
 			return
 		}
-		//@ts-expect-error
+		//@ts-expect-error `name` is more specific than `string`, but TS doesn't know that
 		if (this.resetOn === "soft" || resetType === "hard") delete save[this.name]
 	}
 }

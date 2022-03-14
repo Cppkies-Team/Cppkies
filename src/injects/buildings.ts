@@ -6,8 +6,6 @@ import { todoBeforeLoad } from "../loadValues"
 export const buildingHooks: Record<string, BuildingHooks> =
 	window.__INTERNAL_CPPKIES__?.buildings || {}
 
-let injectionsTodo: Set<string> | undefined
-
 /**
  * Creates the hooks for a building
  * @param building The building to create hooks for

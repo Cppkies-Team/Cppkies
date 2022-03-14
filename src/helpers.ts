@@ -1,3 +1,4 @@
+/* eslint  @typescript-eslint/no-explicit-any: 0 */
 /**
  * The common type for a value, can be either the value or a function that returns a value with the type.
  */

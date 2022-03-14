@@ -1,8 +1,10 @@
 import { Upgrade } from "./baseUpgrade"
 import hooks from "../injects/basegame"
 
-export class MouseUpgrade<Tier extends string | number> extends Upgrade
-	implements Game.GenericTieredUpgrade<Tier> {
+export class MouseUpgrade<Tier extends string | number>
+	extends Upgrade
+	implements Game.GenericTieredUpgrade<Tier>
+{
 	pool = "" as const
 	/**
 	 * Creates an upgrade which powers up the cookies per click

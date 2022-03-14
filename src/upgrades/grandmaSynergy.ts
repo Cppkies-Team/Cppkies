@@ -2,8 +2,10 @@ import { Upgrade } from "./baseUpgrade"
 import { toSentenseCase } from "../helpers"
 import hooks from "../injects/basegame"
 
-export class GrandmaSynergy extends Upgrade
-	implements Game.GrandmaSynergyClass {
+export class GrandmaSynergy
+	extends Upgrade
+	implements Game.GrandmaSynergyClass
+{
 	buildingTie: Game.Object
 	pool: ""
 	/**

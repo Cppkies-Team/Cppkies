@@ -39,7 +39,7 @@ export class Plant implements Game.GardenPlant, OwnershipUnit {
 	owner?: Mod
 	fungus?: boolean
 	icon: number
-	iconX: number = 0
+	iconX = 0
 	iconLink?: string
 	id: number
 	immortal?: Game.PseudoBoolean | boolean | undefined
@@ -52,10 +52,10 @@ export class Plant implements Game.GardenPlant, OwnershipUnit {
 	onDie?: ((x: number, y: number) => void) | undefined
 	onHarvest?: ((x: number, y: number, age: number) => void) | undefined
 	onKill?: ((x: number, y: number, age: number) => void) | undefined
-	plantable: boolean = true
+	plantable = true
 
 	unlocked: Game.PseudoBoolean | boolean = false
-	weed: boolean = false
+	weed = false
 	/**
 	 *
 	 * @param icon The icon of the seed, the growth stages shall be on the right of it
