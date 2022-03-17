@@ -11,11 +11,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 12.x
+      - name: Use Node.js 16.x
         uses: actions/setup-node@v2
         with:
           cache: "yarn"
-          node-version: "12"
+          node-version: "16"
       - name: Install Deps
         run: yarn --immutable
       - name: Build
