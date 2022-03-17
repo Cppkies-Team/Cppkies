@@ -191,7 +191,7 @@ export function injectBasegame(): void {
 			Game.LoadSave = injectCode(
 				Game.LoadSave,
 				null,
-				'__INTERNAL_CPPKIES_HOOKS.isFirstLoad = false;\n__INTERNAL_CPPKIES__.basegame.emit("preLoad");\n',
+				'__INTERNAL_CPPKIES__.isFirstLoad = false;\n__INTERNAL_CPPKIES__.basegame.emit("preLoad");\n',
 				"before"
 			)
 		}),
