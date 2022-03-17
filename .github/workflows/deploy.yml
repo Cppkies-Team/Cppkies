@@ -15,7 +15,9 @@ jobs:
       - uses: actions/checkout@v2
       - name: Use Node.js 12.x
         uses: actions/setup-node@v2
-        cache: "yarn"
+        with:
+          node-version: "12"
+          cache: "yarn"
       - name: Install Deps
         run: yarn --immutable
       - name: Build
