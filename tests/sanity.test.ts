@@ -1,5 +1,5 @@
 import { setupCookieClickerPage } from "cookie-connoisseur"
-import { test, expect } from "@playwright/test"
+import { test } from "@playwright/test"
 
 test.beforeEach(({ page }) => setupCookieClickerPage(page))
 

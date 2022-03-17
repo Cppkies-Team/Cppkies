@@ -48,7 +48,7 @@ test("Should load data on reload", async ({ page }) => {
 	const testNumber = Math.random()
 	await page.evaluate(
 		testNumber =>
-			new Promise<void>(res => {
+			new Promise<void>((res, rej) => {
 				new Cppkies.Mod<{ test: number }>(
 					{ keyname: "loadingtest", version: "1.2.3" },
 					function () {
@@ -66,11 +66,12 @@ test("Should load data on reload", async ({ page }) => {
 	expect(
 		await await page.evaluate(
 			() =>
-				new Promise(res => {
+				new Promise((res, rej) => {
 					new Cppkies.Mod<{ test: number }>(
 						{ keyname: "loadingtest", version: "1.2.3" },
 						function () {
-							res(this.custom.test)
+							if (!this.custom) rej("This shouldn't happen")
+							else res(this.custom.test)
 						}
 					)
 				})

@@ -175,7 +175,11 @@ if (savePartition.active) {
 	hooks.on("preSave", () => {
 		if (!mg) return
 		if (!savePartition.active) return
-		const slots: PantheonSave["slots"] = [null, null, null]
+		const slots: PantheonSave["slots"] = save.minigames?.pantheon?.slots || [
+			null,
+			null,
+			null,
+		]
 		for (const slot in mg.slotNames) {
 			if (mg.slot[slot] !== -1) {
 				slots[slot] = null
@@ -186,6 +190,12 @@ if (savePartition.active) {
 				slots[slot] = god.spiritTitle
 				mg.slot[slot] = -1
 			}
+		}
+		if (slots.every(val => val === null) && save.minigames)
+			delete save.minigames.pantheon
+		else {
+			if (!save.minigames) save.minigames = {}
+			save.minigames.pantheon = { slots }
 		}
 	})
 	hooks.on("postSave", () => {

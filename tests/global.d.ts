@@ -1,5 +1,6 @@
 declare global {
-	var Cppkies: typeof import("../dist")
+	// eslint-disable-next-line no-var
+	var Cppkies: typeof import("..")
 }
 
 export {}

@@ -210,8 +210,14 @@ export interface ModSave {
  * Saves everything
  */
 export function saveAll(): void {
+	for (const mod of mods) save.mods[mod.keyname] = { custom: null }
 	for (const partition of Object.values(__INTERNAL_CPPKIES__.savePartitions)) {
 		partition!.saveAll(save)
+	}
+	for (const mod of mods) {
+		const modSave = save.mods[mod.keyname]
+		if (Object.keys(modSave).length === 1 && modSave.custom === null)
+			delete save.mods[mod.keyname]
 	}
 }
 /**
