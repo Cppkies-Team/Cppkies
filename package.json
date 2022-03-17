@@ -9,7 +9,7 @@
 		"test": "playwright test",
 		"code-test": "yarn prodBuild && yarn eslint",
 		"build": "rollup -c",
-		"prodBuild": "rm -rf dist && export NODE_ENV=\"production\" && yarn build",
+		"prodBuild": "rm -rf dist && export NODE_ENV=\"production\" && yarn build && yarn build-dts",
 		"watch": "export NODE_ENV=\"development\"&& yarn build -- --watch",
 		"eslint": "eslint ./src/**/*.ts ./src/*.ts ./*.js",
 		"eslint:fix": "yarn eslint -- --fix",

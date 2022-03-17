@@ -17,11 +17,9 @@ export const onLoad: Array<() => void> = new Proxy([], {
 	},
 })
 
-export let defferResolve: (() => void) | undefined
-
 /**
  * A promise which is resolved on Cppkies load
  */
-export const deffer = new Promise<void>(res => (defferResolve = res))
+export const deffer = Promise.resolve()
 
 export const todoBeforeLoad: (() => Promise<unknown> | void)[] = []

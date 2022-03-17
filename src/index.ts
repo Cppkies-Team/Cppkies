@@ -22,7 +22,7 @@ export {
 } from "./saves"
 export * from "./ccUI"
 import { exportSave, importSave } from "./saves"
-import { defferResolve, setLoaded, onLoad, todoBeforeLoad } from "./loadValues"
+import { setLoaded, onLoad, todoBeforeLoad } from "./loadValues"
 import { isFirstCppkies } from "./vars"
 export { deffer, onLoad } from "./loadValues"
 export * from "./minigames"
@@ -89,4 +89,3 @@ if (isFirstCppkies) {
 		},
 	})
 }
-defferResolve?.()

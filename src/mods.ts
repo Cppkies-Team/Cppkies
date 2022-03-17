@@ -1,7 +1,6 @@
 import { applyAllProps } from "./helpers"
 import { mods, setCurrentMod } from "./vars"
 import { ToggleBase } from "./modUI"
-import { deffer } from "./loadValues"
 import { ModSavePartition, save } from "./saves"
 
 new ModSavePartition(
@@ -77,7 +76,7 @@ export class Mod<C extends object = object> implements ModMetadata {
 	 */
 	constructor(
 		metadata: ModMetadata,
-		public modFunction?: <T extends Mod<object> = Mod<C>>(this: T) => void
+		public modFunction?: <T extends Mod<C> = Mod<C>>(this: T) => void
 	) {
 		applyAllProps(this, metadata)
 		const ogMod = mods.find(val => val.keyname === metadata.keyname)
@@ -92,13 +91,12 @@ export class Mod<C extends object = object> implements ModMetadata {
 			}
 		mods.push(this)
 		this.custom = (save.mods[this.keyname]?.custom as C) ?? null
-		deffer.then(() => {
-			setCurrentMod(this)
-			modFunction?.apply(this)
-			// Update the menu, just in case
-			Game.UpdateMenu()
-			setCurrentMod(null)
-		})
+
+		setCurrentMod(this)
+		modFunction?.apply(this)
+		// Update the menu, just in case
+		Game.UpdateMenu()
+		setCurrentMod(null)
 	}
 
 	render(): HTMLElement {
