@@ -14,7 +14,7 @@ Parameters:
 For example:
 
 ```ts
-Cppkies.on("cpsMult", mult => mult * 2)
+Cppkies.hooks.on("cpsMult", mult => mult * 2)
 Cppkies.buildingHooks.Factory.on("cps", cps => cps * 2)
 ```
 
@@ -39,7 +39,7 @@ Cppkies.buildingHooks.Factory.on("cps", cps => cps * 2)
   - `getIcon` - called when resolving an icon via `Game.GetIcon`, usually used internally (`{ icon: Icon, tier: number | string, type: string}`)
 - Gameplay hooks
   - `cps` - called when CpS (cookies per second) is calculated (`number`)
-  - `cpcAdd` - same as `cpc`, but before adding the default 1 CpC (and the three cursor  *2 upgrades)
+  - `cpcAdd` - same as `cpc`, but before adding the default 1 CpC (and the three cursor \*2 upgrades)
   - `cpc` - called when calculating CpC (cookies per click) (`number`)
   - `rawCps` - called before `cps`, some calculations use raw CpS instead of normal CpS, for example, stocks (`number`)
   - `cpsMult` - called when calculating CpS, is the multiplier of CpS, some calculations use the multiplier (`number`)
@@ -52,12 +52,14 @@ Cppkies.buildingHooks.Factory.on("cps", cps => cps * 2)
   - `ticker` - The news to display in the news ticker (`string[]`)
 
 \* The function doesn't have to return anything
-The hooks can be accessed via `Cppkies.on` or `Cppkies.hooks.on`
+The hooks can be accessed with `Cppkies.hooks.on`
 
 ### Building Hooks
 
 - `tooltip` - called on tooltip creation when hovering above a building (`string`)
 - `cps` - called when calculating the building CpS (`number`)
+- `buy` - called when the building is bought (`void`)
+- `levelUp` - called when the building is leveled up (`void`)
 
 The hooks can be accessed via `Cppkies.buildingHooks[buildingName].on`
 

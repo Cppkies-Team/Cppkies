@@ -22,3 +22,29 @@ Buildings are classes, so they must be initialized with the `new` keyword.
 8. `onBuy` - `() => void` The function which gets called when it's bought, usually used to unlock upgrades, most of the time it's best to use `DEFAULT_ONBUY`
 9. `foolBuilding` - [`FoolBuilding`](types/FoolBuilding.md) The building during Business day
 10. `buildingSpecial` - `[string, string]` The building special and building debuff
+
+## Example
+
+```ts
+new Cppkies.Building(
+	"Cppkie Baker",
+	"cppkie baker|cppkie bakers|baked|[X] bug fix|[X] bug fixes",
+	"Generates cookies by baking them, why did nobody think about this?",
+	[0, 0],
+	[0, 0],
+	{
+		bg: `https://example.com/buildingBg.png`,
+		pic: `https://example.com/buildingBake.png`,
+		yV: 64,
+		xV: 16,
+	},
+	Cppkies.DEFAULT_CPS,
+	Cppkies.DEFAULT_ONBUY,
+	{
+		name: "Normal Baker",
+		desc: "The top of your cookie hierarchy",
+		icon: [1, 0],
+	},
+	["Motivation!", "Distractions"]
+)
+```

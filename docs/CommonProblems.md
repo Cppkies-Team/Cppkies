@@ -2,15 +2,15 @@
 
 ## IconOrder
 
-All icons in cookie clicker must follow an order due to the way it was implemented in cookie clicker.
+All tiered icons in Cookie Clicker must follow an order, due to implementation reasons.
 
 ### Icons
 
-To make modding cookie clicker more accessible, Cppkies adds new functions for that, `relinkRow`, `relinkColumn` and `patchIconsheet`.
+To make modding Cookie Clicker more accessible, Cppkies adds new functions for changing the icon positions at runtime: `relinkRow`, `relinkColumn`, and `patchIconsheet`.
 
 #### Relink Row
 
-To relink a row (tier icons) you must use the `relinkRow` function.
+To configure icon positions for custom tier icons the `relinkRow` function must be used.
 
 (This function is asynchronous, so you must use [`async`/`await`](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Async_await) to use it)
 
@@ -25,9 +25,9 @@ Parameters:
 
 - Building ids: `1`, `5`, `7`, etc.
 - Building names: `"cursor"`, `"farm"`, etc.
-- Non-standard tier icon tiers: `"research"`, `"cookie"`, `"mouse"`, `"multicursor"`, `"kitten"`
+- Non-standard tier icon tiers: `"research"`, `"cookie"`, `"mouse"`, `"multicursor"`, `"kitten"`.
 
-(Cppkies automatically detects all buildings, even modded ones)
+Cppkies automatically detects all buildings, even modded ones.
 
 Example:
 
@@ -74,7 +74,7 @@ Cppkies.icons.relinkRow(
 
 #### Relink Column
 
-To relink a column (building icons) you must use the `relinkColumn` function.
+To configure icon positions for custom building icons the `relinkColumn` function must be used.
 
 (This function is asynchronous, so you must use [`async`/`await`](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Async_await) to use it)
 
@@ -91,7 +91,7 @@ Parameters:
 - Tier names: `"jetmint"`, `"plain"`, etc.
 - Non-standard tier icon tiers: `"3d"`, `"milestone1"`, `"milestone2"`, `"milestone3"`, `"krumblor"`, `"level1"`, `"level2"`
 
-(Cppkies automatically detects all tiers, even modded ones)
+Cppkies automatically detects all tiers, even modded ones.
 
 Example:
 
@@ -121,14 +121,14 @@ Cppkies.icons.relinkColumn(
 
 #### Patch Icon sheet
 
-To add icons to a different iconsheet, `patchIconsheet` must be used.
+To add icons to an iconsheet from another one, `patchIconsheet` must be used.
 
 (This function is asynchronous, so you must use [`async`/`await`](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Async_await) to use it)
 
 Parameters:
 
 1. `link` - `string` The link to the original, unpatched iconsheet
-2. `matrix` - `[[number, number],`[`Game.Icon`](./types/Icon.md)`][]` The replacements to make, first element in tuple is the original position, second is the icon to replace with
+2. `matrix` - `[[number, number],`[`Game.Icon`](./types/Icon.md)`][]` The replacements to make, first element in the tuple is the original position, second is the icon to replace with
 3. `followAlias` - `boolean` If true, the original image URI will be de-aliased (`relinkColumn`, `relinkRow` and `patchIconsheet` create an alias!)
 
 Example:
@@ -173,7 +173,7 @@ Cppkies.icons.relinkRow(
 // This replaces the most top left icon of the relinked icons with the icon of the "Aura gloves" heavenly upgrade
 Cppkies.icons.patchIconsheet(
 	"https://pipe.miroware.io/5fb27f0be6bde66c95ca6ca3/complete2.png",
-	[[[0, 0], Game.Upgrades["Aura gloves"]]]
+	[[[0, 0], Game.Upgrades["Aura gloves"].icon]]
 )
 ```
 

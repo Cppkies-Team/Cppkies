@@ -3,19 +3,22 @@
 ## [Think Tank Building](https://github.com/Cppkies-Team/examples/tree/master/ThinkTank)
 
 Examples on how to create new:
-* Buildings
-* Upgrades
-* Achievements
+
+- Buildings
+- Upgrades
+- Achievements
 <!--* (ALSO COULD USE AS) Minigames-->
-Sprites: *Bt Y#0895*
+
+Sprites: _Bt Y#0895_
 
 ## [Saffronyx Tier](https://github.com/Cppkies-Team/examples/tree/master/SaffronyxTier)
 
 Examples on how to create new:
-* Upgrade tiers
-* Achievements
 
-Sprites: *Kyleptune#6345*
+- Upgrade tiers
+- Achievements
+
+Sprites: _Kyleptune#6345_
 
 <!--
 ### [LumpExample](https://github.com/Cppkies-Team/examples/tree/master/LumpExample)

@@ -2,46 +2,61 @@
 
 There are 2 ways of using Cppkies, installing with NPM or importing though `Game.LoadMod`.
 
-## Using NPM - JS or TS
+Using Cppkies from NPM requires local setup and more programming knowledge, but allows for treeshaking, TypeScript, better editor support, multiple files in the mod, and small final mod files.
 
-Using Cppkies via NPM is the recommended way of using Cppkies, since you can split your code into files, use typescript, and have IDE autocompletion.
+Using Cppkies via `Game.LoadMod` is easier and doesn't require any preparation, but lacks the abovementioned features.
 
-To use Cppkies using NPM, you must install it first:
+<!-- tabs:start -->
+
+### **NPM**
+
+Before writing any code, [Node.js](https://nodejs.org/) (and, optionally, [Yarn](https://yarnpkg.com/)) must be installed.
+
+Writing the setup code is tedeous, so we've already made a setup kit for you! Just clone [TheGLander/CppkiesModExample](https://github.com/TheGLander/CppkiesModExample) and make sure to update the metadata in `package.json`.
+
+Once project setup is done, the build system and Cppkies can be installed with
 
 ```sh
-npm i cppkies
-# Or if you are using yarn...
-yarn add cppkies
+npm i
+# or...
+yarn
 ```
 
-Then you can use a bundler, like Webpack or Rollup, to bundle them.
+In code, Cppkies can be used like
 
-```js
-import { onLoad, Upgrade } from "cppkies"
-onLoad.push(() => {
-	new Upgrade("Hello, World!", "My first upgrade!", 7, [10, 5])
-})
+```ts
+import { Mod } from "cppkies"
+
+new Mod(
+	{
+		keyname: "neatMod",
+		version: "1.0",
+	},
+	() => {
+		// Write code here!
+	}
+)
 ```
 
-(If you want a simple template to easily start working, you should check out [TheGLander/CppkiesModExample](https://github.com/TheGLander/CppkiesModExample))
+### **loadMod**
 
-## Importing through `Game.LoadMod` - JS
-
-Importing Cppkies through `Game.LoadMod` is not recommended since you can't split your code into multiple files, use typescript, or have IDE autocompletion. This is recommended only if the mod is really small.
-
-To import it, you need to start your mod with
-
-```js
-Game.LoadMod("https://unpkg.com/cppkies@0.3")
-```
-
-For example:
+This one is way easier. Just open any text editor and start writing code!
 
 ```js
 Game.LoadMod("https://unpkg.com/cppkies@0.3")
 if (!window.CPPKIES_ONLOAD) CPPKIES_ONLOAD = []
-CPPKIES_ONLOAD.push(() => {
-	new Cppkies.Upgrade("Hello, World!", "My first upgrade!", 7, [10, 5])
-})
+CPPKIES_ONLOAD.push(
+	() =>
+		new Cppkies.Mod(
+			{
+				keyname: "neatMod",
+				version: "1.0",
+			},
+			() => {
+				// Write code here!
+			}
+		)
+)
 ```
 
+<!-- tabs:end -->

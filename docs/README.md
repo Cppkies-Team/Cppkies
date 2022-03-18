@@ -5,17 +5,13 @@
 <p style="text-align: center;">The only <a href="https://orteil.dashnet.org/cookieclicker/">Cookie Clicker</a> modding framework you'll ever need.</p>
 
 <details><summary><b>Table of contents (Click to expand!)</b></summary>
-	
-- [Documentation](#documentation)
+
 - [Examples](#examples)
-	- [Think Tank Building](#think-tank-building)
-	- [Saffronyx Tier](#saffronyx-tier)
+  - [Think Tank Building](#think-tank-building)
+  - [Saffronyx Tier](#saffronyx-tier)
 - [Credits](#credits)
+
 </details>
-
-## Documentation
-
-You can find detailed documentation [here](https://cppkies.js.org/#).
 
 ## Examples
 
@@ -27,7 +23,8 @@ Examples on how to create new:
 - Upgrades
 - Achievements
   <!--* (ALSO COULD USE AS) Minigames-->
-  Sprites: _Bt Y#0895_
+
+Sprites: _Bt Y#0895_
 
 ### [Saffronyx Tier](https://github.com/Cppkies-Team/examples/tree/master/SaffronyxTier)
 
