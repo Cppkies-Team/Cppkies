@@ -998,12 +998,12 @@ convert-source-map@^1.7.0:
   dependencies:
     safe-buffer "~5.1.1"
 
-cookie-connoisseur@0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/cookie-connoisseur/-/cookie-connoisseur-0.2.0.tgz#8553dd05200cfa7360cd67f5f420f919d2b1cf22"
-  integrity sha512-KF7K0ZvP8t0pq2RMcEOWSsIWfXR4xjbxGKIBM3EALb9WLglWO9EAw9L3iedCTj7uwCAvJhHGBCAYVFxA+RQnng==
+cookie-connoisseur@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/cookie-connoisseur/-/cookie-connoisseur-0.3.0.tgz#5e19e5b9ea0252aaaeec011fbca1f6e190e13d77"
+  integrity sha512-L/YzLyOPR4YYcuY6Wfz4saLNsfXAYbwzAinReoYZEUq0JKte5DTk+EB3/+CSrikUXCbOjU19J7Eyix2c4zeR6g==
   dependencies:
-    playwright "^1.14.1"
+    playwright "^1.17.1"
 
 cross-spawn@^7.0.2:
   version "7.0.3"
@@ -2082,12 +2082,43 @@ playwright-core@1.19.2:
     yauzl "2.10.0"
     yazl "2.5.1"
 
-playwright@^1.14.1, playwright@^1.15.2:
+playwright-core@1.20.0:
+  version "1.20.0"
+  resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.20.0.tgz#57e84d7663cada92fe0d5574e9cd42e5fa2e74e1"
+  integrity sha512-d25IRcdooS278Cijlp8J8A5fLQZ+/aY3dKRJvgX5yjXA69N0huIUdnh3xXSgn+LsQ9DCNmB7Ngof3eY630jgdA==
+  dependencies:
+    colors "1.4.0"
+    commander "8.3.0"
+    debug "4.3.3"
+    extract-zip "2.0.1"
+    https-proxy-agent "5.0.0"
+    jpeg-js "0.4.3"
+    mime "3.0.0"
+    pixelmatch "5.2.1"
+    pngjs "6.0.0"
+    progress "2.0.3"
+    proper-lockfile "4.1.2"
+    proxy-from-env "1.1.0"
+    rimraf "3.0.2"
+    socks-proxy-agent "6.1.1"
+    stack-utils "2.0.5"
+    ws "8.4.2"
+    yauzl "2.10.0"
+    yazl "2.5.1"
+
+playwright@^1.15.2:
   version "1.19.2"
   resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.19.2.tgz#d9927ae8512482642356e50a286c5767dfb7a621"
   integrity sha512-2JmGWr/Iw/Uu27bZULeHgjn8doNrRVxIYdhspMuMlfKNpzwAe/sfm7wH8uey6jiZxnPL4bC5V4ACQcF4dAGWnw==
   dependencies:
     playwright-core "1.19.2"
+
+playwright@^1.17.1:
+  version "1.20.0"
+  resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.20.0.tgz#f80b131c0146afc4645fcd5cfcc2ca11895ba58a"
+  integrity sha512-YcFXhXttk9yvpc8PMbfvts6KEopXjxdBh47BdOiA7xhjF/gkXeSM0Hs9CSdbL9mp2xtlB5xqE7+D+F2soQOjbA==
+  dependencies:
+    playwright-core "1.20.0"
 
 pngjs@6.0.0:
   version "6.0.0"
