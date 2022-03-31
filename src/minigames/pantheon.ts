@@ -62,6 +62,15 @@ export function slotGod(god: Spirit, slot: -1 | 0 | 1 | 2): void {
 	mg.slotGod(god, slot)
 }
 
+export interface SpiritDescriptions {
+	1?: string
+	2?: string
+	3?: string
+	before?: string
+	after?: string
+	active?: () => string
+}
+
 export class Spirit implements Game.PantheonSpirit, OwnershipUnit {
 	activeDescFunc?: () => string
 	desc1?: string
@@ -78,10 +87,7 @@ export class Spirit implements Game.PantheonSpirit, OwnershipUnit {
 		spiritName: string,
 		public spiritTitle: string,
 		public icon: Game.Icon,
-		descriptions?: Partial<
-			Record<1 | 2 | 3 | "before" | "after", string> &
-				Record<"active", () => string>
-		>,
+		descriptions?: SpiritDescriptions,
 		quote?: string,
 		fullName?: string
 	) {
