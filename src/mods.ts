@@ -1,4 +1,3 @@
-import { applyAllProps } from "./helpers"
 import { mods, setCurrentMod } from "./vars"
 import { ToggleBase } from "./modUI"
 import { ModSavePartition, save } from "./saves"
@@ -49,7 +48,7 @@ export class Mod<C extends object = object> implements ModMetadata {
 	 * The unique keyname of the mod, can consist of
 	 * A-Z a-z 0-9 - _ . ! ~ * ' ( )
 	 */
-	keyname = "never-should-happen"
+	keyname: string
 	/**
 	 * The shown name of the mod, doesn't contain any restrictions
 	 */
@@ -61,7 +60,7 @@ export class Mod<C extends object = object> implements ModMetadata {
 	/**
 	 * The version of the mod, must be in semver
 	 */
-	version = "1.0"
+	version: string
 	/**
 	 * Custom additional data which mods can read/write to
 	 */
@@ -78,7 +77,11 @@ export class Mod<C extends object = object> implements ModMetadata {
 		metadata: ModMetadata,
 		public modFunction?: <T extends Mod<C> = Mod<C>>(this: T) => void
 	) {
-		applyAllProps(this, metadata)
+		this.keyname = metadata.keyname
+		this.version = metadata.version
+		this.name = metadata.name
+		this.icon = metadata.icon
+
 		const ogMod = mods.find(val => val.keyname === metadata.keyname)
 		if (ogMod)
 			if (ogMod.version !== this.version)
