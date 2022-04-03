@@ -4,14 +4,37 @@ import { injectCode, injectCodes } from "../helpers"
 import { minigamePromises } from "../minigames/minigamePromises"
 import { ReturnableEventEmitter } from "../lib/eventemitter"
 
-interface MutationInfo {
+export interface MutationInfo {
 	neighs: Record<string, number>
 	neighsM: Record<string, number>
 	muts: [string, number][]
 }
 
+export interface PlotBoostInfo {
+	x: number
+	y: number
+	name: string
+	age: number
+	ageMult: number
+	powerMult: number
+	weedMult: number
+	range: number
+	mult: number
+}
+
+export interface BoostInfo {
+	x: number
+	y: number
+	name: string
+	age: number
+	mult: number
+	effs: Game.Effects
+}
+
 export type GardenHooks = ReturnableEventEmitter<{
 	mutations: [MutationInfo, MutationInfo]
+	plotBoosts: [PlotBoostInfo, PlotBoostInfo]
+	boosts: [BoostInfo, BoostInfo]
 }>
 
 export const gardenHooks: GardenHooks = new ReturnableEventEmitter()
@@ -90,6 +113,8 @@ async function injectGarden(): Promise<void> {
 				],
 				{ M: mg }
 			)
+		}),
+		new Injection("mutations", () => {
 			mg.getMuts = injectCode(
 				mg.getMuts,
 				"return muts;",
@@ -103,6 +128,31 @@ async function injectGarden(): Promise<void> {
 				mg.save,
 				"str+=''+(M.plants[i].unlocked?'1':'0')",
 				"if (!M.plants[i].isCppkies);\n",
+				"before",
+				{ M: mg }
+			)
+		}),
+		new Injection("plotBoosts", () => {
+			mg.computeBoostPlot = injectCode(
+				mg.computeBoostPlot,
+				"//by god i hope these are right",
+				`var boostInfo = __INTERNAL_CPPKIES__.minigames.garden.emit("plotBoosts", { x: x, y: y, name: name, age: tile[1], ageMult: ageMult, powerMult: powerMult, weedMult: weedMult, range: range, mult: mult });
+				ageMult = boostInfo.ageMult
+				powerMult = boostInfo.powerMult
+				weedMult = boostInfo.weedMult
+				range = boostInfo.range
+				mult = boostInfo.mult;\n`,
+				"before",
+				{ M: mg }
+			)
+		}),
+		new Injection("boosts", () => {
+			mg.computeEffs = injectCode(
+				mg.computeEffs,
+				"mult*=M.plotBoost[y][x][1];",
+				`var boostInfo = __INTERNAL_CPPKIES__.minigames.garden.emit("boosts", { x: x, y: y, name: name, age: tile[1], mult: mult, effs: effs })
+				effs = effs
+				mult = mult;\n`,
 				"before",
 				{ M: mg }
 			)
