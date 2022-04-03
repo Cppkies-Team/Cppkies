@@ -68,3 +68,40 @@ For example
 ```ts
 Cppkies.buildingHooks.Factory.on("cps", cps => cps * 2)
 ```
+
+### Garden hooks
+
+```ts
+interface MutationInfo {
+	neighs: Record<string, number>
+	neighsM: Record<string, number>
+	muts: [string, number][]
+}
+
+interface PlotBoostInfo {
+	x: number
+	y: number
+	name: string
+	age: number
+	ageMult: number
+	powerMult: number
+	weedMult: number
+	range: number
+	// The effect multiplier from soils and etc.
+	mult: number
+}
+
+interface BoostInfo {
+	x: number
+	y: number
+	name: string
+	age: number
+	// The effect multiplier from the soil and etc. Your custom effects should be multiplied by `multz
+	mult: number
+	effs: Game.Effects
+}
+```
+
+- `mutations` - Called when a mutation is considered for an empty tile (`MutationInfo`)
+- `plotBoosts` - Called when plot boosts are calculated (`PlotBoostInfo`)
+- `boosts` - Called when boosts from a plant are calculated (`BoostInfo`)
