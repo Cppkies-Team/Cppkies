@@ -24,6 +24,8 @@
   - [Heavenly upgrade](types/HeavenlyUpgrade.md)
   - [Achievement](types/Achievement.md)
   - [Dragon](types/Dragon.md)
+  - [Milks](types/Milks.md)
+  - [Spirit](types/Spirit.md)
 
 - [Examples](Examples.md)
 - [Roadmap](Roadmap.md)
