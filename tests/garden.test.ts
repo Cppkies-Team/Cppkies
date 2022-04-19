@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import setupPage from "./setup-page"
 import { test, expect } from "@playwright/test"
+
+import { writeFileSync } from "fs"
 
 test.beforeEach(async ({ page }) => {
 	await setupPage(page)
@@ -79,7 +82,19 @@ test("Should load garden plot data", async ({ page }) => {
 		const mg = Game.Objects.Farm.minigame
 		return [plant.id, mg.plot[1][1][0] - 1]
 	})
-
+	if (tileId !== plantId) {
+		writeFileSync(
+			"./gaming.json",
+			JSON.stringify(
+				await page.evaluate(() => {
+					const mg = Game.Objects.Farm.minigame
+					//@ts-expect-error I don't care
+					delete mg.parent
+					return mg
+				})
+			)
+		)
+	}
 	expect(tileId).toBe(plantId)
 })
 

@@ -80,17 +80,17 @@ export default class Tier implements Game.Tier, OwnershipUnit {
 	}
 }
 
-hooks.on("getIcon", ({ icon, type, tier }) => {
+hooks.on("getIcon", ({ icon, tier }) => {
 	customTiers.forEach(val => {
 		if (val.keyName === tier.toString() && val.iconLink) icon[2] = val.iconLink
 	})
-	return { icon, type, tier }
+	return icon
 })
-hooks.on("getIcon", ({ icon, type, tier }) => {
+hooks.on("getIcon", ({ icon, tier }) => {
 	if (
 		(icon[2] === undefined || icon[2] === null) &&
 		Game.Tiers[tier.toString()] instanceof Tier
 	)
 		icon[2] = ""
-	return { icon, tier, type }
+	return icon
 })

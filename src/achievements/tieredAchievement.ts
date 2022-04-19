@@ -1,5 +1,19 @@
 import { Achievement } from "./baseAchievement"
 import { buildingHooks } from "../injects/buildings"
+import { shouldRunVersioned } from "../injects/generic"
+
+if (shouldRunVersioned("tieredCursorAchievement"))
+	buildingHooks.on("buy", ({ building }) => {
+		if (building.name !== "Cursor") return
+		for (const ach of Object.values(Game.AchievementsById))
+			if (
+				ach instanceof TieredAchievement &&
+				ach.cursorReq &&
+				ach.cursorReq >= building.amount
+			) {
+				Game.Win(ach.name)
+			}
+	})
 
 export class TieredAchievement<Tier extends string | number>
 	extends Achievement
@@ -8,6 +22,7 @@ export class TieredAchievement<Tier extends string | number>
 	buildingTie: Game.Object
 	pool: "normal"
 	tier: Tier
+	cursorReq?: number
 	/**
 	 * Creates an achievement which is won by having an amount of buildings
 	 * @param name The name of it
@@ -43,9 +58,6 @@ export class TieredAchievement<Tier extends string | number>
 					req = tier === 1 ? 1 : Game.Tiers[tier].achievUnlock * 2
 					break
 			}
-			buildingHooks.Cursor.on("buy", () => {
-				if (Game.Objects.Cursor.amount >= req) Game.Win(this.name)
-			})
 		} else req = Game.Tiers[tier].achievUnlock
 		super(
 			name,
@@ -54,6 +66,7 @@ export class TieredAchievement<Tier extends string | number>
 			}.${quote ? `<q>${quote}</q>` : ""}`,
 			icon ?? Game.GetIcon(buildingObject.name, tier)
 		)
+		if (buildingObject.id === 0) this.cursorReq = req
 		this.pool = "normal"
 		this.tier = tier === "cursor2" || tier === "cursor50" ? (1 as Tier) : tier
 		this.buildingTie = buildingObject

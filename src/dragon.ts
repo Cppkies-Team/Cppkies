@@ -4,6 +4,7 @@ import { resolveIcon } from "./spritesheets"
 import hooks from "./injects/basegame"
 import { Mod, OwnershipUnit } from "./mods"
 import { setUnitOwner } from "./vars"
+import { shouldRunVersioned } from "./injects/generic"
 
 /**
  * The save type for Krumblor
@@ -289,11 +290,12 @@ if (savePartition.active) {
 		if (save.dragon.level !== null && Game.dragonLevels[save.dragon.level])
 			Game.dragonLevel = save.dragon.level
 	})
+}
 
+if (shouldRunVersioned("dragonSpecObjPic"))
 	hooks.on("specialPic", pic => {
 		const level = Game.dragonLevels[Game.dragonLevel]
 		if (pic.tab === "dragon" && level instanceof DragonLevel)
 			pic.pic = level.picLink ?? pic.pic
-		return pic
+		return { frame: pic.frame, pic: pic.pic }
 	})
-}

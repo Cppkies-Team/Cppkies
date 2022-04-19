@@ -146,8 +146,6 @@ export class Building extends Game.Object implements OwnershipUnit {
 		)
 		setUnitOwner(this)
 		customBuildings.push(this)
-		// Create hooks if they don't exist yet
-		if (!buildingHooks[name]) createBuildingHooks(this)
 		//Manually relink canvases and contexts because Orteil made it so new buildings break the old canvas and context links
 		for (const i in Game.ObjectsById) {
 			if (parseInt(i) <= 0) continue
@@ -181,17 +179,6 @@ export class Building extends Game.Object implements OwnershipUnit {
 		if (foolObject) Game.foolObjects[name] = foolObject
 		// The name of this building's golden cookie buff and debuff
 		if (buildingSpecial) Game.goldenCookieBuildingBuffs[name] = buildingSpecial
-
-		if (this.iconLink) {
-			buildingHooks[this.name].on("tooltip", ret =>
-				this.locked
-					? ret
-					: ret.replace(
-							"background-position",
-							`background-image:url(${this.iconLink});background-position`
-					  )
-			)
-		}
 
 		Game.BuildStore()
 		if (this.buildingLink) {
@@ -261,9 +248,19 @@ export const DEFAULT_ONBUY = function (this: Game.Object): void {
 }
 
 if (shouldRunVersioned("customBuildingIcons"))
-	hooks.on("getIcon", ({ icon, type, tier }) => {
+	hooks.on("getIcon", ({ icon, type }) => {
 		customBuildings.forEach(val => {
 			if (val.name === type && val.iconLink) icon[2] = val.iconLink
 		})
-		return { icon, tier, type }
+		return icon
+	})
+
+if (shouldRunVersioned("buildingImageTooltip"))
+	buildingHooks.on("tooltip", ({ building, tooltip }) => {
+		if (building instanceof Building && !building.locked)
+			tooltip = tooltip.replace(
+				"background-position",
+				`background-image:url(${building.iconLink});background-position`
+			)
+		return tooltip
 	})

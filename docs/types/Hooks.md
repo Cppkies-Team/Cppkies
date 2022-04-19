@@ -15,7 +15,7 @@ For example:
 
 ```ts
 Cppkies.hooks.on("cpsMult", mult => mult * 2)
-Cppkies.buildingHooks.Factory.on("cps", cps => cps * 2)
+Cppkies.buildingHooks.on("cps", cps => cps * 2)
 ```
 
 ## Hooks List
@@ -36,7 +36,7 @@ Cppkies.buildingHooks.Factory.on("cps", cps => cps * 2)
   - `grandmaPic` - called when rendering grandmas, must return a link for an image (`string[]`)
   - `buildStore` - called after `Game.BuildStore` (`void`)
 - Icon hooks
-  - `getIcon` - called when resolving an icon via `Game.GetIcon`, usually used internally (`{ icon: Icon, tier: number | string, type: string}`)
+  - `getIcon` - called when resolving an icon via `Game.GetIcon`, usually used internally (`{ icon: Icon; tier: number | string; type: string }` -> `Icon`)
 - Gameplay hooks
   - `cps` - called when CpS (cookies per second) is calculated (`number`)
   - `cpcAdd` - same as `cpc`, but before adding the default 1 CpC (and the three cursor \*2 upgrades)
@@ -45,6 +45,7 @@ Cppkies.buildingHooks.Factory.on("cps", cps => cps * 2)
   - `cpsMult` - called when calculating CpS, is the multiplier of CpS, some calculations use the multiplier (`number`)
   - `rawCpsMult` - called before `cpsMult`, is added to raw CpS, is the multiplier of CpS, some calculations use the multiplier (`number`)
   - `cursorFingerMult` - called when calculating cursor CpS and CpC, is the multiplier of finger upgrades (`number`)
+  - `buildingCps` - called when trying to calculate a building's cps (`{ building: Building; cps: number }` -> `number`)
 - Vanilla hooks
   - `logic` - Called each logic frame (`void`)
   - `draw` - Called each draw frame (`void`)
@@ -56,17 +57,18 @@ The hooks can be accessed with `Cppkies.hooks.on`
 
 ### Building Hooks
 
-- `tooltip` - called on tooltip creation when hovering above a building (`string`)
-- `cps` - called when calculating the building CpS (`number`)
-- `buy` - called when the building is bought (`void`)
-- `levelUp` - called when the building is leveled up (`void`)
+- `tooltip` - called on tooltip creation when hovering above a building (`{ building: Building; tooltip: string }` -> `string`)
+- `buy` - called when the building is bought (`{ building: Building }` -> `void`)
+- `levelUp` - called when the building is leveled up (`{ building: Building }` -> `void`)
 
-The hooks can be accessed via `Cppkies.buildingHooks[buildingName].on`
+The hooks can be accessed via `Cppkies.buildingHooks.on`
 
 For example
 
 ```ts
-Cppkies.buildingHooks.Factory.on("cps", cps => cps * 2)
+Cppkies.buildingHooks.on("tooltip", ({ building, tooltip }) =>
+	building.name === "Factory" ? tooltip + "<br>Child slavery bad" : tooltip
+)
 ```
 
 ### Garden hooks
@@ -96,7 +98,7 @@ interface BoostInfo {
 	y: number
 	name: string
 	age: number
-	// The effect multiplier from the soil and etc. Your custom effects should be multiplied by `multz
+	// The effect multiplier from the soil and etc. Your custom effects should be multiplied by `mult`
 	mult: number
 	effs: Game.Effects
 }

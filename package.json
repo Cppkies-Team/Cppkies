@@ -56,7 +56,7 @@
 		"rollup-plugin-terser": "^7.0.2",
 		"rollup-plugin-typescript2": "^0.31.1",
 		"tslib": "^2.3.0",
-		"typescript": "^4.3.5"
+		"typescript": "^4.6.3"
 	},
 	"sideEffects": [
 		"./dist/esm/index.js"

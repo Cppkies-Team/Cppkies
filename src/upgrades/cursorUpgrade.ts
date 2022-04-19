@@ -1,10 +1,25 @@
 import { Upgrade } from "./baseUpgrade"
 import hooks from "../injects/basegame"
 import { buildingHooks } from "../injects/buildings"
+import { shouldRunVersioned } from "../injects/generic"
 /**
  * Early cursor logs which don't follow any pattern
  */
 const cursorEarlyLogs = [5, 7, 8, 9, 10]
+
+if (shouldRunVersioned("cursorUpgradeRequirement"))
+	buildingHooks.on("buy", ({ building }) => {
+		if (building.name !== "Cursor") return
+
+		for (const upgrade of Object.values(Game.UpgradesById))
+			if (
+				upgrade instanceof CursorUpgrade &&
+				upgrade.cursorReq &&
+				upgrade.cursorReq >= building.amount
+			) {
+				upgrade.unlock()
+			}
+	})
 
 export class CursorUpgrade<Tier extends string | number>
 	extends Upgrade
@@ -12,6 +27,7 @@ export class CursorUpgrade<Tier extends string | number>
 {
 	pool: ""
 	tier: Tier
+	cursorReq?: number
 	/**
 	 * Creates an upgrade which powers up the Thousand Fingers upgrade
 	 * @param name Name of the upgrade
@@ -42,11 +58,11 @@ export class CursorUpgrade<Tier extends string | number>
 		this.pool = ""
 		this.order = 100 + this.id / 1000
 		hooks.on("cursorFingerMult", mult => (this.bought ? mult * power : mult))
-		if (!Game.Tiers[tier].special && !isNaN(tierPow))
-			buildingHooks.Cursor.on("buy", () => {
-				if (building.amount >= (tierPow === 4 ? 25 : (tierPow - 4) * 50))
-					Game.Unlock(this.name)
-			})
+
+		if (!Game.Tiers[tier].special && !isNaN(tierPow)) {
+			this.cursorReq = tierPow === 4 ? 25 : (tierPow - 4) * 50
+		}
+
 		if (tier === "fortune") Game.Tiers[tier].upgrades.push(this)
 		Game.Objects.Cursor.buyFunction.apply(Game.Objects.Cursor)
 	}

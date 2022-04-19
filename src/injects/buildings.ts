@@ -1,34 +1,47 @@
 import { BuildingInjection, Injection } from "./generic"
-import { injectCode } from "../helpers"
+import { injectCode, injectCodes } from "../helpers"
 import { ReturnableEventEmitter } from "../lib/eventemitter"
 import { todoBeforeLoad } from "../loadValues"
 
-export const buildingHooks: Record<string, BuildingHooks> =
-	window.__INTERNAL_CPPKIES__?.buildings || {}
+export const buildingHooks: BuildingHooks =
+	window.__INTERNAL_CPPKIES__?.buildings || new ReturnableEventEmitter()
 
 /**
  * Creates the hooks for a building
  * @param building The building to create hooks for
  */
 
+type BuildingHookRet<T extends object = {}> = T & {
+	building: Game.Object
+}
+
+type CompleteBuildingHookNoRet<T extends object = {}> = [
+	BuildingHookRet<T>,
+	void
+]
+type CompleteBuildingHookRet<T extends object = {}> = [
+	BuildingHookRet<T>,
+	T[keyof T]
+]
+
 export type BuildingHooks = ReturnableEventEmitter<{
-	tooltip: [string, string]
-	cps: [number, number]
-	buy: [void, void]
-	levelUp: [void, void]
+	tooltip: CompleteBuildingHookRet<{ tooltip: string }>
+	buy: CompleteBuildingHookNoRet
+	levelUp: CompleteBuildingHookNoRet
 }>
 
 export function createBuildingHooks(building: Game.Object): void {
-	const emitter: BuildingHooks = new ReturnableEventEmitter()
 	const injections = [
 		new BuildingInjection("tooltip", () => {
-			building.tooltip = injectCode(
-				injectCode(building.tooltip, "return", "let tempRet = ", "replace"),
-				null,
-				`\n//Cppkies injection
-				return __INTERNAL_CPPKIES__.buildings[this.name].emit("tooltip", tempRet)`,
-				"after"
-			)
+			building.tooltip = injectCodes(building.tooltip, [
+				["return", "let tempRet = ", "replace"],
+				[
+					null,
+					`\n//Cppkies injection
+					return __INTERNAL_CPPKIES__.buildings.convertableEmit("tooltip", tooltip => ({ building: this, tooltip: tooltip }), tempRet);\n`,
+					"after",
+				],
+			])
 		}),
 		new BuildingInjection("buy", () => {
 			building.buy = injectCode(
@@ -36,7 +49,7 @@ export function createBuildingHooks(building: Game.Object): void {
 				null,
 				`\n//Cppkies injection
 				if(success) {
-					__INTERNAL_CPPKIES__.buildings[this.name].emit("buy")
+					__INTERNAL_CPPKIES__.buildings.constEmit("buy", { building: this });\n
 				}`,
 				"after"
 			)
@@ -46,7 +59,7 @@ export function createBuildingHooks(building: Game.Object): void {
 				building.levelUp,
 				"me.level+=1;",
 				`\n// Cppkies injection
-__INTERNAL_CPPKIES__.buildings[me.name].emit("levelUp")`,
+__INTERNAL_CPPKIES__.buildings.constEmit("levelUp", { building: me});\n`,
 				"after",
 				{ me: building }
 			)
@@ -56,7 +69,6 @@ __INTERNAL_CPPKIES__.buildings[me.name].emit("levelUp")`,
 	injections.forEach(inject => {
 		inject.runHook(building)
 	})
-	buildingHooks[building.name] = emitter
 }
 
 todoBeforeLoad.push(() => {

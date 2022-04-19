@@ -38,10 +38,7 @@ export type Hooks = ReturnableEventEmitter<{
 
 	reincarnate: [void, void]
 	preLoad: [void, void]
-	minigameSave: [
-		{ building: Game.Object; save: string },
-		{ building: Game.Object; save: string }
-	]
+	minigameSave: [{ building: Game.Object; save: string }, string]
 	//! Tiers
 
 	getIcon: [
@@ -50,11 +47,7 @@ export type Hooks = ReturnableEventEmitter<{
 			tier: string | number
 			icon: Game.Icon
 		},
-		{
-			type: string
-			tier: string | number
-			icon: Game.Icon
-		}
+		Game.Icon
 	]
 
 	//! Buildings
@@ -85,15 +78,12 @@ export type Hooks = ReturnableEventEmitter<{
 	draw: [void, void]
 	check: [void, void]
 	ticker: [string[], string[]]
-	// !!!INTERNAL DO NOT USE!!! Use buildingHooks' "cps" instead
-	buildingCps: [
-		{ building: string; cps: number },
-		{ building: string; cps: number }
-	]
+
+	buildingCps: [{ building: string; cps: number }, number]
 	//! Special objects hooks
 	specialPic: [
 		{ tab: string; pic: string; frame: number },
-		{ tab: string; pic: string; frame: number }
+		{ pic: string; frame: number }
 	]
 }>
 
@@ -208,7 +198,7 @@ export function injectBasegame(): void {
 				[
 					"return [col,Game.Tiers[tier].iconRow];",
 					`// Cppkies Injection
-					return __INTERNAL_CPPKIES__.basegame.emit("getIcon", { icon: [col, Game.Tiers[tier].iconRow], tier: tier, type: type }).icon`,
+					return __INTERNAL_CPPKIES__.basegame.convertableEmit("getIcon", icon => ({ icon: icon, tier: tier, type: type }), [col, Game.Tiers[tier].iconRow])`,
 					"replace",
 				],
 				["col=18;", 'else if (type === "Mouse") col = 11;', "after"],
@@ -297,8 +287,8 @@ add = __INTERNAL_CPPKIES__.basegame.emit("cursorFingerMult", add);\n`,
 			Game.CalculateGains = injectCode(
 				Game.CalculateGains,
 				"me.storedTotalCps=me.amount*me.storedCps;",
-				`// Cppkies injection (internal, do not use)
-me.storedCps = __INTERNAL_CPPKIES__.basegame.emit("buildingCps", { building: i, cps: me.storedCps }).cps;\n`,
+				`// Cppkies injection
+me.storedCps = __INTERNAL_CPPKIES__.basegame.convertableEmit("buildingCps", cps => ({ building: i, cps: cps }), me.storedCps);\n`,
 				"before"
 			)
 		}),
@@ -327,7 +317,7 @@ list = __INTERNAL_CPPKIES__.basegame.emit("ticker", list);\n`,
 				Game.DrawSpecial,
 				"if (hovered || selected)",
 				`// Cppkies injection
-const override = __INTERNAL_CPPKIES__.basegame.emit("specialPic", {tab: Game.specialTabs[i], frame: frame, pic: pic})
+const override = __INTERNAL_CPPKIES__.basegame.convertableEmit("specialPic", ret => ({ tab: Game.specialTabs[i], frame: ret.frame, pic: ret.pic }), { frame: frame, pic: pic })
 pic = override.pic
 frame = override.frame;\n`,
 				"before"
@@ -336,7 +326,7 @@ frame = override.frame;\n`,
 				Game.ToggleSpecialMenu,
 				"else {pic='dragon.png?v='+Game.version;frame=4;}",
 				`// Cppkies injection
-const override = __INTERNAL_CPPKIES__.basegame.emit("specialPic", {tab: Game.specialTab, frame: frame, pic: pic})
+const override = __INTERNAL_CPPKIES__.basegame.convertableEmit("specialPic", ret => ({ tab: Game.specialTabs[i], frame: ret.frame, pic: ret.pic }), { frame: frame, pic: pic })
 pic = override.pic
 frame = override.frame;\n`,
 				"after"
@@ -383,7 +373,7 @@ frame = override.frame;\n`,
 			Game.LoadSave = injectCode(
 				Game.LoadSave,
 				"if (me.minigame",
-				`if (mestr[4]) mestr[4] = __INTERNAL_CPPKIES__.basegame.emit("minigameSave", { building: me, save: mestr[4] }).save;`,
+				`if (mestr[4]) mestr[4] = __INTERNAL_CPPKIES__.basegame.convertableEmit("minigameSave", str => ({ building: me, save: str }), mestr[4]);`,
 				"before"
 			)
 		}),
