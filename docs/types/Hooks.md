@@ -104,6 +104,6 @@ interface BoostInfo {
 }
 ```
 
-- `mutations` - Called when a mutation is considered for an empty tile (`MutationInfo`)
-- `plotBoosts` - Called when plot boosts are calculated (`PlotBoostInfo`)
-- `boosts` - Called when boosts from a plant are calculated (`BoostInfo`)
+- `mutations` - Called when a mutation is considered for an empty tile (`MutationInfo` -> `MutationInfo`)
+- `plotBoosts` - Called when plot boosts are calculated (`PlotBoostInfo` -> `PlotBoostInfo`)
+- `boosts` - Called when boosts from a plant are calculated (`BoostInfo` -> `BoostInfo`)
