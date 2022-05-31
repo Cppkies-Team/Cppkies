@@ -1,11 +1,17 @@
 import { minigamePromises } from "./minigamePromises"
 import { Mod, OwnershipUnit } from "../mods"
 import hooks from "../injects/basegame"
-import { gardenHooks, requireGardenInjects } from "../injects/garden"
+import {
+	BoostInfo,
+	gardenHooks,
+	PlotBoostInfo,
+	requireGardenInjects,
+} from "../injects/garden"
 import { shouldRunVersioned } from "../injects/generic"
 import { MinigameSavePartition, save } from "../saves"
 import { resolveAlias } from "../spritesheets"
 import { setUnitOwner } from "../vars"
+import { injectCodes } from "../helpers"
 
 requireGardenInjects()
 
@@ -56,6 +62,7 @@ export class Plant implements Game.GardenPlant, OwnershipUnit {
 
 	unlocked: Game.PseudoBoolean | boolean = false
 	weed = false
+	effsStr: string
 	/**
 	 *
 	 * @param icon The icon of the seed, the growth stages shall be on the right of it
@@ -69,7 +76,10 @@ export class Plant implements Game.GardenPlant, OwnershipUnit {
 		public ageTick: number,
 		public ageTickR: number,
 		public matureBase: number,
-		public effsStr: string,
+		effsStr:
+			| string
+			| ExEffects
+			| ((state: BoostInfo | PlotBoostInfo) => ExEffects),
 		public q: string
 	) {
 		setUnitOwner(this)
@@ -78,6 +88,11 @@ export class Plant implements Game.GardenPlant, OwnershipUnit {
 		this.iconX = icon[1]
 		this.iconLink = icon[2] && resolveAlias(icon[2])
 		this.mature = this.matureBase
+		if (typeof effsStr === "string") this.effsStr = effsStr
+		else {
+			const effs = new GardenEffect(key, effsStr)
+			this.effsStr = effs.toString()
+		}
 
 		this.id = mg.plantsById.push(this) - 1
 		mg.plants[key] = this
@@ -354,5 +369,101 @@ if (savePartition.active) {
 				mg.plot[y][x][0] = mg.plants[plantName].id + 1
 				mg.plot[y][x][1] = age
 			}
+	})
+}
+
+export type ExEffects = Game.Effects & {
+	multAge?: number | undefined
+	multWeed?: number | undefined
+	multPow?: number | undefined
+	multRange?: number | undefined
+}
+
+export const gardenEffects: GardenEffect[] = []
+interface EffectString {
+	n: string
+	rev?: boolean
+}
+
+export class GardenEffect {
+	constructor(
+		public plantName: string,
+		public effects:
+			| ExEffects
+			| ((state: BoostInfo | PlotBoostInfo) => ExEffects),
+		public customDesc?: string
+	) {
+		gardenEffects.push(this)
+	}
+	toString(): string {
+		if (!mg) throw new Error("Wait for the minigame to load!")
+		const effNames = injectCodes(mg.tools.info.descFunc as () => string, [
+			["M.freeze", "false", "replace"],
+			["var effStr='';", "return effs;}\n/*", "before"],
+			[null, "*/", "after"],
+		])() as unknown as Record<string, EffectString>
+		if (this.customDesc) return this.customDesc
+		if (typeof this.effects === "function")
+			throw new Error("Should have supplied `customDesc`!")
+		let str = ""
+		for (const [effName, mult] of Object.entries(this.effects)) {
+			const effData = effNames[effName]
+			const amount = (mult - 1) * 100
+			const karmaAmount = (effData.rev ? -1 : 1) * amount
+			str += `<div class="${karmaAmount > 0 ? "green" : "red"}">&bull; ${
+				effData.n
+			} ${amount > 0 ? "+" : "-"}${Beautify(Math.abs(amount), 2)}%</div>`
+		}
+		return str
+	}
+}
+
+type ObjectKeysOfValue<O extends object, V> = keyof {
+	[P in keyof O as O[P] extends V ? P : never]: null
+}
+
+if (shouldRunVersioned("plantEffects")) {
+	gardenHooks.on("boosts", boost => {
+		for (const effect of gardenEffects) {
+			const effects =
+				typeof effect.effects === "function"
+					? effect.effects(boost)
+					: effect.effects
+			for (const [effectName, mult] of Object.entries(effects)) {
+				if (effectName.startsWith("mult")) continue
+				if (!(effectName in boost.effs)) continue
+				if (mult > 0) {
+					//@ts-expect-error The effect name is checked beforehand
+					boost.effs[effectName] += boost.mult * mult
+				} else {
+					//@ts-expect-error The effect name is checked beforehand
+					boost.effs[effectName] *= 1 - boost.mult * mult
+				}
+			}
+		}
+		return boost
+	})
+	gardenHooks.on("plotBoosts", boost => {
+		for (const effect of gardenEffects) {
+			const effects =
+				typeof effect.effects === "function"
+					? effect.effects(boost)
+					: effect.effects
+			for (const [effectName, mult] of Object.entries(effects)) {
+				if (!effectName.startsWith("mult")) continue
+				if (
+					!["multAge", "multWeed", "multPow", "multRange"].includes(effectName)
+				)
+					continue
+				let key: ObjectKeysOfValue<typeof boost, number>
+				if (effectName === "multAge") key = "ageMult"
+				else if (effectName === "multWeed") key = "weedMult"
+				else if (effectName === "multPow") key = "powerMult"
+				else if (effectName === "multRange") key = "range"
+				else continue
+				boost[key] *= mult
+			}
+		}
+		return boost
 	})
 }
