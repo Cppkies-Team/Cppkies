@@ -21,7 +21,7 @@ export {
 	ModSavePartition,
 } from "./saves"
 export * from "./ccUI"
-import { exportSave, importSave } from "./saves"
+import { exportSave, importSave, resetSave } from "./saves"
 import { setLoaded, onLoad, todoBeforeLoad } from "./loadValues"
 import { isFirstCppkies } from "./vars"
 export { deffer, onLoad } from "./loadValues"
@@ -71,6 +71,9 @@ if (isFirstCppkies) {
 		save: exportSave,
 		load: importSave,
 		init: () => {},
+	})
+	Game.registerHook("reset", hard => {
+		resetSave(hard ? "hard" : "soft")
 	})
 }
 //Run all onLoad events

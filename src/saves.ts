@@ -31,6 +31,7 @@ export abstract class SavePartition implements OwnershipUnit {
 	}
 	abstract saveAll(save: SaveType): void
 	abstract loadAll(save: SaveType): void
+	abstract resetAll(save: SaveType, type: "soft" | "hard"): void
 }
 
 export class GlobalSavePartition extends SavePartition {
@@ -90,7 +91,7 @@ export class ModSavePartition extends SavePartition {
 		resetOn: "mixed",
 		save: (save: ModSave, mod?: Mod) => void,
 		load: (save: ModSave, mod?: Mod) => void,
-		reset: (save: ModSave, resetType: ResetType, mod?: Mod) => void
+		reset: (save: ModSave, resetType: ResetType) => void
 	)
 	constructor(
 		name: keyof ModSave,
@@ -98,7 +99,7 @@ export class ModSavePartition extends SavePartition {
 		resetOn: PartitionResistance,
 		public save: (save: ModSave, mod?: Mod) => void,
 		public load: (save: ModSave, mod?: Mod) => void,
-		public reset?: (save: ModSave, resetType: ResetType, mod?: Mod) => void
+		public reset?: (save: ModSave, resetType: ResetType) => void
 	) {
 		super(name, version, resetOn)
 	}
@@ -110,18 +111,19 @@ export class ModSavePartition extends SavePartition {
 		this.load(save.foreign)
 		for (const mod of mods) this.load(save.mods[mod.keyname], mod)
 	}
-	protected resetOne(
-		save: ModSave,
-		mod: Mod,
-		resetType: "soft" | "hard"
-	): void {
+	protected resetOne(save: ModSave, resetType: "soft" | "hard"): void {
 		if (this.resetOn === "never") return
 		if (this.resetOn === "mixed") {
-			this.reset?.(save, resetType, mod)
+			this.reset?.(save, resetType)
 			return
 		}
 		//@ts-expect-error `name` is more specific than `string`, but TS doesn't know that
 		if (this.resetOn === "soft" || resetType === "hard") delete save[this.name]
+	}
+	resetAll(save: SaveType, type: "soft" | "hard"): void {
+		for (const mod of Object.values(save.mods)) {
+			this.resetOne(mod, type)
+		}
 	}
 }
 
@@ -171,6 +173,11 @@ export class MinigameSavePartition extends SavePartition {
 	}
 }
 
+export interface IdentificationData {
+	seed: string
+	startDate: number
+}
+
 /**
  * The save type for Cppkies
  */
@@ -178,6 +185,7 @@ export interface SaveType {
 	saveVer: typeof SAVE_VER
 	mods: Record<string, ModSave>
 	foreign: ModSave
+	identification: IdentificationData
 	minigames?: SpecififcMinigameSaves & Record<string, object>
 }
 
@@ -186,6 +194,7 @@ function createDefaultSave(): SaveType {
 		mods: {},
 		foreign: { custom: null },
 		saveVer: SAVE_VER,
+		identification: { seed: Game.seed, startDate: Game.startDate },
 	}
 }
 
@@ -219,6 +228,7 @@ export function saveAll(): void {
 		if (Object.keys(modSave).length === 1 && modSave.custom === null)
 			delete save.mods[mod.keyname]
 	}
+	save.identification = { seed: Game.seed, startDate: Game.startDate }
 }
 /**
  * Loads everything
@@ -226,6 +236,18 @@ export function saveAll(): void {
 export function loadAll(): void {
 	for (const partition of Object.values(__INTERNAL_CPPKIES__.savePartitions)) {
 		partition!.loadAll(save)
+	}
+	if (Game.seed !== save.identification.seed) {
+		console.warn(
+			"Seed mismatch! Looks like a soft reset happened without Cppkies, soft-resetting..."
+		)
+		resetSave("soft")
+	}
+	if (Game.startDate !== save.identification.startDate) {
+		console.warn(
+			"Start date mismatch! Looks like this is a completely different save, hard-resetting..."
+		)
+		resetSave("hard")
 	}
 }
 
@@ -250,4 +272,10 @@ export function importSave(data: string): void {
 export function exportSave(): string {
 	saveAll()
 	return compressToUTF16(JSON.stringify(save))
+}
+
+export function resetSave(type: "soft" | "hard"): void {
+	for (const partition of Object.values(__INTERNAL_CPPKIES__.savePartitions)) {
+		partition!.resetAll(save, type)
+	}
 }
