@@ -1,6 +1,6 @@
 {
 	"name": "cppkies",
-	"version": "0.3.0-alpha1",
+	"version": "0.3.0-alpha2",
 	"description": "Cppkies is a modding framework for the game Cookie Clicker. It intends to make modding the game very simple.",
 	"main": "./dist/index.js",
 	"module": "./dist/esm/index.js",
@@ -15,8 +15,7 @@
 		"eslint:fix": "yarn eslint -- --fix",
 		"build-dts": "dts-bundle-generator src/index.ts -o dist/index.d.ts",
 		"watch-esm": "export NODE_ENV=\"development\" CPPKIES_ESM_DEBUGGING=\"yes\" && yarn build -- --watch",
-		"prepare": "cookie-connoisseur fetch",
-		"prepublishOnly": "yarn prodBuild && npm test"
+		"prepublishOnly": "yarn prodBuild && yarn test"
 	},
 	"husky": {
 		"hooks": {
