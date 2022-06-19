@@ -223,7 +223,10 @@ export class Building extends Game.Object implements OwnershipUnit {
 		const muteElement = document.getElementById("buildingsMute")
 		if (muteElement) muteElement.appendChild(muteDiv)
 		// Load the save stuff
-		loadBuilding(this.owner || save.foreign, this)
+		loadBuilding(
+			(this.owner && save.mods[this.owner.keyname]) || save.foreign,
+			this
+		)
 
 		Game.recalculateGains = 1
 	}

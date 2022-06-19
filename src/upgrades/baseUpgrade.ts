@@ -97,7 +97,10 @@ export class Upgrade extends Game.Upgrade implements OwnershipUnit {
 		if (typeof icon === "function")
 			this.iconFunction = () => resolveIcon(icon())
 		customUpgrades.push(this)
-		loadUpgrade(this.owner || save.foreign, this)
+		loadUpgrade(
+			(this.owner && save.mods[this.owner.keyname]) || save.foreign,
+			this
+		)
 
 		Game.upgradesToRebuild = 1
 	}

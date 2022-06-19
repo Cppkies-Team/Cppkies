@@ -58,7 +58,10 @@ export class Achievement extends Game.Achievement implements OwnershipUnit {
 		super(name, desc, resolveIcon(icon))
 		localizeThing(this)
 		setUnitOwner(this)
-		loadAchievement(this.owner || save.foreign, this)
+		loadAchievement(
+			(this.owner && save.mods[this.owner.keyname]) || save.foreign,
+			this
+		)
 		customAchievements.push(this)
 	}
 }
