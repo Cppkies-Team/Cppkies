@@ -263,7 +263,7 @@ export function injectBasegame(): void {
 				`effs = __INTERNAL_CPPKIES__.basegame.convertableEmit("effs", val => val, effs, (ret, old) => {
 					for (const eff in ret) {
 						if (old[eff] === undefined) old[eff] = ret[eff]
-						else old[eff] *= eff
+						else old[eff] *= ret[eff]
 					}
 					return old
 				});\n`,
