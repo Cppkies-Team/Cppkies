@@ -56,7 +56,7 @@ export class DragonAura implements Game.DragonAura, OwnershipUnit {
 					? buildingOrIcon.iconLink
 					: undefined,
 			])
-		else this.pic = buildingOrIcon
+		else this.pic = resolveIcon(buildingOrIcon)
 		this.id = Object.keys(Game.dragonAuras).length
 		Game.dragonAuras[this.id] = this
 		this.dname = loc(this.name)

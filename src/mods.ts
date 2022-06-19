@@ -1,4 +1,4 @@
-import { mods, setCurrentMod } from "./vars"
+import { miscValues, mods, resetMiscValues, setCurrentMod } from "./vars"
 import { ToggleBase } from "./modUI"
 import { ModSavePartition, save } from "./saves"
 
@@ -96,7 +96,9 @@ export class Mod<C extends object = object> implements ModMetadata {
 		this.custom = (save.mods[this.keyname]?.custom as C) ?? null
 
 		setCurrentMod(this)
+		resetMiscValues()
 		modFunction?.apply(this)
+		resetMiscValues()
 		// Update the menu, just in case
 		Game.UpdateMenu()
 		setCurrentMod(null)

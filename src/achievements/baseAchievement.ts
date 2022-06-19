@@ -2,6 +2,7 @@ import { resolveIcon } from "../spritesheets"
 import { customAchievements, setUnitOwner } from "../vars"
 import { ModSave, ModSavePartition, save } from "../saves"
 import { Mod, OwnershipUnit } from "../mods"
+import { localizeThing } from "../helpers"
 
 export interface AchievementSave {
 	won: boolean
@@ -55,6 +56,7 @@ export class Achievement extends Game.Achievement implements OwnershipUnit {
 	 */
 	constructor(name: string, desc: string, icon: Game.Icon) {
 		super(name, desc, resolveIcon(icon))
+		localizeThing(this)
 		setUnitOwner(this)
 		loadAchievement(this.owner || save.foreign, this)
 		customAchievements.push(this)

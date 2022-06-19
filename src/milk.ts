@@ -33,7 +33,7 @@ export class Milk implements MilkClass, OwnershipUnit {
 		if (!special)
 			this.name = `Rank ${toRomanNumeral(Game.Milks.length + 1)} - ${name}`
 		this.pic = pic.substr(0, pic.length - 4)
-		resolveIcon(icon)
+		icon = resolveIcon(icon)
 		this.icon = [icon[0], icon[1]]
 		this.iconLink = icon[2]
 		// TODO: Special milks

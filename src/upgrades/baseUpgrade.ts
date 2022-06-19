@@ -1,5 +1,5 @@
 import { ModSave, ModSavePartition, save } from "../saves"
-import { CommonValue } from "../helpers"
+import { CommonValue, localizeThing } from "../helpers"
 import { resolveIcon } from "../spritesheets"
 import { customUpgrades, setUnitOwner } from "../vars"
 import { TieredUpgrade } from "./tieredUpgrade"
@@ -90,6 +90,7 @@ export class Upgrade extends Game.Upgrade implements OwnershipUnit {
 			typeof icon === "function" ? [0, 0] : resolveIcon(icon),
 			buyFunc
 		)
+		localizeThing(this)
 		setUnitOwner(this)
 		if (typeof desc === "function") this.descFunc = desc
 		if (typeof price === "function") this.priceFunc = price

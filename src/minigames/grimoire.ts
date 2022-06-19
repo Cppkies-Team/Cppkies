@@ -1,6 +1,7 @@
 import { CommonValue } from "../helpers"
 import { requireGrimoireInjects } from "../injects/grimoire"
 import { Mod, OwnershipUnit } from "../mods"
+import { resolveIcon } from "../spritesheets"
 import { setUnitOwner } from "../vars"
 import { minigamePromises } from "./minigamePromises"
 
@@ -85,6 +86,7 @@ export class Spell implements Game.GrimoireSpell, OwnershipUnit {
 		public fail?: () => void | -1
 	) {
 		setUnitOwner(this)
+		this.icon = resolveIcon(icon)
 		if (!mg) throw new Error("The grimoire minigame has not loaded yet!")
 		if (costMult) this.costPercent = costMult
 		this.id = mg.spellsById.length

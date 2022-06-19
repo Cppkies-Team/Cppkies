@@ -5,6 +5,7 @@ import { MinigameSavePartition, save } from "../saves"
 import { setUnitOwner } from "../vars"
 import { minigamePromises } from "./minigamePromises"
 import { requirePantheonInjects } from "../injects/pantheon"
+import { resolveIcon } from "../spritesheets"
 
 requirePantheonInjects()
 
@@ -92,6 +93,7 @@ export class Spirit implements Game.PantheonSpirit, OwnershipUnit {
 		fullName?: string
 	) {
 		if (!mg) throw new Error("The pantheon minigame has not loaded yet!")
+		this.icon = icon = resolveIcon(icon)
 		setUnitOwner(this)
 		if (quote) this.quote = quote
 		else this.quote = undefined

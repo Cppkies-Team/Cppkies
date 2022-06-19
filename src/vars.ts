@@ -63,6 +63,12 @@ export const miscValues = {
 	buildingLink: "",
 }
 
+export function resetMiscValues(): void {
+	miscValues.cookieOrder = 121212
+	miscValues.iconLink = ""
+	miscValues.buildingLink = ""
+}
+
 export const customBuildings = __INTERNAL_CPPKIES__.customBuildings
 
 export const customAchievements = __INTERNAL_CPPKIES__.customAchievements

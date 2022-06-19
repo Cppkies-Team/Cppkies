@@ -9,7 +9,7 @@ import {
 } from "../injects/garden"
 import { shouldRunVersioned } from "../injects/generic"
 import { MinigameSavePartition, save } from "../saves"
-import { resolveAlias } from "../spritesheets"
+import { resolveAlias, resolveIcon } from "../spritesheets"
 import { setUnitOwner } from "../vars"
 import { injectCodes } from "../helpers"
 
@@ -84,9 +84,10 @@ export class Plant implements Game.GardenPlant, OwnershipUnit {
 	) {
 		setUnitOwner(this)
 		if (!mg) throw new Error("The garden minigame has not loaded yet!")
+		icon = resolveIcon(icon)
 		this.icon = icon[0]
 		this.iconX = icon[1]
-		this.iconLink = icon[2] && resolveAlias(icon[2])
+		this.iconLink = icon[2]
 		this.mature = this.matureBase
 		if (typeof effsStr === "string") this.effsStr = effsStr
 		else {
