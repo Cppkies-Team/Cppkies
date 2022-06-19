@@ -45,6 +45,7 @@ Cppkies.buildingHooks.on("cps", cps => cps * 2)
   - `cpsMult` - called when calculating CpS, is the multiplier of CpS, some calculations use the multiplier (`number`)
   - `rawCpsMult` - called before `cpsMult`, is added to raw CpS, is the multiplier of CpS, some calculations use the multiplier (`number`)
   - `cursorFingerMult` - called when calculating cursor CpS and CpC, is the multiplier of finger upgrades (`number`)
+  - `effs` - called when CpS is calculated, can control a lot of options. Gets the current effs, and must return multipliers for the effs. Read more at [Effects](types/Effects.md).
   - `buildingCps` - called when trying to calculate a building's cps (`{ building: Building; cps: number }` -> `number`)
 - Vanilla hooks
   - `logic` - Called each logic frame (`void`)

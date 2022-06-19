@@ -61,7 +61,8 @@ export class ReturnableEventEmitter<
 	convertableEmit<N extends keyof T>(
 		name: N,
 		converter: (ret: T[N][1]) => T[N][0],
-		startingValue: T[N][1]
+		startingValue: T[N][1],
+		applier?: (funRet: T[N][1], lastRet: T[N][1]) => T[N][1]
 	): T[N][1] {
 		if (this.forwardTo)
 			return this.forwardTo.convertableEmit(name, converter, startingValue)
@@ -69,7 +70,9 @@ export class ReturnableEventEmitter<
 		if (!arr) this._events[name] = arr = []
 		let retVal: T[N][1] = startingValue
 		for (const func of arr as EventListenerFunction<T, N>[]) {
-			retVal = func(converter(retVal))
+			retVal = applier
+				? applier(func(converter(retVal)), retVal)
+				: func(converter(retVal))
 		}
 		return retVal
 	}

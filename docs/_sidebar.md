@@ -19,6 +19,7 @@
 
   - [Building](types/Building.md)
   - [Hooks](types/Hooks.md)
+  - [Effects](types/Effects.md)
   - [Icon](types/Icon.md)
   - [Upgrade](types/Upgrade.md)
   - [Heavenly upgrade](types/HeavenlyUpgrade.md)

@@ -31,30 +31,37 @@ interface ModMetadata {
 ## Example
 
 ```ts
-new Cppkies.Mod({
-	keyname: "cppkies-mod-example",
-	version: "1.0"
-}, () => {
-	// ...
-})
+new Cppkies.Mod(
+	{
+		keyname: "cppkies-mod-example",
+		version: "1.0",
+	},
+	() => {
+		// ...
+	}
+)
 ```
+
 > [!TIP]
 > If you are using a bundler like Rollup or Webpack and submitted to Cppkies Mod Repository, you can import `package.json` in the file you register the mod and add the properties, like
-> ```ts
->import package from "../package.json" // This may or may not be the default export, refer to your bundler to how it's done
 >
->new Cppkies.Mod({
->	keyname: package.name,
->	name: package.ccrepo.name,
->	icon: package.ccrepo.icon,
->	version: package.version
->}, () => {
->	// ...
->})
->```
+> ```ts
+> import { name, ccrepo, version } from "../package.json" // This may or may not be the default export, refer to your bundler to how it's done
+>
+> new Cppkies.Mod(
+> 	{
+> 		keyname: name,
+> 		name: ccrepo.name,
+> 		icon: ccrepo.icon,
+> 		version: version,
+> 	},
+> 	() => {
+> 		// ...
+> 	}
+> )
+> ```
 
 ## Constructor properties
 
 1. `metadata` - `ModMetadata` The mod metadata
 2. `modFunction` - `(this: Mod) => void` The function which is called when Cppkies is loaded and the mod is should add all it's stuff
-

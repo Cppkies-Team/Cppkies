@@ -64,6 +64,7 @@ export type Hooks = ReturnableEventEmitter<{
 	rawCpsMult: [number, number]
 	cps: [number, number]
 	cpsMult: [number, number]
+	effs: [Game.Effects, Game.Effects]
 	/**
 	 * The multiplier of cursor finger bonus
 	 */
@@ -254,6 +255,20 @@ export function injectBasegame(): void {
 				],
 			])
 			Game.registerHook("cps", cps => hooks.emit("cps", cps))
+		}),
+		new Injection("effs", () => {
+			Game.CalculateGains = injectCode(
+				Game.CalculateGains,
+				"Game.effs=effs;",
+				`effs = __INTERNAL_CPPKIES__.basegame.convertableEmit("effs", val => val, effs, (ret, old) => {
+					for (const eff in ret) {
+						if (old[eff] === undefined) old[eff] = ret[eff]
+						else old[eff] *= eff
+					}
+					return old
+				});\n`,
+				"before"
+			)
 		}),
 		new Injection("cursorFingerMult", () => {
 			Game.Objects.Cursor.cps = injectCode(
