@@ -38,7 +38,7 @@
 		"@playwright/test": "^1.15.2",
 		"@rollup/plugin-commonjs": "^21.0.0",
 		"@rollup/plugin-node-resolve": "^13.0.5",
-		"@types/cookieclicker": "^2.44.0",
+		"@types/cookieclicker": "^2.48.0",
 		"@types/lz-string": "^1.3.34",
 		"@typescript-eslint/eslint-plugin": "^5.1.0",
 		"@typescript-eslint/parser": "^5.1.0",

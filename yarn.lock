@@ -604,10 +604,10 @@
     estree-walker "^2.0.1"
     picomatch "^2.2.2"
 
-"@types/cookieclicker@^2.44.0":
-  version "2.44.0"
-  resolved "https://registry.yarnpkg.com/@types/cookieclicker/-/cookieclicker-2.44.0.tgz#74708a8a1b3b00e10139cf38a628390b5d150a8b"
-  integrity sha512-bNaFGywMR/1NXozPwBzHZ/Bk6RPU2wQKa3b+otHElqergXcuN440pZqdoLfYgM074zxO8xtZ/1TaOD6UD8ydMw==
+"@types/cookieclicker@^2.48.0":
+  version "2.48.0"
+  resolved "https://registry.yarnpkg.com/@types/cookieclicker/-/cookieclicker-2.48.0.tgz#1bb9916e2f12ed0425b29c246b2d5d52816ead82"
+  integrity sha512-fHZORzVTRrN59XO2es13/SD3Vopk1xjls2yZQo0ykWZHughjy39JKiXP9tR/cEVAP0eg0QyQVTVqLUQZ1DvbBg==
 
 "@types/estree@*":
   version "0.0.51"

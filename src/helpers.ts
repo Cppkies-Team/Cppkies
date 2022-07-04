@@ -188,19 +188,15 @@ export function attachTooltip(
 }
 
 export function localizeThing(thing: Game.Achievement | Game.Upgrade): void {
-	//@ts-expect-error forgot to add this in the typings
-	const type: "Upgrade" | "Achievement" = thing.getType()
+	const type = thing.getType()
 	const name = FindLocStringByPart(`${type} name ${thing.name}`)
 	if (name) thing.dname = loc(name)
 
 	if (!EN) thing.baseDesc = thing.baseDesc.replace(/<q>.*/, "")
-	//@ts-expect-error Forgot to add ddesc to the typings
 	thing.ddesc = BeautifyInText(thing.baseDesc)
 
 	const desc = FindLocStringByPart(`${type} desc ${thing.name}`)
-	//@ts-expect-error Forgot to add ddesc to the typings
 	if (desc) thing.ddesc = loc(desc)
 	const quote = FindLocStringByPart(`${type} quote ${thing.name}`)
-	//@ts-expect-error Forgot to add ddesc to the typings
 	if (quote) thing.ddesc += `<q>${loc(quote)}</q>`
 }

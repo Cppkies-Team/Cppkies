@@ -27,17 +27,7 @@ function attachTooltip(
 }
 
 export class Spell implements Game.GrimoireSpell, OwnershipUnit {
-	/**
-	 * If set, the fail chance is overwritten with the result of the function
-	 *
-	 * (This is actually a vanilla cookie clicker type, but the typings missed it, whoops)
-	 */
 	failFunc?: (failChance: number) => number
-	/**
-	 * If true, this spell doesn't count for the total spell count
-	 *
-	 * (This is actually a vanilla cookie clicker type, but the typings missed it, whoops)
-	 */
 	passthrough?: boolean
 	owner?: Mod
 	costPercent?: number
