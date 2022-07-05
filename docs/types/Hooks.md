@@ -22,11 +22,13 @@ Cppkies.buildingHooks.on("cps", cps => cps * 2)
 
 ### Generic Hooks
 
-- Menu hooks
+- UI hooks
   - `menu` - called when any menu is opened (`void`)
   - `optionsMenu` - called when the options menu is opened (`void`)
   - `statsMenu` - called when the stats menu is opened (`void`)
   - `infoMenu` - called when the info menu is opened (`void`)
+	- `tooltipDom` - called right after the tooltip is rendered (`HTMLDivElement`\*)
+	- `tooltipString` - called right before the tooltip html string is set, used for more barbaric tooltip modifications  (`string`)
 - Data hooks
   - `preSave` - called right before the game is saved (`void`)
   - `postSave` - called right after the game is saved (`void`)

@@ -1,10 +1,10 @@
-import { injectCode, injectCodes } from "../helpers"
+import { injectCode, injectCodes, InjectParams } from "../helpers"
 import { ReturnableEventEmitter } from "../lib/eventemitter"
 import { todoBeforeLoad } from "../loadValues"
 import { Injection } from "./generic"
 
 export type Hooks = ReturnableEventEmitter<{
-	//! Custom menus
+	//! UI Hooks
 	/**
 	 * Allows you to add entries to all menus
 	 */
@@ -21,6 +21,9 @@ export type Hooks = ReturnableEventEmitter<{
 	 * Allows you to add entries to the info menu
 	 */
 	infoMenu: [void, void]
+
+	tooltipDom: [HTMLDivElement, void]
+	tooltipString: [string, string]
 
 	//! Data manipulation
 
@@ -391,6 +394,25 @@ frame = override.frame;\n`,
 				`if (mestr[4]) mestr[4] = __INTERNAL_CPPKIES__.basegame.convertableEmit("minigameSave", str => ({ building: me, save: str }), mestr[4]);`,
 				"before"
 			)
+		}),
+		new Injection("tooltipDom", () => {
+			Game.tooltip.update = injectCode(
+				Game.tooltip.update,
+				null,
+				'__INTERNAL_CPPKIES__.basegame.constEmit("tooltipDom", this.tt)',
+				"after"
+			)
+		}),
+		new Injection("tooltipString", () => {
+			const tooltipStringInject: InjectParams = [
+				/unescape\(.+\)/g,
+				'__INTERNAL_CPPKIES__.basegame.emit("tooltipString", $&)',
+				"replace",
+			]
+			Game.tooltip.draw = injectCodes(Game.tooltip.draw, [tooltipStringInject])
+			Game.tooltip.update = injectCodes(Game.tooltip.update, [
+				tooltipStringInject,
+			])
 		}),
 	]
 	injections.forEach(inject => inject.runHook())
