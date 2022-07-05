@@ -11,6 +11,9 @@ export * from "./mods"
 export * from "./modUI"
 export { default as hooks } from "./injects/basegame"
 export { buildingHooks } from "./injects/buildings"
+export * from "./injects/garden"
+export * from "./injects/grimoire"
+export * from "./injects/pantheon"
 export {
 	save,
 	SaveType,
